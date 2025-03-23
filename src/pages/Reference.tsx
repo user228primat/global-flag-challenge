@@ -1,15 +1,15 @@
 
 import React from 'react';
 import Header from '../components/Header';
-import MainMenu from '../components/MainMenu';
+import ReferenceTable from '../components/ReferenceTable';
 
-const Index = () => {
+const Reference = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header />
-      <MainMenu />
+      <ReferenceTable />
     </div>
   );
 };
 
-export default Index;
+export default Reference;

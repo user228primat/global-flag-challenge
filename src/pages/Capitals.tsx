@@ -1,15 +1,15 @@
 
 import React from 'react';
 import Header from '../components/Header';
-import MainMenu from '../components/MainMenu';
+import RegionSelection from '../components/RegionSelection';
 
-const Index = () => {
+const Capitals = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header />
-      <MainMenu />
+      <RegionSelection />
     </div>
   );
 };
 
-export default Index;
+export default Capitals;

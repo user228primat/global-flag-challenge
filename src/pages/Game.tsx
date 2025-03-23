@@ -1,15 +1,15 @@
 
 import React from 'react';
 import Header from '../components/Header';
-import MainMenu from '../components/MainMenu';
+import GameScreen from '../components/GameScreen';
 
-const Index = () => {
+const Game = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header />
-      <MainMenu />
+      <GameScreen />
     </div>
   );
 };
 
-export default Index;
+export default Game;

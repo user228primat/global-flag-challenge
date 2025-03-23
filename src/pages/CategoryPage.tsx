@@ -1,15 +1,15 @@
 
 import React from 'react';
 import Header from '../components/Header';
-import MainMenu from '../components/MainMenu';
+import CategoryOptions from '../components/CategoryOptions';
 
-const Index = () => {
+const CategoryPage = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header />
-      <MainMenu />
+      <CategoryOptions />
     </div>
   );
 };
 
-export default Index;
+export default CategoryPage;

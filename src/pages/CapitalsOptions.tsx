@@ -1,15 +1,15 @@
 
 import React from 'react';
 import Header from '../components/Header';
-import MainMenu from '../components/MainMenu';
+import CapitalsOptions from '../components/CapitalsOptions';
 
-const Index = () => {
+const CapitalsOptionsPage = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header />
-      <MainMenu />
+      <CapitalsOptions />
     </div>
   );
 };
 
-export default Index;
+export default CapitalsOptionsPage;
