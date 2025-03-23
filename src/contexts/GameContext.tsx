@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CategoryId, GameContextType, GameStats } from '../types';
 
@@ -14,6 +13,7 @@ const initialGameStats: Record<CategoryId, GameStats> = {
   southAmerica: { currentScore: 0, highScore: 0, isComplete: false },
   africa: { currentScore: 0, highScore: 0, isComplete: false },
   australiaOceania: { currentScore: 0, highScore: 0, isComplete: false },
+  capitals: { currentScore: 0, highScore: 0, isComplete: false },
 };
 
 // Create the context with default values
