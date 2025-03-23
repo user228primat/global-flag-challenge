@@ -1,60 +1,80 @@
 
 import React from 'react';
-import { categoryDisplayNames, gameCategories } from '../data';
-import { CategoryId, GameStats } from '../types';
-import { ChevronRight, Check } from 'lucide-react';
+import { Category, CategoryId } from '../types';
+import { gameCategories, categoryDisplayNames } from '../data';
+import { Award, BookOpen, GraduationCap, MousePointer, Trophy } from 'lucide-react';
+import RegionImages from './RegionImages';
 
 interface CategoryButtonProps {
   categoryId: CategoryId;
   onClick: () => void;
-  stats: GameStats;
-  index: number;
+  completedCount?: number;
+  isCompleted?: boolean;
+  showCompletionStatus?: boolean;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({ 
-  categoryId, 
-  onClick, 
-  stats,
-  index 
+const CategoryButton: React.FC<CategoryButtonProps> = ({
+  categoryId,
+  onClick,
+  completedCount = 0,
+  isCompleted = false,
+  showCompletionStatus = true,
 }) => {
   const category = gameCategories[categoryId];
   const displayName = categoryDisplayNames[categoryId];
-  const isComplete = stats.highScore >= category.countries.length;
   
-  // Calculate animation delay based on index
-  const animationDelay = `${index * 0.1}s`;
+  // Определяем иконку в зависимости от категории
+  const getIcon = () => {
+    if (categoryId.startsWith('level')) {
+      return <GraduationCap size={28} className="text-warning" />;
+    } else if (categoryId === 'allFlags') {
+      return <Trophy size={28} className="text-warning" />;
+    } else if (categoryId === 'capitals') {
+      return <Award size={28} className="text-info" />;
+    } else {
+      return <GraduationCap size={28} className="text-primary" />;
+    }
+  };
 
   return (
     <button
       onClick={onClick}
-      className="glass w-full text-left p-4 rounded-xl transition-all duration-300 hover:bg-white/10 group"
-      style={{ 
-        opacity: 0,
-        animation: 'fade-in 0.5s ease-out forwards',
-        animationDelay 
-      }}
+      className="relative w-full glass p-0 rounded-xl overflow-hidden transition-all duration-300 
+                 hover:bg-white/10 flex flex-col items-center text-left 
+                 group hover:scale-[1.02] hover:shadow-lg"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-medium text-white">{displayName}</span>
-            <span className="text-xs font-medium text-white/60">({category.count})</span>
-          </div>
-          <div className="mt-1">
-            {isComplete ? (
-              <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-success/20 text-success">
-                <Check size={12} className="mr-1" />
-                Завершено
-              </span>
-            ) : (
-              <span className="text-xs text-white/60">
-                Рекорд: {stats.highScore} / {category.count}
-              </span>
-            )}
-          </div>
+      <RegionImages region={categoryId} />
+      
+      <div className="w-full p-4">
+        <div className="flex justify-between items-center mb-1">
+          <h3 className="text-lg font-medium text-white group-hover:text-primary transition-colors">
+            {displayName}
+          </h3>
+          {getIcon()}
         </div>
-        <ChevronRight size={20} className="text-white/60 transition-transform duration-300 group-hover:translate-x-1" />
+        
+        {showCompletionStatus && (
+          <div className="flex items-center justify-between text-sm text-white/60">
+            <div className="flex items-center">
+              <BookOpen size={14} className="mr-1" />
+              <span>
+                {isCompleted ? (
+                  <span className="text-success">Завершено</span>
+                ) : (
+                  <span>{completedCount}/{category.count}</span>
+                )}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <MousePointer size={14} className="mr-1" />
+              <span>Изучить</span>
+            </div>
+          </div>
+        )}
       </div>
+      
+      {/* Overlay effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-70" />
     </button>
   );
 };

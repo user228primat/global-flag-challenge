@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
 import { ArrowLeft, Globe } from 'lucide-react';
+import RegionImages from './RegionImages';
 
 const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
@@ -38,17 +39,28 @@ const RegionSelection: React.FC = () => {
           <button
             key={regionId}
             onClick={() => handleRegionSelect(regionId as CategoryId)}
-            className="glass p-6 rounded-xl text-center transition-all duration-300 hover:bg-white/10 flex flex-col items-center justify-center"
+            className="glass p-0 rounded-xl text-center transition-all duration-300 
+                      hover:bg-white/10 flex flex-col items-center overflow-hidden
+                      hover:scale-[1.02] hover:shadow-lg relative"
             style={{ 
               opacity: 0,
               animation: 'fade-in 0.5s ease-out forwards',
               animationDelay: `${index * 0.1}s` 
             }}
           >
-            <Globe size={36} className="mb-3 text-primary" />
-            <span className="text-xl font-medium text-white">
-              {categoryDisplayNames[regionId as CategoryId]}
-            </span>
+            <RegionImages region={regionId as CategoryId} className="w-full h-32" />
+            
+            <div className="w-full p-4 z-10">
+              <div className="flex flex-col items-center justify-center">
+                <Globe size={32} className="mb-2 text-primary" />
+                <span className="text-xl font-medium text-white">
+                  {categoryDisplayNames[regionId as CategoryId]}
+                </span>
+              </div>
+            </div>
+            
+            {/* Overlay effect */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-70" />
           </button>
         ))}
       </div>

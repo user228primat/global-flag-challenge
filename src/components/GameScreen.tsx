@@ -8,7 +8,7 @@ import LivesIndicator from './LivesIndicator';
 import ScoreCounter from './ScoreCounter';
 import { generateOptions, getNextCountry } from '../utils/gameLogic';
 import { Country } from '../types';
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
 
 const GameScreen: React.FC = () => {
@@ -31,6 +31,7 @@ const GameScreen: React.FC = () => {
   const [usedCountries, setUsedCountries] = useState<Set<string>>(new Set());
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [incorrectOptions, setIncorrectOptions] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   
   // Exit to main menu
@@ -46,6 +47,7 @@ const GameScreen: React.FC = () => {
     setIsLoading(true);
     setSelectedOption(null);
     setIsCorrect(null);
+    setIncorrectOptions(new Set());
     
     const categoryCountries = gameCategories[currentCategory].countries;
     const nextCountry = getNextCountry(categoryCountries, usedCountries);
@@ -67,7 +69,7 @@ const GameScreen: React.FC = () => {
   
   // Handle user answer
   const handleAnswerSelect = (countryName: string) => {
-    if (selectedOption || !currentCountry) return;
+    if (!currentCountry || isCorrect) return;
     
     setSelectedOption(countryName);
     const correct = countryName === currentCountry.name;
@@ -84,15 +86,25 @@ const GameScreen: React.FC = () => {
         loadNextQuestion();
       }, 1000);
     } else {
-      // Wrong answer
-      setLives(lives - 1);
+      // Wrong answer - add to incorrect answers set
+      setIncorrectOptions(prev => new Set([...prev, countryName]));
       
-      // If no lives left, game over
-      if (lives <= 1) {
-        setTimeout(() => {
-          setIsGameOver(true);
-        }, 1000);
+      // Decrement lives only on first incorrect answer per question
+      if (!incorrectOptions.has(countryName)) {
+        setLives(lives - 1);
+        
+        // If no lives left, game over
+        if (lives <= 1) {
+          setTimeout(() => {
+            setIsGameOver(true);
+          }, 1000);
+        }
       }
+      
+      // Reset selection after a moment so user can try again
+      setTimeout(() => {
+        setSelectedOption(null);
+      }, 800);
     }
   };
   
@@ -162,17 +174,21 @@ const GameScreen: React.FC = () => {
         {options.map((option) => {
           const isSelected = selectedOption === option.name;
           const isOptionCorrect = currentCountry.name === option.name;
+          const isIncorrect = incorrectOptions.has(option.name);
           
           let buttonClass = "w-full text-left p-4 rounded-xl transition-all duration-300 ";
           
           if (isSelected) {
-            if (isOptionCorrect) {
-              buttonClass += "bg-success/20 border border-success text-white";
-            } else {
+            // Current selection is shown as incorrect
+            if (!isOptionCorrect) {
               buttonClass += "bg-error/20 border border-error text-white";
+            } else {
+              // Correct answer
+              buttonClass += "bg-success/20 border border-success text-white";
             }
-          } else if (selectedOption && isOptionCorrect) {
-            buttonClass += "bg-success/20 border border-success text-white";
+          } else if (isIncorrect) {
+            // Previously selected incorrect answers
+            buttonClass += "bg-error/10 border border-error/40 text-white/80";
           } else {
             buttonClass += "glass hover:bg-white/10";
           }
@@ -181,7 +197,7 @@ const GameScreen: React.FC = () => {
             <button
               key={option.name}
               onClick={() => handleAnswerSelect(option.name)}
-              disabled={!!selectedOption}
+              disabled={isIncorrect || isCorrect}
               className={buttonClass}
               style={{ 
                 opacity: 0,
