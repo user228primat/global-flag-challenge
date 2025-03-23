@@ -46,4 +46,5 @@ export interface GameContextType {
   resetGame: () => void;
   startGame: (category: CategoryId) => void;
   viewReference: (category: CategoryId) => void;
+  markCategoryComplete: (category: CategoryId) => void;
 }

@@ -5,7 +5,7 @@ import CategoryButton from './CategoryButton';
 import { categoryDisplayNames, categoryGroups } from '../data';
 import { useGameContext } from '../contexts/GameContext';
 import { CategoryId } from '../types';
-import { Globe } from 'lucide-react';
+import { Globe, Trophy, Award } from 'lucide-react';
 
 const MainMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -26,28 +26,32 @@ const MainMenu: React.FC = () => {
     const stats = gameStats[categoryId];
     const isCompleted = stats.isComplete;
     const completedCount = stats.currentScore;
+    const highScore = stats.highScore;
     
-    return { isCompleted, completedCount };
+    return { isCompleted, completedCount, highScore };
   };
 
   return (
     <div className="w-full max-w-xl mx-auto px-4">
-      <div className="mb-12 text-center">
-        <Globe size={80} className="mx-auto mb-6 text-primary animate-pulse-slow" />
-        <h1 className="text-4xl font-bold mb-2 text-white text-shadow animate-fade-in">
+      <div className="mb-12 text-center glass p-8 rounded-2xl bg-gradient-to-br from-primary/20 to-white/5">
+        <Globe size={80} className="mx-auto mb-6 text-primary" />
+        <h1 className="text-4xl font-bold mb-2 text-white text-shadow">
           Флаги Мира
         </h1>
-        <p className="text-white/60 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <p className="text-white/80">
           Проверьте свои знания флагов стран мира
         </p>
       </div>
       
-      <div className="space-y-6">
-        <section>
-          <h2 className="text-xl font-medium mb-3 text-white/80">По сложности</h2>
+      <div className="grid grid-cols-1 gap-6">
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-primary/5 to-white/5">
+          <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
+            <Trophy size={20} className="mr-2 text-warning" />
+            По сложности
+          </h2>
           <div className="space-y-2">
             {categoryGroups.levels.map((categoryId) => {
-              const { isCompleted, completedCount } = getCompletionData(categoryId as CategoryId);
+              const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
               return (
                 <CategoryButton
                   key={categoryId}
@@ -55,17 +59,21 @@ const MainMenu: React.FC = () => {
                   onClick={() => handleCategoryClick(categoryId as CategoryId)}
                   isCompleted={isCompleted}
                   completedCount={completedCount}
+                  highScore={highScore}
                 />
               );
             })}
           </div>
         </section>
         
-        <section>
-          <h2 className="text-xl font-medium mb-3 text-white/80">По регионам</h2>
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-info/5 to-white/5">
+          <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
+            <Globe size={20} className="mr-2 text-info" />
+            По регионам
+          </h2>
           <div className="space-y-2">
             {categoryGroups.regions.map((categoryId) => {
-              const { isCompleted, completedCount } = getCompletionData(categoryId as CategoryId);
+              const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
               return (
                 <CategoryButton
                   key={categoryId}
@@ -73,21 +81,34 @@ const MainMenu: React.FC = () => {
                   onClick={() => handleCategoryClick(categoryId as CategoryId)}
                   isCompleted={isCompleted}
                   completedCount={completedCount}
+                  highScore={highScore}
                 />
               );
             })}
           </div>
         </section>
         
-        <section style={{ opacity: 0, animation: 'fade-in 0.5s ease-out forwards', animationDelay: '0.5s' }}>
-          <h2 className="text-xl font-medium mb-3 text-white/80">Столицы</h2>
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-warning/5 to-white/5">
+          <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
+            <Award size={20} className="mr-2 text-warning" />
+            Столицы
+          </h2>
           <button
             onClick={() => navigate('/capitals')}
-            className="glass w-full text-left p-4 rounded-xl transition-all duration-300 hover:bg-white/10 group"
+            className="glass w-full text-left p-4 rounded-xl transition-all duration-300 hover:bg-white/10 group border border-white/10 bg-gradient-to-r from-white/5 to-transparent"
           >
             <div className="flex items-center justify-between">
               <span className="text-lg font-medium text-white">Столицы стран</span>
               <Globe size={20} className="text-white/60" />
+            </div>
+            <div className="flex items-center justify-between mt-2 text-sm text-white/60">
+              <div className="flex items-center">
+                <Trophy size={14} className="mr-1" />
+                <span>Рекорд: {gameStats.capitals.highScore}</span>
+              </div>
+              {gameStats.capitals.isComplete && (
+                <span className="text-success">Завершено</span>
+              )}
             </div>
           </button>
         </section>

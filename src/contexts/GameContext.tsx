@@ -1,5 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CategoryId, GameContextType, GameStats } from '../types';
+import { gameCategories } from '../data';
 
 // Initial game stats for all categories
 const initialGameStats: Record<CategoryId, GameStats> = {
@@ -32,6 +34,7 @@ const GameContext = createContext<GameContextType>({
   resetGame: () => {},
   startGame: () => {},
   viewReference: () => {},
+  markCategoryComplete: () => {},
 });
 
 // Custom hook to use the game context
@@ -55,6 +58,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('flagGameStats', JSON.stringify(gameStats));
   }, [gameStats]);
 
+  // Mark a category as complete
+  const markCategoryComplete = (category: CategoryId) => {
+    setGameStats(prev => {
+      const newStats = { ...prev };
+      const categoryStats = { ...newStats[category] };
+      
+      categoryStats.isComplete = true;
+      
+      // Ensure high score is updated
+      if (currentScore > categoryStats.highScore) {
+        categoryStats.highScore = currentScore;
+      }
+      
+      newStats[category] = categoryStats;
+      return newStats;
+    });
+  };
+
   // Increment the score for a category
   const incrementScore = (category: CategoryId) => {
     setCurrentScore(prev => prev + 1);
@@ -71,9 +92,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         categoryStats.highScore = categoryStats.currentScore;
       }
       
-      // Check if all flags in the category have been successfully identified
-      // This would need to be compared with the total count from gameCategories
-      // We'll set this in the game logic when appropriate
+      // Check if category completion needs to be updated
+      if (categoryStats.currentScore >= gameCategories[category].countries.length) {
+        categoryStats.isComplete = true;
+      }
       
       newStats[category] = categoryStats;
       return newStats;
@@ -138,6 +160,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetGame,
         startGame,
         viewReference,
+        markCategoryComplete,
       }}
     >
       {children}

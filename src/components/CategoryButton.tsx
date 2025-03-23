@@ -10,6 +10,7 @@ interface CategoryButtonProps {
   onClick: () => void;
   completedCount?: number;
   isCompleted?: boolean;
+  highScore?: number;
   showCompletionStatus?: boolean;
 }
 
@@ -18,6 +19,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   onClick,
   completedCount = 0,
   isCompleted = false,
+  highScore = 0,
   showCompletionStatus = true,
 }) => {
   const category = gameCategories[categoryId];
@@ -36,12 +38,16 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     }
   };
 
+  const completionPercentage = category ? Math.round((completedCount / category.count) * 100) : 0;
+
   return (
     <button
       onClick={onClick}
-      className="relative w-full glass p-0 rounded-xl overflow-hidden transition-all duration-300 
-                 hover:bg-white/10 flex flex-col items-center text-left 
-                 group hover:scale-[1.02] hover:shadow-lg"
+      className="relative w-full glass p-0 rounded-xl overflow-hidden 
+                 transition-all duration-300 hover:bg-white/10 
+                 flex flex-col items-center text-left 
+                 group hover:scale-[1.01] hover:shadow-lg
+                 border border-white/10 bg-gradient-to-r from-white/5 to-transparent"
     >
       <RegionImages region={categoryId} />
       
@@ -66,12 +72,24 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
               </span>
             </div>
             <div className="flex items-center">
-              <MousePointer size={14} className="mr-1" />
-              <span>Изучить</span>
+              <Trophy size={14} className="mr-1" />
+              <span>Рекорд: {highScore}</span>
             </div>
           </div>
         )}
       </div>
+      
+      {/* Progress bar */}
+      {!isCompleted && category && completedCount > 0 && (
+        <div className="absolute bottom-0 left-0 h-1 bg-primary" style={{ width: `${completionPercentage}%` }} />
+      )}
+      
+      {/* Completed badge */}
+      {isCompleted && (
+        <div className="absolute top-2 right-2 bg-success/90 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+          ✓ Завершено
+        </div>
+      )}
       
       {/* Overlay effect on hover */}
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-70" />

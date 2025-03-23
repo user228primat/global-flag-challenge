@@ -38,10 +38,30 @@
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
     background: linear-gradient(135deg, hsl(220, 20%, 10%) 0%, hsl(240, 15%, 5%) 100%);
     min-height: 100vh;
+    background-attachment: fixed;
   }
 
   html {
     @apply scroll-smooth;
+  }
+  
+  /* Улучшенные стили для скроллбара */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -99,6 +119,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 @layer utilities {
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
@@ -118,6 +147,16 @@
   
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+    background: linear-gradient(90deg, 
+      rgba(255,255,255,0) 0%, 
+      rgba(255,255,255,0.05) 50%, 
+      rgba(255,255,255,0) 100%
+    );
+    background-size: 200% 100%;
   }
   
   .glass {
@@ -146,6 +185,18 @@
   
   .bg-gradient-success {
     background: linear-gradient(90deg, hsla(139, 70%, 75%, 1) 0%, hsla(63, 90%, 76%, 1) 100%);
+  }
+  
+  .bg-gradient-cool {
+    background: linear-gradient(135deg, #4568dc 0%, #b06ab3 100%);
+  }
+  
+  .bg-gradient-warm {
+    background: linear-gradient(135deg, #f83600 0%, #f9d423 100%);
+  }
+  
+  .bg-gradient-gentle {
+    background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
   }
   
   .scrollbar-hidden {

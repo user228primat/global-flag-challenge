@@ -22,7 +22,8 @@ const GameScreen: React.FC = () => {
     incrementScore, 
     isGameOver, 
     setIsGameOver,
-    resetGame 
+    resetGame,
+    markCategoryComplete
   } = useGameContext();
   
   // Game state
@@ -40,9 +41,30 @@ const GameScreen: React.FC = () => {
     navigate('/');
   };
   
+  // Check if all countries in the category have been used
+  const checkForCategoryCompletion = () => {
+    if (!currentCategory) return false;
+    
+    const categoryCountries = gameCategories[currentCategory].countries;
+    const allCountriesUsed = usedCountries.size >= categoryCountries.length;
+    
+    if (allCountriesUsed) {
+      markCategoryComplete(currentCategory);
+      setIsGameOver(true);
+      return true;
+    }
+    
+    return false;
+  };
+  
   // Load next question
   const loadNextQuestion = () => {
     if (!currentCategory) return;
+    
+    // First check if all countries have been used
+    if (checkForCategoryCompletion()) {
+      return;
+    }
     
     setIsLoading(true);
     setSelectedOption(null);
@@ -57,12 +79,11 @@ const GameScreen: React.FC = () => {
       setOptions(generateOptions(categoryCountries, nextCountry));
       setUsedCountries(prev => new Set([...prev, nextCountry.name]));
       
-      // Simulate loading for a smoother experience
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
+      // No delay for a smoother experience
+      setIsLoading(false);
     } else {
       // All countries have been used
+      markCategoryComplete(currentCategory);
       setIsGameOver(true);
     }
   };
@@ -81,10 +102,8 @@ const GameScreen: React.FC = () => {
         incrementScore(currentCategory);
       }
       
-      // Load next question after a slight delay
-      setTimeout(() => {
-        loadNextQuestion();
-      }, 1000);
+      // Load next question immediately
+      loadNextQuestion();
     } else {
       // Wrong answer - add to incorrect answers set
       setIncorrectOptions(prev => new Set([...prev, countryName]));
@@ -95,16 +114,14 @@ const GameScreen: React.FC = () => {
         
         // If no lives left, game over
         if (lives <= 1) {
-          setTimeout(() => {
-            setIsGameOver(true);
-          }, 1000);
+          setIsGameOver(true);
         }
       }
       
       // Reset selection after a moment so user can try again
       setTimeout(() => {
         setSelectedOption(null);
-      }, 800);
+      }, 400);
     }
   };
   
@@ -199,11 +216,6 @@ const GameScreen: React.FC = () => {
               onClick={() => handleAnswerSelect(option.name)}
               disabled={isIncorrect || isCorrect}
               className={buttonClass}
-              style={{ 
-                opacity: 0,
-                animation: 'scale-in 0.3s ease-out forwards',
-                animationDelay: `${options.indexOf(option) * 0.1}s` 
-              }}
             >
               <span className="text-lg">{option.name}</span>
             </button>
