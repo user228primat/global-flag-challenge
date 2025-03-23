@@ -21,6 +21,15 @@ const MainMenu: React.FC = () => {
     }
   };
 
+  // Function to calculate completion status and count for a category
+  const getCompletionData = (categoryId: CategoryId) => {
+    const stats = gameStats[categoryId];
+    const isCompleted = stats.isComplete;
+    const completedCount = stats.currentScore;
+    
+    return { isCompleted, completedCount };
+  };
+
   return (
     <div className="w-full max-w-xl mx-auto px-4">
       <div className="mb-12 text-center">
@@ -37,30 +46,36 @@ const MainMenu: React.FC = () => {
         <section>
           <h2 className="text-xl font-medium mb-3 text-white/80">По сложности</h2>
           <div className="space-y-2">
-            {categoryGroups.levels.map((categoryId, index) => (
-              <CategoryButton
-                key={categoryId}
-                categoryId={categoryId as CategoryId}
-                stats={gameStats[categoryId as CategoryId]}
-                onClick={() => handleCategoryClick(categoryId as CategoryId)}
-                index={index}
-              />
-            ))}
+            {categoryGroups.levels.map((categoryId) => {
+              const { isCompleted, completedCount } = getCompletionData(categoryId as CategoryId);
+              return (
+                <CategoryButton
+                  key={categoryId}
+                  categoryId={categoryId as CategoryId}
+                  onClick={() => handleCategoryClick(categoryId as CategoryId)}
+                  isCompleted={isCompleted}
+                  completedCount={completedCount}
+                />
+              );
+            })}
           </div>
         </section>
         
         <section>
           <h2 className="text-xl font-medium mb-3 text-white/80">По регионам</h2>
           <div className="space-y-2">
-            {categoryGroups.regions.map((categoryId, index) => (
-              <CategoryButton
-                key={categoryId}
-                categoryId={categoryId as CategoryId}
-                stats={gameStats[categoryId as CategoryId]}
-                onClick={() => handleCategoryClick(categoryId as CategoryId)}
-                index={index}
-              />
-            ))}
+            {categoryGroups.regions.map((categoryId) => {
+              const { isCompleted, completedCount } = getCompletionData(categoryId as CategoryId);
+              return (
+                <CategoryButton
+                  key={categoryId}
+                  categoryId={categoryId as CategoryId}
+                  onClick={() => handleCategoryClick(categoryId as CategoryId)}
+                  isCompleted={isCompleted}
+                  completedCount={completedCount}
+                />
+              );
+            })}
           </div>
         </section>
         
