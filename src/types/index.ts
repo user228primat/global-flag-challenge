@@ -28,7 +28,8 @@ export type CategoryId =
   | 'northAmerica' 
   | 'southAmerica' 
   | 'africa' 
-  | 'australiaOceania';
+  | 'australiaOceania'
+  | 'capitals';
 
 export interface GameContextType {
   currentCategory: CategoryId | null;
