@@ -46,8 +46,28 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [gameStats, setGameStats] = useState<Record<CategoryId, GameStats>>(() => {
     // Try to load saved game stats from localStorage
     const savedStats = localStorage.getItem('flagGameStats');
-    return savedStats ? JSON.parse(savedStats) : initialGameStats;
+    if (savedStats) {
+      try {
+        const parsedStats = JSON.parse(savedStats);
+        // Ensure all categories exist in the loaded stats
+        const completeStats = { ...initialGameStats };
+        
+        // Only copy keys that exist in initialGameStats to avoid invalid categories
+        Object.keys(initialGameStats).forEach(key => {
+          if (parsedStats[key]) {
+            completeStats[key as CategoryId] = parsedStats[key];
+          }
+        });
+        
+        return completeStats;
+      } catch (error) {
+        console.error("Error parsing saved game stats:", error);
+        return initialGameStats;
+      }
+    }
+    return initialGameStats;
   });
+  
   const [lives, setLives] = useState(3);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);

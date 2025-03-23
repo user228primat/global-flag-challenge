@@ -23,12 +23,29 @@ const MainMenu: React.FC = () => {
 
   // Function to calculate completion status and count for a category
   const getCompletionData = (categoryId: CategoryId) => {
-    const stats = gameStats[categoryId];
+    // Check if category stats exist, if not return defaults
+    const stats = gameStats[categoryId] || { currentScore: 0, highScore: 0, isComplete: false };
     const isCompleted = stats.isComplete;
     const completedCount = stats.currentScore;
     const highScore = stats.highScore;
     
     return { isCompleted, completedCount, highScore };
+  };
+
+  // Safe way to get capitals highScore with fallback
+  const getCapitalsHighScore = () => {
+    if (gameStats && gameStats.capitals) {
+      return gameStats.capitals.highScore;
+    }
+    return 0;
+  };
+
+  // Safe way to check if capitals is completed
+  const isCapitalsComplete = () => {
+    if (gameStats && gameStats.capitals) {
+      return gameStats.capitals.isComplete;
+    }
+    return false;
   };
 
   return (
@@ -104,9 +121,9 @@ const MainMenu: React.FC = () => {
             <div className="flex items-center justify-between mt-2 text-sm text-white/60">
               <div className="flex items-center">
                 <Trophy size={14} className="mr-1" />
-                <span>Рекорд: {gameStats.capitals.highScore}</span>
+                <span>Рекорд: {getCapitalsHighScore()}</span>
               </div>
-              {gameStats.capitals.isComplete && (
+              {isCapitalsComplete() && (
                 <span className="text-success">Завершено</span>
               )}
             </div>
