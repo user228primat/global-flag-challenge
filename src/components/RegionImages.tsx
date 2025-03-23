@@ -10,17 +10,13 @@ type RegionImageProps = {
 const RegionImages: React.FC<RegionImageProps> = ({ region, className = "" }) => {
   // Объект с путями к изображениям регионов
   const regionImages: Record<string, string> = {
-    europe: "/images/regions/europe.jpg",
-    asia: "/images/regions/asia.jpg",
-    northAmerica: "/images/regions/north-america.jpg",
-    southAmerica: "/images/regions/south-america.jpg",
-    africa: "/images/regions/africa.jpg",
-    australiaOceania: "/images/regions/australia.jpg",
-    level1: "/images/regions/level1.jpg",
-    level2: "/images/regions/level2.jpg",
-    level3: "/images/regions/level3.jpg",
-    allFlags: "/images/regions/world.jpg",
-    capitals: "/images/regions/capitals.jpg"
+    europe: "https://cdn.pixabay.com/photo/2016/07/14/13/35/europe-1516733_1280.jpg",
+    asia: "https://cdn.pixabay.com/photo/2014/05/05/17/36/asia-338447_1280.jpg", 
+    northAmerica: "https://cdn.pixabay.com/photo/2023/10/17/04/32/north-america-8320768_1280.jpg",
+    southAmerica: "https://cdn.pixabay.com/photo/2014/05/26/09/25/south-america-354563_1280.jpg",
+    africa: "https://cdn.pixabay.com/photo/2018/09/18/11/19/morocco-3685773_1280.jpg",
+    australiaOceania: "https://cdn.pixabay.com/photo/2017/01/19/17/28/map-1992972_1280.jpg",
+    capitals: "https://cdn.pixabay.com/photo/2018/09/18/11/19/morocco-3685773_1280.jpg"
   };
 
   const fallbackImage = "/images/regions/fallback.jpg";
@@ -28,9 +24,9 @@ const RegionImages: React.FC<RegionImageProps> = ({ region, className = "" }) =>
   
   return (
     <div 
-      className={`w-full h-24 rounded-lg overflow-hidden mb-3 ${className}`}
+      className={`w-full h-24 rounded-t-lg overflow-hidden ${className}`}
       style={{ 
-        backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url(${imagePath})`,
+        backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)), url(${imagePath})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}

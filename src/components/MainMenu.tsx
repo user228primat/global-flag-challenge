@@ -49,8 +49,8 @@ const MainMenu: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4">
-      <div className="mb-12 text-center glass p-8 rounded-2xl bg-gradient-to-br from-primary/20 to-white/5">
+    <div className="w-full max-w-4xl mx-auto px-4">
+      <div className="mb-8 text-center glass p-8 rounded-2xl bg-gradient-to-br from-primary/20 to-white/5">
         <Globe size={80} className="mx-auto mb-6 text-primary" />
         <h1 className="text-4xl font-bold mb-2 text-white text-shadow">
           Флаги Мира
@@ -60,23 +60,24 @@ const MainMenu: React.FC = () => {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-primary/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
             <Trophy size={20} className="mr-2 text-warning" />
             По сложности
           </h2>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-3">
             {categoryGroups.levels.map((categoryId) => {
-              const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
+              const { isCompleted, highScore } = getCompletionData(categoryId as CategoryId);
               return (
                 <CategoryButton
                   key={categoryId}
                   categoryId={categoryId as CategoryId}
                   onClick={() => handleCategoryClick(categoryId as CategoryId)}
                   isCompleted={isCompleted}
-                  completedCount={completedCount}
                   highScore={highScore}
+                  showCompletionCount={false}
+                  showImage={false}
                 />
               );
             })}
@@ -88,24 +89,24 @@ const MainMenu: React.FC = () => {
             <Globe size={20} className="mr-2 text-info" />
             По регионам
           </h2>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-3">
             {categoryGroups.regions.map((categoryId) => {
-              const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
+              const { isCompleted } = getCompletionData(categoryId as CategoryId);
               return (
                 <CategoryButton
                   key={categoryId}
                   categoryId={categoryId as CategoryId}
                   onClick={() => handleCategoryClick(categoryId as CategoryId)}
                   isCompleted={isCompleted}
-                  completedCount={completedCount}
-                  highScore={highScore}
+                  showHighScore={false}
+                  showCompletionCount={false}
                 />
               );
             })}
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-warning/5 to-white/5">
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-warning/5 to-white/5 md:col-span-2">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
             <Award size={20} className="mr-2 text-warning" />
             Столицы
