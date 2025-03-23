@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CategoryId } from '../types';
+import { Category, CategoryId } from '../types';
 import { gameCategories, categoryDisplayNames } from '../data';
 import { Award, BookOpen, GraduationCap, MousePointer, Trophy } from 'lucide-react';
 import RegionImages from './RegionImages';
@@ -12,9 +12,6 @@ interface CategoryButtonProps {
   isCompleted?: boolean;
   highScore?: number;
   showCompletionStatus?: boolean;
-  showCompletionCount?: boolean;
-  showHighScore?: boolean;
-  showImage?: boolean;
 }
 
 const CategoryButton: React.FC<CategoryButtonProps> = ({
@@ -24,9 +21,6 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   isCompleted = false,
   highScore = 0,
   showCompletionStatus = true,
-  showCompletionCount = true,
-  showHighScore = true,
-  showImage = true,
 }) => {
   const category = gameCategories[categoryId];
   const displayName = categoryDisplayNames[categoryId];
@@ -44,6 +38,8 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     }
   };
 
+  const completionPercentage = category ? Math.round((completedCount / category.count) * 100) : 0;
+
   return (
     <button
       onClick={onClick}
@@ -53,7 +49,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                  group hover:scale-[1.01] hover:shadow-lg
                  border border-white/10 bg-gradient-to-r from-white/5 to-transparent"
     >
-      {showImage && <RegionImages region={categoryId} />}
+      <RegionImages region={categoryId} />
       
       <div className="w-full p-4">
         <div className="flex justify-between items-center mb-1">
@@ -65,27 +61,28 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         
         {showCompletionStatus && (
           <div className="flex items-center justify-between text-sm text-white/60">
-            {showCompletionCount && category && (
-              <div className="flex items-center">
-                <BookOpen size={14} className="mr-1" />
-                <span>
-                  {isCompleted ? (
-                    <span className="text-success">Завершено</span>
-                  ) : (
-                    <span>{category.count}</span>
-                  )}
-                </span>
-              </div>
-            )}
-            {showHighScore && (
-              <div className="flex items-center">
-                <Trophy size={14} className="mr-1" />
-                <span>Рекорд: {highScore}</span>
-              </div>
-            )}
+            <div className="flex items-center">
+              <BookOpen size={14} className="mr-1" />
+              <span>
+                {isCompleted ? (
+                  <span className="text-success">Завершено</span>
+                ) : (
+                  <span>{completedCount}/{category.count}</span>
+                )}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <Trophy size={14} className="mr-1" />
+              <span>Рекорд: {highScore}</span>
+            </div>
           </div>
         )}
       </div>
+      
+      {/* Progress bar */}
+      {!isCompleted && category && completedCount > 0 && (
+        <div className="absolute bottom-0 left-0 h-1 bg-primary" style={{ width: `${completionPercentage}%` }} />
+      )}
       
       {/* Completed badge */}
       {isCompleted && (
@@ -95,7 +92,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       )}
       
       {/* Overlay effect on hover */}
-      {showImage && <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-70" />}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-70" />
     </button>
   );
 };

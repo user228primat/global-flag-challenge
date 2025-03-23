@@ -26,14 +26,10 @@ const MainMenu: React.FC = () => {
     // Check if category stats exist, if not return defaults
     const stats = gameStats[categoryId] || { currentScore: 0, highScore: 0, isComplete: false };
     const isCompleted = stats.isComplete;
-    const totalCount = categoryId && categoryId in gameStats ? 
-      (categoryId === 'level1' ? 17 : 
-       categoryId === 'level2' ? 50 : 
-       categoryId === 'level3' ? 100 : 
-       categoryId === 'allFlags' ? 238 : 0) : 0;
+    const completedCount = stats.currentScore;
     const highScore = stats.highScore;
     
-    return { isCompleted, totalCount, highScore };
+    return { isCompleted, completedCount, highScore };
   };
 
   // Safe way to get capitals highScore with fallback
@@ -53,8 +49,8 @@ const MainMenu: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
-      <div className="mb-8 text-center glass p-8 rounded-2xl bg-gradient-to-br from-primary/30 to-white/10">
+    <div className="w-full max-w-xl mx-auto px-4">
+      <div className="mb-12 text-center glass p-8 rounded-2xl bg-gradient-to-br from-primary/20 to-white/5">
         <Globe size={80} className="mx-auto mb-6 text-primary" />
         <h1 className="text-4xl font-bold mb-2 text-white text-shadow">
           Флаги Мира
@@ -64,54 +60,52 @@ const MainMenu: React.FC = () => {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-primary/10 to-white/5">
+      <div className="grid grid-cols-1 gap-6">
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-primary/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
             <Trophy size={20} className="mr-2 text-warning" />
             По сложности
           </h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
             {categoryGroups.levels.map((categoryId) => {
-              const { isCompleted, totalCount, highScore } = getCompletionData(categoryId as CategoryId);
+              const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
               return (
                 <CategoryButton
                   key={categoryId}
                   categoryId={categoryId as CategoryId}
                   onClick={() => handleCategoryClick(categoryId as CategoryId)}
                   isCompleted={isCompleted}
+                  completedCount={completedCount}
                   highScore={highScore}
-                  totalCount={totalCount}
-                  showCompletionCount={false}
-                  showImage={false}
                 />
               );
             })}
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-info/10 to-white/5">
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-info/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
             <Globe size={20} className="mr-2 text-info" />
             По регионам
           </h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
             {categoryGroups.regions.map((categoryId) => {
-              const { isCompleted } = getCompletionData(categoryId as CategoryId);
+              const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
               return (
                 <CategoryButton
                   key={categoryId}
                   categoryId={categoryId as CategoryId}
                   onClick={() => handleCategoryClick(categoryId as CategoryId)}
                   isCompleted={isCompleted}
-                  showHighScore={false}
-                  showCompletionCount={false}
+                  completedCount={completedCount}
+                  highScore={highScore}
                 />
               );
             })}
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-warning/10 to-white/5 md:col-span-2">
+        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-warning/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
             <Award size={20} className="mr-2 text-warning" />
             Столицы

@@ -28,7 +28,7 @@ const GameScreen: React.FC = () => {
   
   // Game state
   const [currentCountry, setCurrentCountry] = useState<Country | null>(null);
-  const [options, setOptions] = useState<string[]>([]);
+  const [options, setOptions] = useState<Country[]>([]);
   const [usedCountries, setUsedCountries] = useState<Set<string>>(new Set());
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -57,46 +57,6 @@ const GameScreen: React.FC = () => {
     return false;
   };
   
-  // Generate capital options for a country
-  const generateCapitalOptions = (
-    countries: Country[],
-    correctCountry: Country
-  ): string[] => {
-    // Start with the correct capital
-    const correctCapital = correctCountry.capital;
-    const capitalOptions: string[] = [correctCapital];
-    
-    // Create a copy of countries without the correct one
-    const otherCountries = countries.filter(c => c.name !== correctCountry.name);
-    
-    // Add random capitals until we have 4 options
-    while (capitalOptions.length < 4 && otherCountries.length > 0) {
-      const randomIndex = Math.floor(Math.random() * otherCountries.length);
-      const randomCapital = otherCountries[randomIndex].capital;
-      
-      // Only add if it's not already in our options
-      if (!capitalOptions.includes(randomCapital)) {
-        capitalOptions.push(randomCapital);
-      }
-      
-      // Remove this country from options to avoid duplicates
-      otherCountries.splice(randomIndex, 1);
-    }
-    
-    // Shuffle the options to randomize the position of the correct answer
-    return shuffleArray(capitalOptions);
-  };
-  
-  // Shuffle array helper function
-  const shuffleArray = <T,>(array: T[]): T[] => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
-  
   // Load next question
   const loadNextQuestion = () => {
     if (!currentCategory) return;
@@ -116,17 +76,10 @@ const GameScreen: React.FC = () => {
     
     if (nextCountry) {
       setCurrentCountry(nextCountry);
-      
-      // Generate different options based on game mode
-      if (currentCategory === 'capitals') {
-        setOptions(generateCapitalOptions(categoryCountries, nextCountry));
-      } else {
-        // For flag games, we need country name options
-        const countryOptions = generateOptions(categoryCountries, nextCountry);
-        setOptions(countryOptions.map(country => country.name));
-      }
-      
+      setOptions(generateOptions(categoryCountries, nextCountry));
       setUsedCountries(prev => new Set([...prev, nextCountry.name]));
+      
+      // No delay for a smoother experience
       setIsLoading(false);
     } else {
       // All countries have been used
@@ -136,20 +89,11 @@ const GameScreen: React.FC = () => {
   };
   
   // Handle user answer
-  const handleAnswerSelect = (answer: string) => {
-    if (!currentCountry || selectedOption === answer) return;
+  const handleAnswerSelect = (countryName: string) => {
+    if (!currentCountry || isCorrect) return;
     
-    setSelectedOption(answer);
-    let correct = false;
-    
-    if (currentCategory === 'capitals') {
-      // In capitals mode, check if selected capital matches the correct capital
-      correct = answer === currentCountry.capital;
-    } else {
-      // In flag mode, check if selected country name matches
-      correct = answer === currentCountry.name;
-    }
-    
+    setSelectedOption(countryName);
+    const correct = countryName === currentCountry.name;
     setIsCorrect(correct);
     
     if (correct) {
@@ -158,23 +102,26 @@ const GameScreen: React.FC = () => {
         incrementScore(currentCategory);
       }
       
-      // Load next question after a very short delay
-      setTimeout(() => {
-        loadNextQuestion();
-      }, 250);
+      // Load next question immediately
+      loadNextQuestion();
     } else {
       // Wrong answer - add to incorrect answers set
-      setIncorrectOptions(prev => new Set([...prev, answer]));
+      setIncorrectOptions(prev => new Set([...prev, countryName]));
       
       // Decrement lives only on first incorrect answer per question
-      if (!incorrectOptions.has(answer)) {
-        setLives(prev => prev - 1);
+      if (!incorrectOptions.has(countryName)) {
+        setLives(lives - 1);
         
-        // Check if no lives left after decrement
+        // If no lives left, game over
         if (lives <= 1) {
           setIsGameOver(true);
         }
       }
+      
+      // Reset selection after a moment so user can try again
+      setTimeout(() => {
+        setSelectedOption(null);
+      }, 400);
     }
   };
   
@@ -216,7 +163,6 @@ const GameScreen: React.FC = () => {
   
   const totalFlags = currentCategory ? gameCategories[currentCategory].countries.length : 0;
   const highScore = currentCategory ? gameStats[currentCategory].highScore : 0;
-  const isCapitalsMode = currentCategory === 'capitals';
   
   return (
     <div className="w-full max-w-xl mx-auto px-4 pb-8">
@@ -239,52 +185,39 @@ const GameScreen: React.FC = () => {
       
       <div className="mt-8 mb-6">
         <FlagCard country={currentCountry} isLoading={isLoading} />
-        
-        {/* Show country name for capitals mode */}
-        {isCapitalsMode && (
-          <div className="mt-4 mb-2 text-center">
-            <h2 className="text-2xl font-bold text-white">
-              {currentCountry.name}
-            </h2>
-            <p className="text-white/60">Выберите столицу</p>
-          </div>
-        )}
       </div>
       
       <div className="space-y-3">
         {options.map((option) => {
-          const isSelected = selectedOption === option;
-          const isOptionCorrect = isCapitalsMode 
-            ? currentCountry.capital === option
-            : currentCountry.name === option;
-          const isIncorrect = incorrectOptions.has(option);
+          const isSelected = selectedOption === option.name;
+          const isOptionCorrect = currentCountry.name === option.name;
+          const isIncorrect = incorrectOptions.has(option.name);
           
-          let buttonClass = "w-full text-left p-4 rounded-xl transition-colors border ";
+          let buttonClass = "w-full text-left p-4 rounded-xl transition-all duration-300 ";
           
           if (isSelected) {
-            // Current selection
-            if (isOptionCorrect) {
-              // Correct answer
-              buttonClass += "bg-success/20 border-success text-white";
+            // Current selection is shown as incorrect
+            if (!isOptionCorrect) {
+              buttonClass += "bg-error/20 border border-error text-white";
             } else {
-              // Wrong answer
-              buttonClass += "bg-error/20 border-error text-white";
+              // Correct answer
+              buttonClass += "bg-success/20 border border-success text-white";
             }
           } else if (isIncorrect) {
             // Previously selected incorrect answers
-            buttonClass += "bg-error/10 border-error/40 text-white/80";
+            buttonClass += "bg-error/10 border border-error/40 text-white/80";
           } else {
-            buttonClass += "glass hover:bg-white/10 border-white/10";
+            buttonClass += "glass hover:bg-white/10";
           }
           
           return (
             <button
-              key={option}
-              onClick={() => handleAnswerSelect(option)}
-              disabled={isIncorrect || isCorrect === true}
+              key={option.name}
+              onClick={() => handleAnswerSelect(option.name)}
+              disabled={isIncorrect || isCorrect}
               className={buttonClass}
             >
-              <span className="text-lg">{option}</span>
+              <span className="text-lg">{option.name}</span>
             </button>
           );
         })}

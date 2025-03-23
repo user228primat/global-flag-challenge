@@ -45,29 +45,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentCategory, setCurrentCategory] = useState<CategoryId | null>(null);
   const [gameStats, setGameStats] = useState<Record<CategoryId, GameStats>>(() => {
     // Try to load saved game stats from localStorage
-    try {
-      const savedStats = localStorage.getItem('flagGameStats');
-      if (savedStats) {
+    const savedStats = localStorage.getItem('flagGameStats');
+    if (savedStats) {
+      try {
         const parsedStats = JSON.parse(savedStats);
-        
-        // Create a new object with all initial categories
+        // Ensure all categories exist in the loaded stats
         const completeStats = { ...initialGameStats };
         
-        // Only merge values from parsedStats that exist in our schema
+        // Only copy keys that exist in initialGameStats to avoid invalid categories
         Object.keys(initialGameStats).forEach(key => {
-          const categoryId = key as CategoryId;
-          if (parsedStats[categoryId]) {
-            completeStats[categoryId] = {
-              ...completeStats[categoryId],
-              ...parsedStats[categoryId]
-            };
+          if (parsedStats[key]) {
+            completeStats[key as CategoryId] = parsedStats[key];
           }
         });
         
         return completeStats;
+      } catch (error) {
+        console.error("Error parsing saved game stats:", error);
+        return initialGameStats;
       }
-    } catch (error) {
-      console.error("Error parsing saved game stats:", error);
     }
     return initialGameStats;
   });
@@ -117,8 +113,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Check if category completion needs to be updated
-      if (category && gameCategories[category] && 
-          categoryStats.currentScore >= gameCategories[category].countries.length) {
+      if (categoryStats.currentScore >= gameCategories[category].countries.length) {
         categoryStats.isComplete = true;
       }
       
