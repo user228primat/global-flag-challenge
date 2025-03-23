@@ -57,7 +57,7 @@ const GameScreen: React.FC = () => {
     return false;
   };
   
-  // Generate capital options for a country in capitals mode
+  // Generate capital options for a country
   const generateCapitalOptions = (
     countries: Country[],
     correctCountry: Country
@@ -137,7 +137,7 @@ const GameScreen: React.FC = () => {
   
   // Handle user answer
   const handleAnswerSelect = (answer: string) => {
-    if (!currentCountry || isCorrect) return;
+    if (!currentCountry || selectedOption === answer) return;
     
     setSelectedOption(answer);
     let correct = false;
@@ -158,28 +158,23 @@ const GameScreen: React.FC = () => {
         incrementScore(currentCategory);
       }
       
-      // Load next question immediately
+      // Load next question after a very short delay
       setTimeout(() => {
         loadNextQuestion();
-      }, 300); // Very short delay for visual feedback
+      }, 250);
     } else {
       // Wrong answer - add to incorrect answers set
       setIncorrectOptions(prev => new Set([...prev, answer]));
       
       // Decrement lives only on first incorrect answer per question
       if (!incorrectOptions.has(answer)) {
-        setLives(lives - 1);
+        setLives(prev => prev - 1);
         
-        // If no lives left, game over
+        // Check if no lives left after decrement
         if (lives <= 1) {
           setIsGameOver(true);
         }
       }
-      
-      // Reset selection after a moment so user can try again
-      setTimeout(() => {
-        setSelectedOption(null);
-      }, 400);
     }
   };
   
@@ -264,28 +259,29 @@ const GameScreen: React.FC = () => {
             : currentCountry.name === option;
           const isIncorrect = incorrectOptions.has(option);
           
-          let buttonClass = "w-full text-left p-4 rounded-xl transition-all duration-300 ";
+          let buttonClass = "w-full text-left p-4 rounded-xl transition-colors border ";
           
           if (isSelected) {
-            // Current selection is shown as incorrect
-            if (!isOptionCorrect) {
-              buttonClass += "bg-error/20 border border-error text-white";
-            } else {
+            // Current selection
+            if (isOptionCorrect) {
               // Correct answer
-              buttonClass += "bg-success/20 border border-success text-white";
+              buttonClass += "bg-success/20 border-success text-white";
+            } else {
+              // Wrong answer
+              buttonClass += "bg-error/20 border-error text-white";
             }
           } else if (isIncorrect) {
             // Previously selected incorrect answers
-            buttonClass += "bg-error/10 border border-error/40 text-white/80";
+            buttonClass += "bg-error/10 border-error/40 text-white/80";
           } else {
-            buttonClass += "glass hover:bg-white/10";
+            buttonClass += "glass hover:bg-white/10 border-white/10";
           }
           
           return (
             <button
               key={option}
               onClick={() => handleAnswerSelect(option)}
-              disabled={isIncorrect || isCorrect}
+              disabled={isIncorrect || isCorrect === true}
               className={buttonClass}
             >
               <span className="text-lg">{option}</span>
