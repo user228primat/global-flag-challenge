@@ -55,9 +55,9 @@ const RegionSelection: React.FC = () => {
               key={regionId}
               onClick={() => handleRegionSelect(regionId as CategoryId)}
               className="p-0 rounded-xl text-center transition-all duration-300 
-                        hover:bg-blue-800/20 flex flex-col items-center overflow-hidden
+                        hover:bg-blue-800/30 flex flex-col items-center overflow-hidden
                         hover:scale-[1.02] hover:shadow-lg relative
-                        border border-blue-700/30 bg-blue-900/10 backdrop-blur-sm"
+                        border border-blue-800/50 bg-blue-950/60 backdrop-blur-sm shadow-md"
               style={{ 
                 opacity: 0,
                 animation: 'fade-in 0.5s ease-out forwards',
@@ -68,13 +68,13 @@ const RegionSelection: React.FC = () => {
               
               <div className="w-full p-4 z-10">
                 <div className="flex flex-col items-center justify-center">
-                  <Globe size={32} className="mb-2 text-blue-400" />
+                  <Globe size={32} className="mb-2 text-blue-300" />
                   <span className="text-xl font-medium text-blue-100">
                     {categoryDisplayNames[regionId as CategoryId]}
                   </span>
                 </div>
                 
-                <div className="flex items-center justify-between mt-2 text-sm text-blue-200/70">
+                <div className="flex items-center justify-between mt-2 text-sm text-blue-200/80">
                   <div className="flex items-center mr-2">
                     <BookOpen size={12} className="mr-1" />
                     <span>{countryCount} стран</span>

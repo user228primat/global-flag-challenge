@@ -49,19 +49,19 @@ const MainMenu: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4 py-8 min-h-screen bg-gradient-to-b from-blue-950 to-indigo-950">
-      <div className="mb-8 text-center p-8 rounded-2xl bg-blue-900/20 backdrop-blur-md border border-blue-800/30">
-        <Globe size={70} className="mx-auto mb-6 text-blue-400 animate-float" />
+    <div className="w-full max-w-xl mx-auto px-4 py-8 min-h-screen">
+      <div className="mb-8 text-center p-8 rounded-2xl bg-blue-950/70 backdrop-blur-md border border-blue-800/50 shadow-lg">
+        <Globe size={70} className="mx-auto mb-6 text-blue-300 animate-float" />
         <h1 className="text-4xl font-bold mb-2 text-blue-100 text-shadow">
           Флаги Мира
         </h1>
-        <p className="text-blue-200/80">
+        <p className="text-blue-300/90">
           Проверьте свои знания флагов стран мира
         </p>
       </div>
       
       <div className="grid grid-cols-1 gap-6">
-        <section className="rounded-xl p-6 border border-blue-800/30 bg-blue-900/10 backdrop-blur-sm">
+        <section className="rounded-xl p-6 border border-blue-900/50 bg-blue-950/60 backdrop-blur-sm shadow-md">
           <h2 className="text-xl font-bold mb-3 text-blue-100 flex items-center">
             <Trophy size={20} className="mr-2 text-yellow-400" />
             По сложности
@@ -87,9 +87,9 @@ const MainMenu: React.FC = () => {
           </div>
         </section>
         
-        <section className="rounded-xl p-6 border border-blue-800/30 bg-blue-900/10 backdrop-blur-sm">
+        <section className="rounded-xl p-6 border border-blue-900/50 bg-blue-950/60 backdrop-blur-sm shadow-md">
           <h2 className="text-xl font-bold mb-3 text-blue-100 flex items-center">
-            <Globe size={20} className="mr-2 text-blue-400" />
+            <Globe size={20} className="mr-2 text-blue-300" />
             По регионам
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -112,16 +112,16 @@ const MainMenu: React.FC = () => {
           </div>
         </section>
         
-        <section className="rounded-xl p-6 border border-blue-800/30 bg-blue-900/10 backdrop-blur-sm">
+        <section className="rounded-xl p-6 border border-blue-900/50 bg-blue-950/60 backdrop-blur-sm shadow-md">
           <h2 className="text-xl font-bold mb-3 text-blue-100 flex items-center">
-            <Award size={20} className="mr-2 text-blue-400" />
+            <Award size={20} className="mr-2 text-blue-300" />
             Столицы
           </h2>
           <button
             onClick={() => navigate('/capitals')}
             className="w-full text-left p-4 rounded-xl transition-all duration-300 
-                      hover:bg-blue-800/20 group border border-blue-700/30 
-                      bg-gradient-to-r from-blue-900/30 to-blue-900/10 backdrop-blur-sm"
+                      hover:bg-blue-800/30 group relative border border-blue-800/50 
+                      bg-gradient-to-r from-blue-900/40 to-blue-900/20 backdrop-blur-sm shadow-md"
           >
             <div className="flex items-center justify-between">
               <span className="text-lg font-medium text-blue-100">Столицы стран</span>
@@ -133,7 +133,7 @@ const MainMenu: React.FC = () => {
               </div>
             </div>
             {getCapitalsHighScore() > 0 && (
-              <div className="mt-2 text-xs text-blue-300/60">
+              <div className="mt-2 text-xs text-blue-300/70">
                 <span className="flex items-center">
                   <Trophy size={12} className="mr-1 text-yellow-400" />
                   Лучший результат: {getCapitalsHighScore()}

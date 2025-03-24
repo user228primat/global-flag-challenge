@@ -36,9 +36,9 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     } else if (categoryId === 'allFlags') {
       return <Trophy size={28} className="text-yellow-400" />;
     } else if (categoryId === 'capitals') {
-      return <Award size={28} className="text-blue-400" />;
+      return <Award size={28} className="text-blue-300" />;
     } else {
-      return <GraduationCap size={28} className="text-blue-400" />;
+      return <GraduationCap size={28} className="text-blue-300" />;
     }
   };
 
@@ -48,11 +48,11 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     <button
       onClick={onClick}
       className="relative w-full p-0 rounded-xl overflow-hidden 
-                 transition-all duration-300 hover:bg-blue-800/20
+                 transition-all duration-300 hover:bg-blue-800/30
                  flex flex-col items-center text-left 
                  group hover:scale-[1.01] hover:shadow-lg
-                 border border-blue-700/30 bg-gradient-to-r from-blue-900/30 to-blue-900/10
-                 backdrop-blur-sm"
+                 border border-blue-800/50 bg-gradient-to-r from-blue-900/40 to-blue-900/20
+                 backdrop-blur-sm shadow-md"
     >
       {showImage && <RegionImages region={categoryId} />}
       
@@ -65,7 +65,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         </div>
         
         {showCompletionStatus && (
-          <div className="flex items-center justify-between text-sm text-blue-200/70">
+          <div className="flex items-center justify-between text-sm text-blue-200/80">
             <div className="flex items-center">
               <BookOpen size={14} className="mr-1" />
               <span>
