@@ -16,7 +16,7 @@ const FlagCard: React.FC<FlagCardProps> = ({ country, isLoading = false }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto aspect-[3/2] relative overflow-hidden rounded-xl glass">
+    <div className="w-full max-w-md mx-auto relative overflow-hidden rounded-xl glass">
       {/* Loading state */}
       {(isLoading || !loaded) && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
@@ -24,11 +24,11 @@ const FlagCard: React.FC<FlagCardProps> = ({ country, isLoading = false }) => {
         </div>
       )}
       
-      {/* Flag image - исправляем отображение флага */}
+      {/* Flag image */}
       <img
         src={flagUrl}
         alt={`Флаг ${country.name}`}
-        className={`w-full h-full object-contain transition-opacity duration-300 ${
+        className={`w-full object-contain transition-opacity duration-300 ${
           loaded ? 'opacity-100' : 'opacity-0'
         }`}
         onLoad={handleImageLoad}
