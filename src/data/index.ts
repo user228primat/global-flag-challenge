@@ -1,3 +1,4 @@
+
 import { Category, CategoryId } from '../types';
 
 // Parse country data from the provided format
@@ -638,3 +639,128 @@ const allFlagsData = `Все флаги
 Сент-Винсент и Гренадины;Кингстаун;vc.svg
 Сент-Китс и Невис;Бастер;kn.svg
 Сент-Люсия;Кастри;lc.svg
+Сербия;Белград;rs.svg
+Сингапур;Сингапур;sg.svg
+Синт-Мартен;Филипсбург;sx.svg
+Синт-Эстатиус;Ораньестад;tf.svg
+Сирия;Дамаск;sy.svg
+Словакия;Братислава;sk.svg
+Словения;Любляна;si.svg
+США;Вашингтон;us.svg
+Соломоновы Острова;Хониара;sb.svg
+Сомали;Могадишо;so.svg
+Судан;Хартум;sd.svg
+Суринам;Парамарибо;sr.svg
+Сьерра-Леоне;Фритаун;sl.svg
+Таджикистан;Душанбе;tj.svg
+Таиланд;Бангкок;th.svg
+Тайвань;Тайбэй;tw.svg
+Танзания;Додома;tz.svg
+Тёркс и Кайкос;Коберн-Таун;tc.svg
+Того;Ломе;tg.svg
+Токелау;Атафу;tk.svg
+Тонга;Нукуалофа;to.svg
+Тринидад и Тобаго;Порт-оф-Спейн;tt.svg
+Тувалу;Фунафути;tv.svg
+Тунис;Тунис;tn.svg
+Туркменистан;Ашхабад;tm.svg
+Турция;Анкара;tr.svg
+Уганда;Кампала;ug.svg
+Узбекистан;Ташкент;uz.svg
+Украина;Киев;ua.svg
+Уругвай;Монтевидео;uy.svg
+Уэльс;Кардифф;gb-wls.svg
+Фарерские острова;Торсхавн;fo.svg
+Федеративные Штаты Микронезии;Паликир;fm.svg
+Фиджи;Сува;fj.svg
+Филиппины;Манила;ph.svg
+Финляндия;Хельсинки;fi.svg
+Франция;Париж;fr.svg
+Французская Полинезия;Папеэте;pf.svg
+Хорватия;Загреб;hr.svg
+Центральноафриканская Республика;Банги;cf.svg
+Чад;Нджамена;td.svg
+Черногория;Подгорица;me.svg
+Чехия;Прага;cz.svg
+Чили;Сантьяго;cl.svg
+Швейцария;Берн;ch.svg
+Швеция;Стокгольм;se.svg
+Шотландия;Эдинбург;gb-sct.svg
+Шри-Ланка;Шри-Джаяварденепура-Котте;lk.svg
+Эквадор;Кито;ec.svg
+Экваториальная Гвинея;Малабо;gq.svg
+Эритрея;Асмэра;er.svg
+Эсватини;Мбабане;sz.svg
+Эстония;Таллин;ee.svg
+Эфиопия;Аддис-Абеба;et.svg
+ЮАР;Претория;za.svg
+Южная Корея;Сеул;kr.svg
+Южный Судан;Джуба;ss.svg
+Ямайка;Кингстон;jm.svg
+Япония;Токио;jp.svg`;
+
+// Process all data
+const asiaCategory = parseCountryData(asiaData);
+const southAmericaCategory = parseCountryData(southAmericaData);
+const australiaOceaniaCategory = parseCountryData(australiaOceaniaData);
+const europeCategory = parseCountryData(europeData);
+const northAmericaCategory = parseCountryData(northAmericaData);
+const africaCategory = parseCountryData(africaData);
+const level1Category = parseCountryData(level1Data);
+const level2Category = parseCountryData(level2Data);
+const level3Category = parseCountryData(level3Data);
+const allFlagsCategory = parseCountryData(allFlagsData);
+
+// Объединение всех стран для категории "Столицы"
+const allCountriesForCapitals = [
+  ...asiaCategory.countries,
+  ...europeCategory.countries,
+  ...northAmericaCategory.countries,
+  ...southAmericaCategory.countries,
+  ...africaCategory.countries,
+  ...australiaOceaniaCategory.countries
+];
+
+// Create the capitals category
+const capitalsCategory: Category = {
+  id: 'capitals' as CategoryId,
+  title: 'Столицы',
+  count: allCountriesForCapitals.length,
+  countries: allCountriesForCapitals
+};
+
+// Group categories for menu
+export const categoryGroups = {
+  levels: ['level1', 'level2', 'level3', 'allFlags'],
+  regions: ['europe', 'asia', 'northAmerica', 'southAmerica', 'africa', 'australiaOceania']
+};
+
+// Display names mapping
+export const categoryDisplayNames: Record<CategoryId, string> = {
+  level1: 'Уровень 1',
+  level2: 'Уровень 2',
+  level3: 'Уровень 3',
+  allFlags: 'Все флаги',
+  europe: 'Европа',
+  asia: 'Азия',
+  northAmerica: 'Северная Америка',
+  southAmerica: 'Южная Америка',
+  africa: 'Африка',
+  australiaOceania: 'Австралия и Океания',
+  capitals: 'Столицы'
+};
+
+// Export all categories
+export const gameCategories: Record<CategoryId, Category> = {
+  level1: level1Category,
+  level2: level2Category,
+  level3: level3Category,
+  allFlags: allFlagsCategory,
+  europe: europeCategory,
+  asia: asiaCategory,
+  northAmerica: northAmericaCategory,
+  southAmerica: southAmericaCategory,
+  africa: africaCategory,
+  australiaOceania: australiaOceaniaCategory,
+  capitals: capitalsCategory
+};
