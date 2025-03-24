@@ -28,12 +28,13 @@ const GameScreen: React.FC = () => {
   
   // Game state
   const [currentCountry, setCurrentCountry] = useState<Country | null>(null);
-  const [options, setOptions] = useState<Country[]>([]);
+  const [options, setOptions] = useState<Array<{ text: string, value: string }>>([]); // Изменяем формат опций
   const [usedCountries, setUsedCountries] = useState<Set<string>>(new Set());
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [incorrectOptions, setIncorrectOptions] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [isCapitalsMode, setIsCapitalsMode] = useState(false);
   
   // Exit to main menu
   const handleExit = () => {
@@ -57,6 +58,46 @@ const GameScreen: React.FC = () => {
     return false;
   };
   
+  // Generate options for capitals mode
+  const generateCapitalsOptions = (countries: Country[], correctCountry: Country, count = 4) => {
+    // Убедимся, что у нас достаточно стран для вариантов
+    if (countries.length < count) {
+      return countries.map(country => ({ 
+        text: country.capital,
+        value: country.capital
+      }));
+    }
+    
+    // Начнем с правильного ответа
+    const options = [{ 
+      text: correctCountry.capital,
+      value: correctCountry.capital
+    }];
+    
+    // Создадим копию стран без правильной
+    const remainingCountries = countries.filter(
+      country => country.capital !== correctCountry.capital
+    );
+    
+    // Добавим случайные страны, пока не наберем достаточно вариантов
+    while (options.length < count && remainingCountries.length > 0) {
+      const randomIndex = Math.floor(Math.random() * remainingCountries.length);
+      const randomCountry = remainingCountries[randomIndex];
+      
+      // Добавим столицу в варианты
+      options.push({ 
+        text: randomCountry.capital,
+        value: randomCountry.capital
+      });
+      
+      // Удалим страну из оставшихся
+      remainingCountries.splice(randomIndex, 1);
+    }
+    
+    // Перемешаем варианты
+    return options.sort(() => Math.random() - 0.5);
+  };
+  
   // Load next question
   const loadNextQuestion = () => {
     if (!currentCategory) return;
@@ -76,10 +117,21 @@ const GameScreen: React.FC = () => {
     
     if (nextCountry) {
       setCurrentCountry(nextCountry);
-      setOptions(generateOptions(categoryCountries, nextCountry));
-      setUsedCountries(prev => new Set([...prev, nextCountry.name]));
       
-      // No delay for a smoother experience
+      // Определяем режим игры и генерируем соответствующие варианты
+      if (currentCategory === 'capitals' || window.location.pathname.includes('/capitals')) {
+        setIsCapitalsMode(true);
+        setOptions(generateCapitalsOptions(categoryCountries, nextCountry));
+      } else {
+        setIsCapitalsMode(false);
+        // Преобразуем варианты в новый формат
+        setOptions(generateOptions(categoryCountries, nextCountry).map(country => ({
+          text: country.name,
+          value: country.name
+        })));
+      }
+      
+      setUsedCountries(prev => new Set([...prev, nextCountry.name]));
       setIsLoading(false);
     } else {
       // All countries have been used
@@ -89,14 +141,19 @@ const GameScreen: React.FC = () => {
   };
   
   // Handle user answer
-  const handleAnswerSelect = (countryName: string) => {
+  const handleAnswerSelect = (value: string) => {
     if (!currentCountry || isCorrect) return;
     
-    setSelectedOption(countryName);
-    const correct = countryName === currentCountry.name;
-    setIsCorrect(correct);
+    setSelectedOption(value);
     
-    if (correct) {
+    // Проверяем правильность ответа в зависимости от режима
+    const isAnswerCorrect = isCapitalsMode 
+      ? value === currentCountry.capital 
+      : value === currentCountry.name;
+    
+    setIsCorrect(isAnswerCorrect);
+    
+    if (isAnswerCorrect) {
       // Correct answer
       if (currentCategory) {
         incrementScore(currentCategory);
@@ -106,10 +163,10 @@ const GameScreen: React.FC = () => {
       loadNextQuestion();
     } else {
       // Wrong answer - add to incorrect answers set
-      setIncorrectOptions(prev => new Set([...prev, countryName]));
+      setIncorrectOptions(prev => new Set([...prev, value]));
       
       // Decrement lives only on first incorrect answer per question
-      if (!incorrectOptions.has(countryName)) {
+      if (!incorrectOptions.has(value)) {
         setLives(lives - 1);
         
         // If no lives left, game over
@@ -128,6 +185,8 @@ const GameScreen: React.FC = () => {
   // Initialize game
   useEffect(() => {
     if (currentCategory) {
+      // Определяем, это игра со столицами или нет
+      setIsCapitalsMode(currentCategory === 'capitals' || window.location.pathname.includes('/capitals'));
       loadNextQuestion();
     } else {
       navigate('/');
@@ -162,7 +221,7 @@ const GameScreen: React.FC = () => {
   }
   
   const totalFlags = currentCategory ? gameCategories[currentCategory].countries.length : 0;
-  const highScore = currentCategory ? gameStats[currentCategory].highScore : 0;
+  const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
     <div className="w-full max-w-xl mx-auto px-4 pb-8">
@@ -185,13 +244,22 @@ const GameScreen: React.FC = () => {
       
       <div className="mt-8 mb-6">
         <FlagCard country={currentCountry} isLoading={isLoading} />
+        
+        {/* В режиме столиц показываем название страны */}
+        {isCapitalsMode && (
+          <div className="mt-4 text-center">
+            <h2 className="text-2xl font-bold text-white">{currentCountry.name}</h2>
+          </div>
+        )}
       </div>
       
       <div className="space-y-3">
         {options.map((option) => {
-          const isSelected = selectedOption === option.name;
-          const isOptionCorrect = currentCountry.name === option.name;
-          const isIncorrect = incorrectOptions.has(option.name);
+          const isSelected = selectedOption === option.value;
+          const isOptionCorrect = isCapitalsMode 
+            ? currentCountry.capital === option.value 
+            : currentCountry.name === option.value;
+          const isIncorrect = incorrectOptions.has(option.value);
           
           let buttonClass = "w-full text-left p-4 rounded-xl transition-all duration-300 ";
           
@@ -212,12 +280,12 @@ const GameScreen: React.FC = () => {
           
           return (
             <button
-              key={option.name}
-              onClick={() => handleAnswerSelect(option.name)}
+              key={option.value}
+              onClick={() => handleAnswerSelect(option.value)}
               disabled={isIncorrect || isCorrect}
               className={buttonClass}
             >
-              <span className="text-lg">{option.name}</span>
+              <span className="text-lg">{option.text}</span>
             </button>
           );
         })}

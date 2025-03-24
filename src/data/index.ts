@@ -281,7 +281,7 @@ const africaData = `Африка
 ЮАР;Претория;za.svg
 Южный Судан;Джуба;ss.svg`;
 
-// Level 1 data
+// Level 1 data - оставляем как есть
 const level1Data = `Уровень 1
 Беларусь;Минск;by.svg
 Бразилия;Бразилиа;br.svg
@@ -301,20 +301,25 @@ const level1Data = `Уровень 1
 Южная Корея;Сеул;kr.svg
 Япония;Токио;jp.svg`;
 
-// Level 2 data
+// Level 2 data - обновляем до 50 стран
 const level2Data = `Уровень 2
 Австралия;Канберра;au.svg
 Австрия;Вена;at.svg
+Азербайджан;Баку;az.svg
 Алжир;Алжир;dz.svg
 Аргентина;Буэнос-Айрес;ar.svg
+Армения;Ереван;am.svg
+Афганистан;Кабул;af.svg
 Беларусь;Минск;by.svg
 Бельгия;Брюссель;be.svg
+Болгария;София;bg.svg
 Бразилия;Бразилиа;br.svg
 Великобритания;Лондон;gb.svg
 Венгрия;Будапешт;hu.svg
 Вьетнам;Ханой;vn.svg
 Германия;Берлин;de.svg
 Греция;Афины;gr.svg
+Грузия;Тбилиси;ge.svg
 Дания;Копенгаген;dk.svg
 Египет;Каир;eg.svg
 Израиль;Иерусалим;il.svg
@@ -322,12 +327,16 @@ const level2Data = `Уровень 2
 Индонезия;Джакарта;id.svg
 Ирак;Багдад;iq.svg
 Иран;Тегеран;ir.svg
+Ирландия;Дублин;ie.svg
+Исландия;Рейкьявик;is.svg
 Испания;Мадрид;es.svg
 Италия;Рим;it.svg
 Казахстан;Астана;kz.svg
 Канада;Оттава;ca.svg
+Кения;Найроби;ke.svg
 Китай;Пекин;cn.svg
 Колумбия;Богота;co.svg
+Малайзия;Куала-Лумпур;my.svg
 Мексика;Мехико;mx.svg
 Нидерланды;Амстердам;nl.svg
 Новая Зеландия;Веллингтон;nz.svg
@@ -337,44 +346,46 @@ const level2Data = `Уровень 2
 Польша;Варшава;pl.svg
 Португалия;Лиссабон;pt.svg
 Россия;Москва;ru.svg
-Румыния;Бухарест;ro.svg
 Саудовская Аравия;Эр-Рияд;sa.svg
 Сингапур;Сингапур;sg.svg
 США;Вашингтон;us.svg
-Таиланд;Бангкок;th.svg
 Турция;Анкара;tr.svg
 Украина;Киев;ua.svg
-Филиппины;Манила;ph.svg
-Финляндия;Хельсинки;fi.svg
-Франция;Париж;fr.svg
-Хорватия;Загреб;hr.svg
-Чехия;Прага;cz.svg
-Швейцария;Берн;ch.svg
 Швеция;Стокгольм;se.svg
-ЮАР;Претория;za.svg
-Южная Корея;Сеул;kr.svg
 Япония;Токио;jp.svg`;
 
-// Level 3 data
+// Level 3 data - обновляем до 100 стран
 const level3Data = `Уровень 3
 Австралия;Канберра;au.svg
 Австрия;Вена;at.svg
 Азербайджан;Баку;az.svg
+Албания;Тирана;al.svg
 Алжир;Алжир;dz.svg
+Ангола;Луанда;ao.svg
 Аргентина;Буэнос-Айрес;ar.svg
 Армения;Ереван;am.svg
+Афганистан;Кабул;af.svg
+Бангладеш;Дакка;bd.svg
 Бахрейн;Манама;bh.svg
 Беларусь;Минск;by.svg
 Бельгия;Брюссель;be.svg
 Болгария;София;bg.svg
 Боливия;Сукре;bo.svg
+Босния и Герцеговина;Сараево;ba.svg
+Ботсвана;Габороне;bw.svg
 Бразилия;Бразилиа;br.svg
+Буркина-Фасо;Уагадугу;bf.svg
+Бурунди;Гитега;bi.svg
 Великобритания;Лондон;gb.svg
 Венгрия;Будапешт;hu.svg
 Венесуэла;Каракас;ve.svg
 Вьетнам;Ханой;vn.svg
+Габон;Либревиль;ga.svg
+Гаити;Порт-о-Пренс;ht.svg
+Гамбия;Банжул;gm.svg
 Гана;Аккра;gh.svg
 Гватемала;Гватемала;gt.svg
+Гвинея;Конакри;gn.svg
 Германия;Берлин;de.svg
 Гондурас;Тегусигальпа;hn.svg
 Греция;Афины;gr.svg
@@ -391,35 +402,40 @@ const level3Data = `Уровень 3
 Ирак;Багдад;iq.svg
 Иран;Тегеран;ir.svg
 Ирландия;Дублин;ie.svg
+Исландия;Рейкьявик;is.svg
 Испания;Мадрид;es.svg
 Италия;Рим;it.svg
 Йемен;Сана;ye.svg
 Казахстан;Астана;kz.svg
+Камбоджа;Пномпень;kh.svg
 Камерун;Яунде;cm.svg
 Канада;Оттава;ca.svg
-Катар;Доха;qa.svg
+Кения;Найроби;ke.svg
 Кипр;Никосия;cy.svg
 Китай;Пекин;cn.svg
 Колумбия;Богота;co.svg
 Коста-Рика;Сан-Хосе;cr.svg
+Кот-д'Ивуар;Ямусукро;ci.svg
 Куба;Гавана;cu.svg
 Кувейт;Эль-Кувейт;kw.svg
 Кыргызстан;Бишкек;kg.svg
-Кюрасао;Виллемстад;cw.svg
 Лаос;Вьентьян;la.svg
 Латвия;Рига;lv.svg
+Ливан;Бейрут;lb.svg
+Ливия;Триполи;ly.svg
 Литва;Вильнюс;lt.svg
-Лихтенштейн;Вадуц;li.svg
 Люксембург;Люксембург;lu.svg
 Маврикий;Порт-Луи;mu.svg
-Мавритания;Нуакшот;mr.svg
 Мадагаскар;Антананариву;mg.svg
-Малави;Лилонгве;mw.svg
+Малайзия;Куала-Лумпур;my.svg
 Мали;Бамако;ml.svg
 Марокко;Рабат;ma.svg
 Мексика;Мехико;mx.svg
 Мозамбик;Мапуту;mz.svg
 Молдова;Кишинёв;md.svg
+Монголия;Улан-Батор;mn.svg
+Намибия;Виндхук;na.svg
+Непал;Катманду;np.svg
 Нигерия;Абуджа;ng.svg
 Нидерланды;Амстердам;nl.svg
 Никарагуа;Манагуа;ni.svg
@@ -429,71 +445,22 @@ const level3Data = `Уровень 3
 Оман;Маскат;om.svg
 Пакистан;Исламабад;pk.svg
 Панама;Панама;pa.svg
+Папуа – Новая Гвинея;Порт-Морсби;pg.svg
 Парагвай;Асунсьон;py.svg
 Перу;Лима;pe.svg
 Польша;Варшава;pl.svg
 Португалия;Лиссабон;pt.svg
-Пуэрто-Рико;Сан-Хуан;pr.svg
-Республика Конго;Браззавиль;cg.svg
 Россия;Москва;ru.svg
 Руанда;Кигали;rw.svg
 Румыния;Бухарест;ro.svg
-Саба;Боттом;sb.svg
-Сальвадор;Сан-Сальвадор;sv.svg
-Самоа;Апиа;ws.svg
-Сан-Марино;Сан-Марино;sm.svg
-Сан-Томе и Принсипи;Сан-Томе;st.svg
 Саудовская Аравия;Эр-Рияд;sa.svg
-Северная Ирландия;Белфаст;gb-nir.svg
-Северная Македония;Скопье;mk.svg
-Северные Марианские Острова;Сайпан;mp.svg
-Сейшельские Острова;Виктория;sc.svg
 Сенегал;Дакар;sn.svg
-Сент-Винсент и Гренадины;Кингстаун;vc.svg
-Сент-Китс и Невис;Бастер;kn.svg
-Сент-Люсия;Кастри;lc.svg
 Сербия;Белград;rs.svg
 Сингапур;Сингапур;sg.svg
 Сирия;Дамаск;sy.svg
 Словакия;Братислава;sk.svg
 Словения;Любляна;si.svg
-Судан;Хартум;sd.svg
-США;Вашингтон;us.svg
-Таджикистан;Душанбе;tj.svg
-Таиланд;Бангкок;th.svg
-Танзания;Додома;tz.svg
-Тёркс и Кайкос;Коберн-Таун;tc.svg
-Того;Ломе;tg.svg
-Токелау;Атафу;tk.svg
-Тонга;Нукуалофа;to.svg
-Тринидад и Тобаго;Порт-оф-Спейн;tt.svg
-Тувалу;Фунафути;tv.svg
-Тунис;Тунис;tn.svg
-Туркменистан;Ашхабад;tm.svg
-Турция;Анкара;tr.svg
-Уганда;Кампала;ug.svg
-Узбекистан;Ташкент;uz.svg
-Украина;Киев;ua.svg
-Уругвай;Монтевидео;uy.svg
-Филиппины;Манила;ph.svg
-Финляндия;Хельсинки;fi.svg
-Франция;Париж;fr.svg
-Хорватия;Загреб;hr.svg
-Центральноафриканская Республика;Банги;cf.svg
-Чад;Нджамена;td.svg
-Черногория;Подгорица;me.svg
-Чехия;Прага;cz.svg
-Чили;Сантьяго;cl.svg
-Швейцария;Берн;ch.svg
-Швеция;Стокгольм;se.svg
-Эквадор;Кито;ec.svg
-Эстония;Таллин;ee.svg
-Эфиопия;Аддис-Абеба;et.svg
-ЮАР;Претория;za.svg
-Южная Корея;Сеул;kr.svg
-Южный Судан;Джуба;ss.svg
-Ямайка;Кингстон;jm.svg
-Япония;Токио;jp.svg`;
+США;Вашингтон;us.svg`;
 
 // All flags data
 const allFlagsData = `Все флаги
@@ -671,82 +638,4 @@ const allFlagsData = `Все флаги
 Словения;Любляна;si.svg
 Судан;Хартум;sd.svg
 США;Вашингтон;us.svg
-Сьерра-Леоне;Фритаун;sl.svg
-Таджикистан;Душанбе;tj.svg
-Таиланд;Бангкок;th.svg
-Тайвань;Тайбэй;tw.svg
-Танзания;Додома;tz.svg
-Тёркс и Кайкос;Коберн-Таун;tc.svg
-Того;Ломе;tg.svg
-Токелау;Атафу;tk.svg
-Тонга;Нукуалофа;to.svg
-Тринидад и Тобаго;Порт-оф-Спейн;tt.svg
-Тувалу;Фунафути;tv.svg
-Тунис;Тунис;tn.svg
-Туркменистан;Ашхабад;tm.svg
-Турция;Анкара;tr.svg
-Уганда;Кампала;ug.svg
-Узбекистан;Ташкент;uz.svg
-Украина;Киев;ua.svg
-Уругвай;Монтевидео;uy.svg
-Уэльс;Кардифф;gb-wls.svg
-Фарерские острова;Торсхавн;fo.svg
-Федеративные Штаты Микронезии;Паликир;fm.svg
-Фиджи;Сува;fj.svg
-Филиппины;Манила;ph.svg
-Финляндия;Хельсинки;fi.svg
-Франция;Париж;fr.svg
-Французская Полинезия;Папеэте;pf.svg
-Хорватия;Загреб;hr.svg
-Центральноафриканская Республика;Банги;cf.svg
-Чад;Нджамена;td.svg
-Черногория;Подгорица;me.svg
-Чехия;Прага;cz.svg
-Чили;Сантьяго;cl.svg
-Швейцария;Берн;ch.svg
-Швеция;Стокгольм;se.svg
-Эквадор;Кито;ec.svg
-Эстония;Таллин;ee.svg
-Эфиопия;Аддис-Абеба;et.svg
-ЮАР;Претория;za.svg
-Южная Корея;Сеул;kr.svg
-Южный Судан;Джуба;ss.svg
-Ямайка;Кингстон;jm.svg
-Япония;Токио;jp.svg`;
-
-// Parse all categories
-export const gameCategories: Record<CategoryId, Category> = {
-  asia: parseCountryData(asiaData),
-  southAmerica: parseCountryData(southAmericaData),
-  australiaOceania: parseCountryData(australiaOceaniaData),
-  europe: parseCountryData(europeData),
-  northAmerica: parseCountryData(northAmericaData),
-  africa: parseCountryData(africaData),
-  level1: parseCountryData(level1Data),
-  level2: parseCountryData(level2Data),
-  level3: parseCountryData(level3Data),
-  allFlags: parseCountryData(allFlagsData),
-  capitals: { id: 'capitals', title: 'Столицы', count: 0, countries: [] },
-};
-
-// Map category IDs to display names
-export const categoryDisplayNames: Record<CategoryId, string> = {
-  level1: 'Уровень 1',
-  level2: 'Уровень 2',
-  level3: 'Уровень 3',
-  allFlags: 'Все флаги',
-  europe: 'Европа',
-  asia: 'Азия',
-  northAmerica: 'Северная Америка',
-  southAmerica: 'Южная Америка',
-  africa: 'Африка',
-  australiaOceania: 'Австралия и Океания',
-  capitals: 'Столицы',
-};
-
-// Define category groupings
-export const categoryGroups = {
-  levels: ['level1', 'level2', 'level3', 'allFlags'],
-  regions: ['europe', 'asia', 'northAmerica', 'southAmerica', 'africa', 'australiaOceania'],
-  capitals: ['europe', 'asia', 'northAmerica', 'southAmerica', 'africa', 'australiaOceania']
-};
+Сьерра-Ле

@@ -12,6 +12,8 @@ interface CategoryButtonProps {
   isCompleted?: boolean;
   highScore?: number;
   showCompletionStatus?: boolean;
+  showCompletionCount?: boolean;
+  showImage?: boolean;
 }
 
 const CategoryButton: React.FC<CategoryButtonProps> = ({
@@ -21,6 +23,8 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   isCompleted = false,
   highScore = 0,
   showCompletionStatus = true,
+  showCompletionCount = true,
+  showImage = true,
 }) => {
   const category = gameCategories[categoryId];
   const displayName = categoryDisplayNames[categoryId];
@@ -49,7 +53,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                  group hover:scale-[1.01] hover:shadow-lg
                  border border-white/10 bg-gradient-to-r from-white/5 to-transparent"
     >
-      <RegionImages region={categoryId} />
+      {showImage && <RegionImages region={categoryId} />}
       
       <div className="w-full p-4">
         <div className="flex justify-between items-center mb-1">
@@ -67,7 +71,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 {isCompleted ? (
                   <span className="text-success">Завершено</span>
                 ) : (
-                  <span>{completedCount}/{category.count}</span>
+                  <span>{showCompletionCount ? `${completedCount}/${category.count}` : `${category.count}`}</span>
                 )}
               </span>
             </div>

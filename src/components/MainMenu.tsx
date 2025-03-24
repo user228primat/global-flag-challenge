@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryButton from './CategoryButton';
-import { categoryDisplayNames, categoryGroups } from '../data';
+import { categoryDisplayNames, categoryGroups, gameCategories } from '../data';
 import { useGameContext } from '../contexts/GameContext';
 import { CategoryId } from '../types';
 import { Globe, Trophy, Award } from 'lucide-react';
@@ -49,9 +49,9 @@ const MainMenu: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4">
-      <div className="mb-12 text-center glass p-8 rounded-2xl bg-gradient-to-br from-primary/20 to-white/5">
-        <Globe size={80} className="mx-auto mb-6 text-primary" />
+    <div className="w-full max-w-xl mx-auto px-4 py-8 bg-gradient-to-b from-blue-900/50 to-purple-900/30 min-h-screen">
+      <div className="mb-8 text-center glass p-8 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/5">
+        <Globe size={70} className="mx-auto mb-6 text-blue-400" />
         <h1 className="text-4xl font-bold mb-2 text-white text-shadow">
           Флаги Мира
         </h1>
@@ -61,14 +61,16 @@ const MainMenu: React.FC = () => {
       </div>
       
       <div className="grid grid-cols-1 gap-6">
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-primary/5 to-white/5">
+        <section className="glass rounded-xl p-6 border border-indigo-300/10 bg-gradient-to-br from-indigo-600/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
-            <Trophy size={20} className="mr-2 text-warning" />
+            <Trophy size={20} className="mr-2 text-yellow-400" />
             По сложности
           </h2>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
             {categoryGroups.levels.map((categoryId) => {
               const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
+              const totalCount = gameCategories[categoryId as CategoryId].count;
+              
               return (
                 <CategoryButton
                   key={categoryId}
@@ -77,20 +79,24 @@ const MainMenu: React.FC = () => {
                   isCompleted={isCompleted}
                   completedCount={completedCount}
                   highScore={highScore}
+                  showCompletionCount={false}
+                  showImage={false}
                 />
               );
             })}
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-info/5 to-white/5">
+        <section className="glass rounded-xl p-6 border border-blue-300/10 bg-gradient-to-br from-blue-600/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
-            <Globe size={20} className="mr-2 text-info" />
+            <Globe size={20} className="mr-2 text-blue-400" />
             По регионам
           </h2>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
             {categoryGroups.regions.map((categoryId) => {
               const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
+              const totalCount = gameCategories[categoryId as CategoryId].count;
+              
               return (
                 <CategoryButton
                   key={categoryId}
@@ -99,15 +105,16 @@ const MainMenu: React.FC = () => {
                   isCompleted={isCompleted}
                   completedCount={completedCount}
                   highScore={highScore}
+                  showCompletionCount={false}
                 />
               );
             })}
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-warning/5 to-white/5">
+        <section className="glass rounded-xl p-6 border border-amber-300/10 bg-gradient-to-br from-amber-500/5 to-white/5">
           <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
-            <Award size={20} className="mr-2 text-warning" />
+            <Award size={20} className="mr-2 text-amber-400" />
             Столицы
           </h2>
           <button
@@ -118,14 +125,10 @@ const MainMenu: React.FC = () => {
               <span className="text-lg font-medium text-white">Столицы стран</span>
               <Globe size={20} className="text-white/60" />
             </div>
-            <div className="flex items-center justify-between mt-2 text-sm text-white/60">
+            <div className="flex items-center mt-2 text-sm text-white/60">
               <div className="flex items-center">
-                <Trophy size={14} className="mr-1" />
-                <span>Рекорд: {getCapitalsHighScore()}</span>
+                <span>Выберите регион для игры со столицами</span>
               </div>
-              {isCapitalsComplete() && (
-                <span className="text-success">Завершено</span>
-              )}
             </div>
           </button>
         </section>
