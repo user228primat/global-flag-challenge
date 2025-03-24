@@ -32,13 +32,13 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   // Определяем иконку в зависимости от категории
   const getIcon = () => {
     if (categoryId.startsWith('level')) {
-      return <GraduationCap size={28} className="text-warning" />;
+      return <GraduationCap size={28} className="text-yellow-400" />;
     } else if (categoryId === 'allFlags') {
-      return <Trophy size={28} className="text-warning" />;
+      return <Trophy size={28} className="text-yellow-400" />;
     } else if (categoryId === 'capitals') {
-      return <Award size={28} className="text-info" />;
+      return <Award size={28} className="text-blue-400" />;
     } else {
-      return <GraduationCap size={28} className="text-primary" />;
+      return <GraduationCap size={28} className="text-blue-400" />;
     }
   };
 
@@ -47,36 +47,37 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className="relative w-full glass p-0 rounded-xl overflow-hidden 
-                 transition-all duration-300 hover:bg-white/10 
+      className="relative w-full p-0 rounded-xl overflow-hidden 
+                 transition-all duration-300 hover:bg-blue-800/20
                  flex flex-col items-center text-left 
                  group hover:scale-[1.01] hover:shadow-lg
-                 border border-white/10 bg-gradient-to-r from-white/5 to-transparent"
+                 border border-blue-700/30 bg-gradient-to-r from-blue-900/30 to-blue-900/10
+                 backdrop-blur-sm"
     >
       {showImage && <RegionImages region={categoryId} />}
       
       <div className="w-full p-4">
         <div className="flex justify-between items-center mb-1">
-          <h3 className="text-lg font-medium text-white group-hover:text-primary transition-colors">
+          <h3 className="text-lg font-medium text-blue-100 group-hover:text-blue-200 transition-colors">
             {displayName}
           </h3>
           {getIcon()}
         </div>
         
         {showCompletionStatus && (
-          <div className="flex items-center justify-between text-sm text-white/60">
+          <div className="flex items-center justify-between text-sm text-blue-200/70">
             <div className="flex items-center">
               <BookOpen size={14} className="mr-1" />
               <span>
                 {isCompleted ? (
-                  <span className="text-success">Завершено</span>
+                  <span className="text-green-400">Завершено</span>
                 ) : (
                   <span>{showCompletionCount ? `${completedCount}/${category.count}` : `${category.count}`}</span>
                 )}
               </span>
             </div>
             <div className="flex items-center">
-              <Trophy size={14} className="mr-1" />
+              <Trophy size={14} className="mr-1 text-yellow-400" />
               <span>Рекорд: {highScore}</span>
             </div>
           </div>
@@ -85,18 +86,18 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       
       {/* Progress bar */}
       {!isCompleted && category && completedCount > 0 && (
-        <div className="absolute bottom-0 left-0 h-1 bg-primary" style={{ width: `${completionPercentage}%` }} />
+        <div className="absolute bottom-0 left-0 h-1 bg-blue-500" style={{ width: `${completionPercentage}%` }} />
       )}
       
       {/* Completed badge */}
       {isCompleted && (
-        <div className="absolute top-2 right-2 bg-success/90 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+        <div className="absolute top-2 right-2 bg-green-500/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
           ✓ Завершено
         </div>
       )}
       
       {/* Overlay effect on hover */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-70" />
+      <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 via-transparent to-transparent opacity-70" />
     </button>
   );
 };

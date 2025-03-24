@@ -5,7 +5,7 @@ import CategoryButton from './CategoryButton';
 import { categoryDisplayNames, categoryGroups, gameCategories } from '../data';
 import { useGameContext } from '../contexts/GameContext';
 import { CategoryId } from '../types';
-import { Globe, Trophy, Award } from 'lucide-react';
+import { Globe, Trophy, Award, Star } from 'lucide-react';
 
 const MainMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -49,20 +49,20 @@ const MainMenu: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4 py-8 bg-gradient-to-b from-blue-900/50 to-purple-900/30 min-h-screen">
-      <div className="mb-8 text-center glass p-8 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/5">
-        <Globe size={70} className="mx-auto mb-6 text-blue-400" />
-        <h1 className="text-4xl font-bold mb-2 text-white text-shadow">
+    <div className="w-full max-w-xl mx-auto px-4 py-8 min-h-screen bg-gradient-to-b from-blue-950 to-indigo-950">
+      <div className="mb-8 text-center p-8 rounded-2xl bg-blue-900/20 backdrop-blur-md border border-blue-800/30">
+        <Globe size={70} className="mx-auto mb-6 text-blue-400 animate-float" />
+        <h1 className="text-4xl font-bold mb-2 text-blue-100 text-shadow">
           Флаги Мира
         </h1>
-        <p className="text-white/80">
+        <p className="text-blue-200/80">
           Проверьте свои знания флагов стран мира
         </p>
       </div>
       
       <div className="grid grid-cols-1 gap-6">
-        <section className="glass rounded-xl p-6 border border-indigo-300/10 bg-gradient-to-br from-indigo-600/5 to-white/5">
-          <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
+        <section className="rounded-xl p-6 border border-blue-800/30 bg-blue-900/10 backdrop-blur-sm">
+          <h2 className="text-xl font-bold mb-3 text-blue-100 flex items-center">
             <Trophy size={20} className="mr-2 text-yellow-400" />
             По сложности
           </h2>
@@ -87,8 +87,8 @@ const MainMenu: React.FC = () => {
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-blue-300/10 bg-gradient-to-br from-blue-600/5 to-white/5">
-          <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
+        <section className="rounded-xl p-6 border border-blue-800/30 bg-blue-900/10 backdrop-blur-sm">
+          <h2 className="text-xl font-bold mb-3 text-blue-100 flex items-center">
             <Globe size={20} className="mr-2 text-blue-400" />
             По регионам
           </h2>
@@ -112,24 +112,39 @@ const MainMenu: React.FC = () => {
           </div>
         </section>
         
-        <section className="glass rounded-xl p-6 border border-amber-300/10 bg-gradient-to-br from-amber-500/5 to-white/5">
-          <h2 className="text-xl font-bold mb-3 text-white/90 flex items-center">
-            <Award size={20} className="mr-2 text-amber-400" />
+        <section className="rounded-xl p-6 border border-blue-800/30 bg-blue-900/10 backdrop-blur-sm">
+          <h2 className="text-xl font-bold mb-3 text-blue-100 flex items-center">
+            <Award size={20} className="mr-2 text-blue-400" />
             Столицы
           </h2>
           <button
             onClick={() => navigate('/capitals')}
-            className="glass w-full text-left p-4 rounded-xl transition-all duration-300 hover:bg-white/10 group border border-white/10 bg-gradient-to-r from-white/5 to-transparent"
+            className="w-full text-left p-4 rounded-xl transition-all duration-300 
+                      hover:bg-blue-800/20 group border border-blue-700/30 
+                      bg-gradient-to-r from-blue-900/30 to-blue-900/10 backdrop-blur-sm"
           >
             <div className="flex items-center justify-between">
-              <span className="text-lg font-medium text-white">Столицы стран</span>
-              <Globe size={20} className="text-white/60" />
+              <span className="text-lg font-medium text-blue-100">Столицы стран</span>
+              <Star size={20} className="text-yellow-400" />
             </div>
-            <div className="flex items-center mt-2 text-sm text-white/60">
+            <div className="flex items-center mt-2 text-sm text-blue-200/80">
               <div className="flex items-center">
                 <span>Выберите регион для игры со столицами</span>
               </div>
             </div>
+            {getCapitalsHighScore() > 0 && (
+              <div className="mt-2 text-xs text-blue-300/60">
+                <span className="flex items-center">
+                  <Trophy size={12} className="mr-1 text-yellow-400" />
+                  Лучший результат: {getCapitalsHighScore()}
+                </span>
+              </div>
+            )}
+            {isCapitalsComplete() && (
+              <div className="absolute top-2 right-2 bg-green-500/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                ✓ Завершено
+              </div>
+            )}
           </button>
         </section>
       </div>
