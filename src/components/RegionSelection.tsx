@@ -34,7 +34,7 @@ const RegionSelection: React.FC = () => {
         <Button 
           onClick={() => navigate('/')}
           variant="ghost" 
-          className="text-blue-300 hover:text-blue-100 hover:bg-blue-900/30"
+          className="text-blue-400 hover:text-blue-300 hover:bg-slate-800/50"
         >
           <ArrowLeft size={20} className="mr-1" />
           <span>Назад</span>
@@ -45,7 +45,7 @@ const RegionSelection: React.FC = () => {
         <h1 className="text-3xl font-bold mb-2 text-blue-100 text-shadow animate-fade-in">
           Выберите регион
         </h1>
-        <p className="text-blue-300/80 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <p className="text-blue-400/90 animate-fade-in" style={{ animationDelay: '0.2s' }}>
           Для изучения столиц
         </p>
       </div>
@@ -59,9 +59,10 @@ const RegionSelection: React.FC = () => {
               key={regionId}
               onClick={() => handleRegionSelect(regionId as CategoryId)}
               className="p-0 rounded-xl text-center transition-all duration-300 
-                        hover:bg-blue-900/30 flex flex-col items-center overflow-hidden
-                        hover:scale-[1.02] hover:shadow-lg relative
-                        border border-blue-900/30 bg-gradient-to-br from-blue-950/70 to-indigo-950/50 backdrop-blur-sm shadow-md"
+                        hover:bg-slate-800/50 flex flex-col items-center overflow-hidden
+                        hover:scale-[1.02] hover:shadow-xl relative
+                        border border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80 
+                        backdrop-blur-sm shadow-lg"
               style={{ 
                 opacity: 0,
                 animation: 'fade-in 0.5s ease-out forwards',
@@ -72,15 +73,15 @@ const RegionSelection: React.FC = () => {
               
               <div className="w-full p-4 z-10 relative">
                 <div className="flex flex-col items-center justify-center">
-                  <Globe size={32} className="mb-2 text-blue-400" />
+                  <Globe size={32} className="mb-2 text-blue-500" />
                   <span className="text-xl font-medium text-blue-100">
                     {categoryDisplayNames[regionId as CategoryId]}
                   </span>
                 </div>
                 
-                <div className="flex items-center justify-between mt-2 text-sm text-blue-200/90">
+                <div className="flex items-center justify-between mt-2 text-sm text-blue-300/90">
                   <div className="flex items-center mr-2">
-                    <BookOpen size={12} className="mr-1 text-blue-300" />
+                    <BookOpen size={12} className="mr-1 text-blue-400" />
                     <span>{countryCount} стран</span>
                   </div>
                   
@@ -95,16 +96,20 @@ const RegionSelection: React.FC = () => {
               
               {/* Completed badge */}
               {isComplete && (
-                <Badge variant="default" className="absolute top-2 right-2 bg-green-500/80 hover:bg-green-500/80 px-2 py-1 text-xs">
+                <Badge variant="default" className="absolute top-2 right-2 bg-green-600/80 hover:bg-green-600/80 px-2 py-1 text-xs">
                   ✓ Завершено
                 </Badge>
               )}
               
               {/* Overlay effect */}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-950 via-indigo-950/50 to-transparent opacity-70" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent opacity-70" />
+              
+              {/* Highlight effect on edges */}
+              <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
+              <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
               
               {/* Hover effect */}
-              <div className="absolute inset-0 bg-blue-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-blue-600/5 opacity-0 hover:opacity-100 transition-opacity duration-300" />
             </button>
           );
         })}

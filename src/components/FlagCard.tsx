@@ -16,10 +16,10 @@ const FlagCard: React.FC<FlagCardProps> = ({ country, isLoading = false }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto relative overflow-hidden rounded-xl glass">
+    <div className="w-full max-w-md mx-auto relative overflow-hidden rounded-xl glass-dark shadow-lg">
       {/* Loading state */}
       {(isLoading || !loaded) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
         </div>
       )}

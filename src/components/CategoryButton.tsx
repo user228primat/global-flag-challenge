@@ -34,13 +34,13 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   // Определяем иконку в зависимости от категории
   const getIcon = () => {
     if (categoryId.startsWith('level')) {
-      return <GraduationCap size={24} className="text-blue-300" />;
+      return <GraduationCap size={24} className="text-blue-400" />;
     } else if (categoryId === 'allFlags') {
       return <Trophy size={24} className="text-amber-400" />;
     } else if (categoryId === 'capitals') {
-      return <Award size={24} className="text-sky-300" />;
+      return <Award size={24} className="text-sky-400" />;
     } else {
-      return <GraduationCap size={24} className="text-blue-300" />;
+      return <GraduationCap size={24} className="text-blue-400" />;
     }
   };
 
@@ -52,10 +52,11 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       className={cn(
         "relative w-full overflow-hidden rounded-xl border transition-all duration-300",
         "flex flex-col items-center text-left",
-        "group hover:scale-[1.02] hover:shadow-lg",
-        "border-blue-900/40 bg-gradient-to-br from-blue-950/80 to-indigo-950/60",
-        "backdrop-blur-sm shadow-md",
-        isCompleted ? "border-green-500/30" : "hover:border-blue-700/60"
+        "group hover:scale-[1.02] hover:shadow-xl",
+        "border-slate-800/80 shadow-lg",
+        "bg-gradient-to-br from-slate-900/90 to-slate-950",
+        "backdrop-blur-sm",
+        isCompleted ? "border-green-600/30 shadow-green-900/10" : "hover:border-blue-900"
       )}
     >
       {showImage && <RegionImages region={categoryId} />}
@@ -69,9 +70,9 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         </div>
         
         {showCompletionStatus && (
-          <div className="flex items-center justify-between text-sm text-blue-200/90">
+          <div className="flex items-center justify-between text-sm text-blue-300/80">
             <div className="flex items-center">
-              <BookOpen size={14} className="mr-1 text-blue-300" />
+              <BookOpen size={14} className="mr-1 text-blue-400" />
               <span>
                 {isCompleted ? (
                   <span className="text-green-400">Завершено</span>
@@ -90,22 +91,26 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       
       {/* Progress bar */}
       {!isCompleted && category && completedCount > 0 && (
-        <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-400" 
+        <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600" 
             style={{ width: `${completionPercentage}%` }} />
       )}
       
       {/* Completed badge */}
       {isCompleted && (
-        <Badge variant="default" className="absolute top-2 right-2 bg-green-500/80 hover:bg-green-500/80 px-2 py-1 text-xs">
+        <Badge variant="default" className="absolute top-2 right-2 bg-green-600/80 hover:bg-green-600/80 px-2 py-1 text-xs">
           ✓ Завершено
         </Badge>
       )}
       
       {/* Overlay effect for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-indigo-950/40 to-transparent opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent opacity-70" />
       
-      {/* Hover effect */}
-      <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Hover effect with subtle glow */}
+      <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      {/* Highlight effect on edges */}
+      <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
     </button>
   );
 };

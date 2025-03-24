@@ -33,7 +33,7 @@ const CategoryOptions: React.FC = () => {
       <div className="flex items-center mb-8">
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center text-white/70 hover:text-white transition-colors"
+          className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
         >
           <ArrowLeft size={20} className="mr-1" />
           <span>Назад</span>
@@ -49,33 +49,41 @@ const CategoryOptions: React.FC = () => {
       <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
         <button
           onClick={handlePlayClick}
-          className="glass w-full p-6 rounded-xl transition-all duration-300 hover:bg-white/10 flex items-center"
+          className="glass-dark w-full p-6 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group"
         >
-          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary/20 mr-4">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary/20 mr-4 group-hover:bg-primary/30 transition-colors">
             <Play size={24} className="text-primary ml-1" />
           </div>
           <div className="text-left">
             <div className="text-xl font-medium text-white">Играть</div>
             <div className="text-sm text-white/60">Пройти викторину по флагам</div>
           </div>
+          
+          {/* Highlight effect on edges */}
+          <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </button>
         
         <button
           onClick={handleReferenceClick}
-          className="glass w-full p-6 rounded-xl transition-all duration-300 hover:bg-white/10 flex items-center"
+          className="glass-dark w-full p-6 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group"
           style={{ 
             opacity: 0,
             animation: 'fade-in 0.5s ease-out forwards',
             animationDelay: '0.3s' 
           }}
         >
-          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 mr-4">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 mr-4 group-hover:bg-white/15 transition-colors">
             <Book size={24} className="text-white" />
           </div>
           <div className="text-left">
             <div className="text-xl font-medium text-white">Таблица</div>
             <div className="text-sm text-white/60">Изучить справочник со странами</div>
           </div>
+          
+          {/* Highlight effect on edges */}
+          <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </button>
       </div>
     </div>

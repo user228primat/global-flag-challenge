@@ -20,11 +20,12 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
 
   return (
     <div className="w-full max-w-xl mx-auto px-4 flex flex-col items-center justify-center min-h-[70vh]">
-      <div className="glass p-8 rounded-2xl w-full max-w-md text-center bg-gradient-to-br from-primary/10 to-transparent border border-white/10">
+      <div className="glass-dark p-8 rounded-2xl w-full max-w-md text-center bg-gradient-to-br from-slate-900/90 to-slate-950/80 border border-slate-800/50 shadow-xl">
         <div className="relative inline-block">
-          <Trophy size={80} className="mx-auto mb-4 text-warning" />
+          <div className="absolute inset-0 rounded-full bg-amber-500/10 blur-xl"></div>
+          <Trophy size={80} className="mx-auto mb-4 text-warning relative z-10" />
           {isHighScore && (
-            <div className="absolute -top-2 -right-2 text-warning">
+            <div className="absolute -top-2 -right-2 text-warning z-20">
               <Star size={24} fill="currentColor" />
             </div>
           )}
@@ -33,7 +34,7 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
         <h2 className="text-3xl font-bold mb-2 text-white">Игра окончена</h2>
         
         <div className="mb-6 space-y-2">
-          <p className="text-white/80 text-xl">Вы отгадали <span className="text-primary font-bold">{score}</span> флагов</p>
+          <p className="text-white/90 text-xl">Вы отгадали <span className="text-primary font-bold">{score}</span> флагов</p>
           
           {isHighScore && (
             <p className="text-warning font-medium">Новый рекорд!</p>
@@ -50,18 +51,27 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
         <div className="flex flex-col gap-4">
           <button
             onClick={onRestart}
-            className="glass-dark px-6 py-3 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/10 bg-gradient-to-r from-primary/20 to-transparent"
+            className="glass-dark px-6 py-3 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-slate-800/70 relative group"
           >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-50 rounded-xl"></div>
             <RefreshCw size={20} className="mr-2" />
-            <span>Начать заново</span>
+            <span className="relative z-10">Начать заново</span>
+            
+            {/* Highlight effect on edges */}
+            <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </button>
           
           <button
             onClick={onExit}
-            className="px-6 py-3 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
+            className="px-6 py-3 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-slate-800/40 bg-slate-900/40 border border-slate-800/30 group"
           >
             <ArrowLeft size={20} className="mr-2" />
             <span>Вернуться в меню</span>
+            
+            {/* Highlight effect on edges */}
+            <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </button>
         </div>
       </div>

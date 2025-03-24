@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -26,9 +25,8 @@ const GameScreen: React.FC = () => {
     markCategoryComplete
   } = useGameContext();
   
-  // Game state
   const [currentCountry, setCurrentCountry] = useState<Country | null>(null);
-  const [options, setOptions] = useState<Array<{ text: string, value: string }>>([]); // Изменяем формат опций
+  const [options, setOptions] = useState<Array<{ text: string, value: string }>>([]);
   const [usedCountries, setUsedCountries] = useState<Set<string>>(new Set());
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -36,13 +34,11 @@ const GameScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCapitalsMode, setIsCapitalsMode] = useState(false);
   
-  // Exit to main menu
   const handleExit = () => {
     resetGame();
     navigate('/');
   };
   
-  // Check if all countries in the category have been used
   const checkForCategoryCompletion = () => {
     if (!currentCategory) return false;
     
@@ -58,9 +54,7 @@ const GameScreen: React.FC = () => {
     return false;
   };
   
-  // Generate options for capitals mode
   const generateCapitalsOptions = (countries: Country[], correctCountry: Country, count = 4) => {
-    // Убедимся, что у нас достаточно стран для вариантов
     if (countries.length < count) {
       return countries.map(country => ({ 
         text: country.capital,
@@ -68,41 +62,33 @@ const GameScreen: React.FC = () => {
       }));
     }
     
-    // Начнем с правильного ответа
     const options = [{ 
       text: correctCountry.capital,
       value: correctCountry.capital
     }];
     
-    // Создадим копию стран без правильной
     const remainingCountries = countries.filter(
       country => country.capital !== correctCountry.capital
     );
     
-    // Добавим случайные страны, пока не наберем достаточно вариантов
     while (options.length < count && remainingCountries.length > 0) {
       const randomIndex = Math.floor(Math.random() * remainingCountries.length);
       const randomCountry = remainingCountries[randomIndex];
       
-      // Добавим столицу в варианты
       options.push({ 
         text: randomCountry.capital,
         value: randomCountry.capital
       });
       
-      // Удалим страну из оставшихся
       remainingCountries.splice(randomIndex, 1);
     }
     
-    // Перемешаем варианты
     return options.sort(() => Math.random() - 0.5);
   };
   
-  // Load next question
   const loadNextQuestion = () => {
     if (!currentCategory) return;
     
-    // First check if all countries have been used
     if (checkForCategoryCompletion()) {
       return;
     }
@@ -118,13 +104,11 @@ const GameScreen: React.FC = () => {
     if (nextCountry) {
       setCurrentCountry(nextCountry);
       
-      // Определяем режим игры и генерируем соответствующие варианты
       if (currentCategory === 'capitals' || window.location.pathname.includes('/capitals')) {
         setIsCapitalsMode(true);
         setOptions(generateCapitalsOptions(categoryCountries, nextCountry));
       } else {
         setIsCapitalsMode(false);
-        // Преобразуем варианты в новый формат
         setOptions(generateOptions(categoryCountries, nextCountry).map(country => ({
           text: country.name,
           value: country.name
@@ -134,19 +118,16 @@ const GameScreen: React.FC = () => {
       setUsedCountries(prev => new Set([...prev, nextCountry.name]));
       setIsLoading(false);
     } else {
-      // All countries have been used
       markCategoryComplete(currentCategory);
       setIsGameOver(true);
     }
   };
   
-  // Handle user answer
   const handleAnswerSelect = (value: string) => {
     if (!currentCountry || isCorrect) return;
     
     setSelectedOption(value);
     
-    // Проверяем правильность ответа в зависимости от режима
     const isAnswerCorrect = isCapitalsMode 
       ? value === currentCountry.capital 
       : value === currentCountry.name;
@@ -154,38 +135,30 @@ const GameScreen: React.FC = () => {
     setIsCorrect(isAnswerCorrect);
     
     if (isAnswerCorrect) {
-      // Correct answer
       if (currentCategory) {
         incrementScore(currentCategory);
       }
       
-      // Load next question immediately
       loadNextQuestion();
     } else {
-      // Wrong answer - add to incorrect answers set
       setIncorrectOptions(prev => new Set([...prev, value]));
       
-      // Decrement lives only on first incorrect answer per question
       if (!incorrectOptions.has(value)) {
         setLives(lives - 1);
         
-        // If no lives left, game over
         if (lives <= 1) {
           setIsGameOver(true);
         }
       }
       
-      // Reset selection after a moment so user can try again
       setTimeout(() => {
         setSelectedOption(null);
       }, 400);
     }
   };
   
-  // Initialize game
   useEffect(() => {
     if (currentCategory) {
-      // Определяем, это игра со столицами или нет
       setIsCapitalsMode(currentCategory === 'capitals' || window.location.pathname.includes('/capitals'));
       loadNextQuestion();
     } else {
@@ -193,7 +166,6 @@ const GameScreen: React.FC = () => {
     }
   }, [currentCategory]);
   
-  // If game is over, show the game over screen
   if (isGameOver) {
     return (
       <GameOverScreen
@@ -211,7 +183,6 @@ const GameScreen: React.FC = () => {
     );
   }
   
-  // If no current country, show loading
   if (!currentCountry) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -245,7 +216,6 @@ const GameScreen: React.FC = () => {
       <div className="mt-8 mb-6">
         <FlagCard country={currentCountry} isLoading={isLoading} />
         
-        {/* В режиме столиц показываем название страны */}
         {isCapitalsMode && (
           <div className="mt-4 text-center">
             <h2 className="text-2xl font-bold text-white">{currentCountry.name}</h2>
@@ -264,18 +234,15 @@ const GameScreen: React.FC = () => {
           let buttonClass = "w-full text-left p-4 rounded-xl transition-all duration-300 ";
           
           if (isSelected) {
-            // Current selection is shown as incorrect
             if (!isOptionCorrect) {
-              buttonClass += "bg-error/20 border border-error text-white";
+              buttonClass += "bg-error/30 border border-error text-white";
             } else {
-              // Correct answer
-              buttonClass += "bg-success/20 border border-success text-white";
+              buttonClass += "bg-success/30 border border-success text-white";
             }
           } else if (isIncorrect) {
-            // Previously selected incorrect answers
-            buttonClass += "bg-error/10 border border-error/40 text-white/80";
+            buttonClass += "bg-error/20 border border-error/40 text-white/80";
           } else {
-            buttonClass += "glass hover:bg-white/10";
+            buttonClass += "dark-blur hover:bg-slate-800/70";
           }
           
           return (
