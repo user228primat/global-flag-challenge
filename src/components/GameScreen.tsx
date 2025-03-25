@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -37,6 +38,11 @@ const GameScreen: React.FC = () => {
   const handleExit = () => {
     resetGame();
     navigate('/');
+  };
+  
+  const handleGoBack = () => {
+    resetGame();
+    navigate(-1); // Navigate to previous page instead of fixed path
   };
   
   const checkForCategoryCompletion = () => {
@@ -195,10 +201,10 @@ const GameScreen: React.FC = () => {
   const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4 pb-8">
+    <div className="w-full max-w-xl mx-auto px-4 pb-8 pt-6">
       <div className="flex items-center justify-between mb-6">
         <button 
-          onClick={handleExit}
+          onClick={handleGoBack}
           className="flex items-center text-white/70 hover:text-white transition-colors"
         >
           <ArrowLeft size={20} className="mr-1" />
