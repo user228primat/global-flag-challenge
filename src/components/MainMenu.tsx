@@ -55,7 +55,7 @@ const MainMenu: React.FC = () => {
       <div className="mb-8 text-center p-8 rounded-2xl bg-gradient-to-br from-[#2D3748]/80 to-[#1A202C]/70 backdrop-blur-md border border-slate-800/50 shadow-xl">
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-blue-700/10 blur-xl"></div>
-          <Globe size={70} className="mx-auto mb-6 text-blue-500 animate-float relative z-10" />
+          <Globe size={70} className="mx-auto mb-6 text-blue-500 relative z-10" />
         </div>
         <h1 className="text-4xl font-bold mb-2 text-blue-50 text-shadow">
           Флаги Мира
@@ -124,27 +124,27 @@ const MainMenu: React.FC = () => {
             <Award size={20} className="mr-2 text-blue-500" />
             Столицы
           </h2>
-          <button
+          <div 
             onClick={() => navigate('/capitals')}
-            className="w-full relative overflow-hidden rounded-xl border transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-slate-800/50 shadow-lg bg-gradient-to-br from-[#2D3748] to-[#1A202C] backdrop-blur-sm flex items-center justify-between p-4"
+            className="w-full relative overflow-hidden rounded-xl border transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-slate-800/50 shadow-lg bg-gradient-to-br from-[#2D3748] to-[#1A202C] backdrop-blur-sm cursor-pointer"
           >
-            <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600/20 mr-4">
-                <Star size={20} className="text-blue-400" />
+            <div className="p-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600/20 mr-3">
+                  <Star size={18} className="text-blue-400" />
+                </div>
+                <div className="text-left">
+                  <div className="text-base font-medium text-blue-100">Столицы стран</div>
+                  <div className="text-xs text-blue-300/80">Выберите регион для игры</div>
+                </div>
               </div>
-              <div className="text-left">
-                <div className="text-lg font-medium text-blue-100">Столицы стран</div>
-                <div className="text-sm text-blue-300/80">Выберите регион для игры</div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col items-end">
-              {getCapitalsHighScore() > 0 && (
-                <div className="text-sm text-blue-300/90 flex items-center">
-                  <Trophy size={14} className="mr-1 text-amber-400" />
+              
+              <div className="flex flex-col items-end">
+                <div className="text-xs text-blue-300/90 flex items-center">
+                  <Trophy size={12} className="mr-1 text-amber-400" />
                   <span>Рекорд: {getCapitalsHighScore()}</span>
                 </div>
-              )}
+              </div>
             </div>
             
             {isCapitalsComplete() && (
@@ -153,12 +153,9 @@ const MainMenu: React.FC = () => {
               </Badge>
             )}
             
-            {/* Gradient border effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-blue-600/0 opacity-0 hover:opacity-100 transition-opacity rounded pointer-events-none"></div>
-            
-            {/* Overlay effect for depth */}
+            {/* Subtle hover effects */}
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-600/5 to-blue-600/0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-          </button>
+          </div>
         </Card>
       </div>
     </div>

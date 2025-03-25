@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
@@ -8,7 +8,6 @@ import { Play, Book, ArrowLeft } from 'lucide-react';
 
 const CapitalsOptions: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { regionId } = useParams<{ regionId: string }>();
   const { startGame, viewReference } = useGameContext();
   
@@ -18,7 +17,7 @@ const CapitalsOptions: React.FC = () => {
   }
   
   const handleGoBack = () => {
-    navigate(-1); // Navigate to previous page instead of fixed path
+    navigate('/capitals');
   };
   
   const handlePlayClick = () => {

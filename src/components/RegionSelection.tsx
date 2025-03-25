@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
 import { ArrowLeft, Globe, Trophy, Award, BookOpen, Map } from 'lucide-react';
@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 
 const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { gameStats } = useGameContext();
   
   const handleRegionSelect = (region: CategoryId) => {
@@ -19,7 +18,7 @@ const RegionSelection: React.FC = () => {
   };
   
   const handleGoBack = () => {
-    navigate(-1); // Navigate to previous page instead of fixed path
+    navigate('/');
   };
   
   const getRegionStats = (regionId: CategoryId) => {
