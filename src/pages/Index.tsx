@@ -1,8 +1,13 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import MainMenu from '../components/MainMenu';
 
 const Index = () => {
+  // Сбрасываем позицию прокрутки при загрузке страницы
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
     <div className="min-h-screen bg-gradient-deep pb-16 relative overflow-hidden">
       {/* Subtle gradient overlay */}

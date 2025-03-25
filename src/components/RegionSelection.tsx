@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
@@ -14,8 +14,16 @@ const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
   const { gameStats } = useGameContext();
   
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const handleRegionSelect = (region: CategoryId) => {
     navigate(`/capitals/${region}`);
+  };
+  
+  const handleBackClick = () => {
+    navigate(-1); // Навигация назад в истории
   };
   
   const getRegionStats = (regionId: CategoryId) => {
@@ -32,7 +40,7 @@ const RegionSelection: React.FC = () => {
     <div className="w-full max-w-xl mx-auto px-4">
       <div className="flex items-center mb-8">
         <Button 
-          onClick={() => navigate('/')}
+          onClick={handleBackClick}
           variant="ghost" 
           className="text-blue-400 hover:text-blue-300 hover:bg-slate-800/50"
         >
@@ -42,10 +50,10 @@ const RegionSelection: React.FC = () => {
       </div>
       
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-blue-100 text-shadow animate-fade-in">
+        <h1 className="text-3xl font-bold mb-2 text-blue-100 text-shadow">
           Выберите регион
         </h1>
-        <p className="text-blue-400/90 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <p className="text-blue-400/90">
           Для изучения столиц
         </p>
       </div>
@@ -63,11 +71,6 @@ const RegionSelection: React.FC = () => {
                         hover:scale-[1.02] hover:shadow-xl relative
                         border border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80 
                         backdrop-blur-sm shadow-lg"
-              style={{ 
-                opacity: 0,
-                animation: 'fade-in 0.5s ease-out forwards',
-                animationDelay: `${index * 0.1}s` 
-              }}
             >
               <RegionImages region={regionId as CategoryId} className="w-full h-32" />
               
@@ -85,12 +88,10 @@ const RegionSelection: React.FC = () => {
                     <span>{countryCount} стран</span>
                   </div>
                   
-                  {highScore > 0 && (
-                    <div className="flex items-center">
-                      <Trophy size={12} className="mr-1 text-amber-400" />
-                      <span>Рекорд: {highScore}</span>
-                    </div>
-                  )}
+                  <div className="flex items-center">
+                    <Trophy size={12} className="mr-1 text-amber-400" />
+                    <span>Рекорд: {highScore}</span>
+                  </div>
                 </div>
               </div>
               

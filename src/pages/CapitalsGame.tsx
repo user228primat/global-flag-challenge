@@ -1,8 +1,13 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import GameScreen from '../components/GameScreen';
 
 const CapitalsGame = () => {
+  // Сбрасываем позицию прокрутки при загрузке страницы
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 pb-16 relative overflow-hidden">
       {/* Subtle gradient overlay */}

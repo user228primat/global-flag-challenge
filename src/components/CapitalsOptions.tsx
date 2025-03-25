@@ -26,13 +26,17 @@ const CapitalsOptions: React.FC = () => {
     navigate('/reference');
   };
   
+  const handleBackClick = () => {
+    navigate(-1); // Навигация назад в истории
+  };
+  
   const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';
   
   return (
     <div className="w-full max-w-xl mx-auto px-4">
       <div className="flex items-center mb-8">
         <button 
-          onClick={() => navigate('/capitals')}
+          onClick={handleBackClick}
           className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
         >
           <ArrowLeft size={20} className="mr-1" />
@@ -41,15 +45,15 @@ const CapitalsOptions: React.FC = () => {
       </div>
       
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-white text-shadow animate-fade-in">
+        <h1 className="text-3xl font-bold mb-2 text-white text-shadow">
           Столицы: {displayName}
         </h1>
-        <p className="text-blue-400/90 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <p className="text-blue-400/90">
           Выберите режим
         </p>
       </div>
       
-      <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+      <div className="space-y-4">
         <button
           onClick={handlePlayClick}
           className="glass-dark w-full p-6 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group relative"
@@ -70,11 +74,6 @@ const CapitalsOptions: React.FC = () => {
         <button
           onClick={handleReferenceClick}
           className="glass-dark w-full p-6 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group relative"
-          style={{ 
-            opacity: 0,
-            animation: 'fade-in 0.5s ease-out forwards',
-            animationDelay: '0.3s' 
-          }}
         >
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 mr-4 group-hover:bg-white/15 transition-colors">
             <Book size={24} className="text-white" />
