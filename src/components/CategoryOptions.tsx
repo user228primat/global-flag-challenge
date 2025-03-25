@@ -17,7 +17,7 @@ const CategoryOptions: React.FC = () => {
   }
   
   const handleGoBack = () => {
-    navigate('/');
+    navigate(-1); // Исправлено для возврата на предыдущую страницу
   };
   
   const handlePlayClick = () => {
@@ -63,7 +63,6 @@ const CategoryOptions: React.FC = () => {
             <div className="text-sm text-white/60">Пройти викторину по флагам</div>
           </div>
           
-          {/* Highlight effect on edges */}
           <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </button>
@@ -80,7 +79,6 @@ const CategoryOptions: React.FC = () => {
             <div className="text-sm text-white/60">Изучить справочник со странами</div>
           </div>
           
-          {/* Highlight effect on edges */}
           <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </button>

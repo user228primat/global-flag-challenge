@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
@@ -13,12 +13,17 @@ const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
   const { gameStats } = useGameContext();
   
+  // Сбрасываем позицию скролла при загрузке компонента
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const handleRegionSelect = (region: CategoryId) => {
     navigate(`/capitals/${region}`);
   };
   
   const handleGoBack = () => {
-    navigate('/');
+    navigate(-1); // Исправлено для возврата на предыдущую страницу
   };
   
   const getRegionStats = (regionId: CategoryId) => {
@@ -90,7 +95,6 @@ const RegionSelection: React.FC = () => {
                 </div>
               </div>
               
-              {/* Completed badge */}
               {isComplete && (
                 <Badge variant="default" className="absolute top-2 right-2 bg-green-600/80 hover:bg-green-600/80 px-2 py-1 text-xs">
                   ✓ Завершено

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -42,7 +41,7 @@ const GameScreen: React.FC = () => {
   
   const handleGoBack = () => {
     resetGame();
-    navigate(-1); // Navigate to previous page instead of fixed path
+    navigate(-1); // Исправлено для возврата на предыдущую страницу
   };
   
   const checkForCategoryCompletion = () => {

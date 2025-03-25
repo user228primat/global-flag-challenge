@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryButton from './CategoryButton';
 import { categoryDisplayNames, categoryGroups, gameCategories } from '../data';
@@ -12,6 +12,11 @@ import { Badge } from '@/components/ui/badge';
 const MainMenu: React.FC = () => {
   const navigate = useNavigate();
   const { gameStats, startGame, viewReference } = useGameContext();
+  
+  // Сбрасываем позицию скролла при загрузке компонента
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const handleCategoryClick = (categoryId: CategoryId) => {
     if (categoryId === 'capitals') {
@@ -124,26 +129,22 @@ const MainMenu: React.FC = () => {
             <Award size={20} className="mr-2 text-blue-500" />
             Столицы
           </h2>
-          <div 
+          <button 
             onClick={() => navigate('/capitals')}
-            className="w-full relative overflow-hidden rounded-xl border transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-slate-800/50 shadow-lg bg-gradient-to-br from-[#2D3748] to-[#1A202C] backdrop-blur-sm cursor-pointer"
+            className="glass-dark w-full p-5 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group relative overflow-hidden border border-slate-800/50 shadow-lg"
           >
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600/20 mr-3">
-                  <Star size={18} className="text-blue-400" />
-                </div>
-                <div className="text-left">
-                  <div className="text-base font-medium text-blue-100">Столицы стран</div>
-                  <div className="text-xs text-blue-300/80">Выберите регион для игры</div>
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-end">
-                <div className="text-xs text-blue-300/90 flex items-center">
-                  <Trophy size={12} className="mr-1 text-amber-400" />
-                  <span>Рекорд: {getCapitalsHighScore()}</span>
-                </div>
+            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600/20 mr-4 group-hover:bg-blue-600/30 transition-colors">
+              <Star size={20} className="text-blue-400" />
+            </div>
+            <div className="text-left">
+              <div className="text-lg font-medium text-blue-100 group-hover:text-white transition-colors">Столицы стран</div>
+              <div className="text-xs text-blue-300/80">Выберите регион для игры</div>
+            </div>
+            
+            <div className="ml-auto flex items-center">
+              <div className="text-xs text-blue-300/90 flex items-center">
+                <Trophy size={12} className="mr-1 text-amber-400" />
+                <span>Рекорд: {getCapitalsHighScore()}</span>
               </div>
             </div>
             
@@ -153,9 +154,10 @@ const MainMenu: React.FC = () => {
               </Badge>
             )}
             
-            {/* Subtle hover effects */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-600/5 to-blue-600/0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-          </div>
+            {/* Highlight effect on edges */}
+            <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </button>
         </Card>
       </div>
     </div>
