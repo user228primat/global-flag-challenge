@@ -27,14 +27,14 @@ const ReferenceTable: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto px-4">
       <div className="flex items-center justify-between mb-8">
         <button 
-          onClick={() => navigate(-1)} // Исправлено для возврата на предыдущую страницу
+          onClick={() => navigate('/')}
           className="flex items-center text-white/70 hover:text-white transition-colors"
         >
           <ArrowLeft size={20} className="mr-1" />
           <span>Назад</span>
         </button>
         
-        <h1 className="text-xl font-medium text-white text-shadow">
+        <h1 className="text-xl font-medium text-white text-shadow animate-fade-in">
           {displayName}
         </h1>
       </div>
@@ -63,10 +63,15 @@ const ReferenceTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredCountries.map((country) => (
+              {filteredCountries.map((country, index) => (
                 <tr 
                   key={country.name} 
                   className="border-b border-white/10 hover:bg-white/5 transition-colors"
+                  style={{ 
+                    opacity: 0,
+                    animation: 'fade-in 0.3s ease-out forwards',
+                    animationDelay: `${index * 0.03}s` 
+                  }}
                 >
                   <td className="p-4">
                     <div className="w-12 h-8 overflow-hidden rounded">

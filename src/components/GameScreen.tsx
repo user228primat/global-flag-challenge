@@ -39,11 +39,6 @@ const GameScreen: React.FC = () => {
     navigate('/');
   };
   
-  const handleGoBack = () => {
-    resetGame();
-    navigate(-1); // Исправлено для возврата на предыдущую страницу
-  };
-  
   const checkForCategoryCompletion = () => {
     if (!currentCategory) return false;
     
@@ -200,10 +195,10 @@ const GameScreen: React.FC = () => {
   const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4 pb-8 pt-6">
+    <div className="w-full max-w-xl mx-auto px-4 pb-8">
       <div className="flex items-center justify-between mb-6">
         <button 
-          onClick={handleGoBack}
+          onClick={handleExit}
           className="flex items-center text-white/70 hover:text-white transition-colors"
         >
           <ArrowLeft size={20} className="mr-1" />

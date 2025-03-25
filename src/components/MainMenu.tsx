@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryButton from './CategoryButton';
 import { categoryDisplayNames, categoryGroups, gameCategories } from '../data';
@@ -8,15 +8,11 @@ import { CategoryId } from '../types';
 import { Globe, Trophy, Award, Star, Map, BookOpen } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const MainMenu: React.FC = () => {
   const navigate = useNavigate();
   const { gameStats, startGame, viewReference } = useGameContext();
-  
-  // Сбрасываем позицию скролла при загрузке компонента
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   
   const handleCategoryClick = (categoryId: CategoryId) => {
     if (categoryId === 'capitals') {
@@ -57,10 +53,10 @@ const MainMenu: React.FC = () => {
 
   return (
     <div className="w-full max-w-xl mx-auto px-4 py-6 min-h-screen">
-      <div className="mb-8 text-center p-8 rounded-2xl bg-gradient-to-br from-[#2D3748]/80 to-[#1A202C]/70 backdrop-blur-md border border-slate-800/50 shadow-xl">
+      <div className="mb-8 text-center p-8 rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-950/70 backdrop-blur-md border border-slate-800/50 shadow-xl animate-fade-in">
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-blue-700/10 blur-xl"></div>
-          <Globe size={70} className="mx-auto mb-6 text-blue-500 relative z-10" />
+          <Globe size={70} className="mx-auto mb-6 text-blue-500 animate-float relative z-10" />
         </div>
         <h1 className="text-4xl font-bold mb-2 text-blue-50 text-shadow">
           Флаги Мира
@@ -70,8 +66,8 @@ const MainMenu: React.FC = () => {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 gap-6">
-        <Card className="rounded-xl p-6 border-slate-800/50 bg-gradient-to-br from-[#2D3748]/90 to-[#1A202C]/80 backdrop-blur-sm shadow-xl">
+      <div className="grid grid-cols-1 gap-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+        <Card className="rounded-xl p-6 border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80 backdrop-blur-sm shadow-xl">
           <h2 className="text-xl font-semibold mb-4 text-blue-100 flex items-center">
             <Trophy size={20} className="mr-2 text-amber-400" />
             По сложности
@@ -82,7 +78,7 @@ const MainMenu: React.FC = () => {
               const totalCount = gameCategories[categoryId as CategoryId].count;
               
               return (
-                <div key={categoryId}>
+                <div key={categoryId} className="animate-fade-in" style={{ animationDelay: `${0.2 + index * 0.1}s` }}>
                   <CategoryButton
                     categoryId={categoryId as CategoryId}
                     onClick={() => handleCategoryClick(categoryId as CategoryId)}
@@ -98,7 +94,7 @@ const MainMenu: React.FC = () => {
           </div>
         </Card>
         
-        <Card className="rounded-xl p-6 border-slate-800/50 bg-gradient-to-br from-[#2D3748]/90 to-[#1A202C]/80 backdrop-blur-sm shadow-xl">
+        <Card className="rounded-xl p-6 border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80 backdrop-blur-sm shadow-xl animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <h2 className="text-xl font-semibold mb-4 text-blue-100 flex items-center">
             <Map size={20} className="mr-2 text-blue-500" />
             По регионам
@@ -109,7 +105,7 @@ const MainMenu: React.FC = () => {
               const totalCount = gameCategories[categoryId as CategoryId].count;
               
               return (
-                <div key={categoryId}>
+                <div key={categoryId} className="animate-fade-in" style={{ animationDelay: `${0.4 + index * 0.1}s` }}>
                   <CategoryButton
                     categoryId={categoryId as CategoryId}
                     onClick={() => handleCategoryClick(categoryId as CategoryId)}
@@ -124,30 +120,36 @@ const MainMenu: React.FC = () => {
           </div>
         </Card>
         
-        <Card className="rounded-xl p-6 border-slate-800/50 bg-gradient-to-br from-[#2D3748]/90 to-[#1A202C]/80 backdrop-blur-sm shadow-xl">
+        <Card className="rounded-xl p-6 border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80 backdrop-blur-sm shadow-xl animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <h2 className="text-xl font-semibold mb-4 text-blue-100 flex items-center">
             <Award size={20} className="mr-2 text-blue-500" />
             Столицы
           </h2>
-          <button 
+          <Button
             onClick={() => navigate('/capitals')}
-            className="glass-dark w-full p-5 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group relative overflow-hidden border border-slate-800/50 shadow-lg"
+            variant="ghost"
+            className="w-full text-left p-4 rounded-xl transition-all duration-300 
+                    hover:border-blue-900 hover:bg-slate-800/50 group relative 
+                    border border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80
+                    backdrop-blur-sm shadow-lg"
           >
-            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600/20 mr-4 group-hover:bg-blue-600/30 transition-colors">
-              <Star size={20} className="text-blue-400" />
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-medium text-blue-100 group-hover:text-white transition-colors">Столицы стран</span>
+              <Star size={20} className="text-amber-400" />
             </div>
-            <div className="text-left">
-              <div className="text-lg font-medium text-blue-100 group-hover:text-white transition-colors">Столицы стран</div>
-              <div className="text-xs text-blue-300/80">Выберите регион для игры</div>
-            </div>
-            
-            <div className="ml-auto flex items-center">
-              <div className="text-xs text-blue-300/90 flex items-center">
-                <Trophy size={12} className="mr-1 text-amber-400" />
-                <span>Рекорд: {getCapitalsHighScore()}</span>
+            <div className="flex items-center mt-2 text-sm text-blue-300/90 z-10 relative">
+              <div className="flex items-center">
+                <span>Выберите регион для игры со столицами</span>
               </div>
             </div>
-            
+            {getCapitalsHighScore() > 0 && (
+              <div className="mt-2 text-xs text-blue-400/80">
+                <span className="flex items-center">
+                  <Trophy size={12} className="mr-1 text-amber-400" />
+                  Лучший результат: {getCapitalsHighScore()}
+                </span>
+              </div>
+            )}
             {isCapitalsComplete() && (
               <Badge variant="default" className="absolute top-2 right-2 bg-green-600/80 hover:bg-green-600/80 px-2 py-1 text-xs">
                 ✓ Завершено
@@ -157,7 +159,10 @@ const MainMenu: React.FC = () => {
             {/* Highlight effect on edges */}
             <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          </button>
+            
+            {/* Hover effect */}
+            <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+          </Button>
         </Card>
       </div>
     </div>

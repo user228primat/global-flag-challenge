@@ -1,15 +1,10 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import MainMenu from '../components/MainMenu';
 
 const Index = () => {
-  // Reset scroll position when component mounts
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A202C] to-[#2D3748] pb-16 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-deep pb-16 relative overflow-hidden">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/5 via-slate-900/0 to-transparent pointer-events-none"></div>
       
