@@ -4,7 +4,7 @@ import GameScreen from '../components/GameScreen';
 
 const CapitalsGame = () => {
   return (
-    <div className="min-h-screen bg-gradient-game pb-16 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 pb-16 relative overflow-hidden">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/5 via-slate-900/0 to-transparent pointer-events-none"></div>
       
