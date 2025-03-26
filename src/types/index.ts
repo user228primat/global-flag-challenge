@@ -1,4 +1,3 @@
-
 export interface Country {
   name: string;
   capital: string;
@@ -39,12 +38,13 @@ export interface GameContextType {
   isGameOver: boolean;
   currentScore: number;
   setCurrentCategory: (category: CategoryId | null) => void;
-  setLives: (lives: number) => void;
-  setIsPlaying: (isPlaying: boolean) => void;
-  setIsGameOver: (isGameOver: boolean) => void;
+  setLives: React.Dispatch<React.SetStateAction<number>>;
+  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   incrementScore: (category: CategoryId) => void;
   resetGame: () => void;
   startGame: (category: CategoryId) => void;
   viewReference: (category: CategoryId) => void;
   markCategoryComplete: (category: CategoryId) => void;
+  showRewardedAd: () => Promise<boolean>;
 }

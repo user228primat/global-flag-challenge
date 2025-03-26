@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CategoryId, GameContextType, GameStats } from '../types';
 import { gameCategories } from '../data';
+import YandexGamesSDK from '../services/YandexGamesSDK';
 
 // Initial game stats for all categories
 const initialGameStats: Record<CategoryId, GameStats> = {
@@ -35,6 +36,7 @@ const GameContext = createContext<GameContextType>({
   startGame: () => {},
   viewReference: () => {},
   markCategoryComplete: () => {},
+  showRewardedAd: () => Promise.resolve(false),
 });
 
 // Custom hook to use the game context
@@ -72,11 +74,67 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
+  const [isSDKInitialized, setIsSDKInitialized] = useState(false);
+  
+  // Initialize Yandex Games SDK
+  useEffect(() => {
+    const yaSdk = YandexGamesSDK.getInstance();
+    yaSdk.init().then(initialized => {
+      setIsSDKInitialized(initialized);
+      
+      // If SDK initialized, try to load progress from Yandex cloud
+      if (initialized) {
+        yaSdk.loadProgress().then(progress => {
+          if (progress && progress.gameStats) {
+            // Load game stats from Yandex cloud storage
+            setGameStats(prev => {
+              const newStats = { ...prev };
+              // Only copy valid categories
+              Object.keys(initialGameStats).forEach(key => {
+                if (progress.gameStats[key]) {
+                  newStats[key as CategoryId] = progress.gameStats[key];
+                }
+              });
+              return newStats;
+            });
+          }
+        });
+      }
+    });
+  }, []);
 
-  // Save game stats to localStorage whenever they change
+  // Save game stats to localStorage and Yandex cloud whenever they change
   useEffect(() => {
     localStorage.setItem('flagGameStats', JSON.stringify(gameStats));
-  }, [gameStats]);
+    
+    // Save to Yandex cloud if SDK is initialized
+    if (isSDKInitialized) {
+      const yaSdk = YandexGamesSDK.getInstance();
+      yaSdk.saveProgress({
+        gameStats: gameStats,
+        highScores: Object.entries(gameStats).reduce((acc, [key, value]) => {
+          acc[key] = value.highScore;
+          return acc;
+        }, {} as Record<string, number>)
+      });
+    }
+  }, [gameStats, isSDKInitialized]);
+
+  // Show rewarded ad and restore one life if ad is watched
+  const showRewardedAd = async (): Promise<boolean> => {
+    if (!isSDKInitialized) {
+      console.warn('SDK not initialized, cannot show rewarded ad');
+      return false;
+    }
+    
+    const yaSdk = YandexGamesSDK.getInstance();
+    return await yaSdk.showRewardedAd(() => {
+      // Player got the reward - restore one life
+      setLives(prev => prev + 1);
+      // Resume game
+      setIsGameOver(false);
+    });
+  };
 
   // Mark a category as complete
   const markCategoryComplete = (category: CategoryId) => {
@@ -181,6 +239,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         startGame,
         viewReference,
         markCategoryComplete,
+        showRewardedAd,
       }}
     >
       {children}

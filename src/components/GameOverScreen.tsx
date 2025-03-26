@@ -1,7 +1,8 @@
 
-import React from 'react';
-import { Trophy, ArrowLeft, RefreshCw, Award, Star } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Trophy, ArrowLeft, RefreshCw, Award, Star, Play } from 'lucide-react';
 import { useGameContext } from '../contexts/GameContext';
+import YandexGamesSDK from '../services/YandexGamesSDK';
 
 interface GameOverScreenProps {
   score: number;
@@ -14,9 +15,20 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
   onExit, 
   onRestart 
 }) => {
-  const { currentCategory, gameStats } = useGameContext();
+  const { currentCategory, gameStats, showRewardedAd } = useGameContext();
   const isHighScore = currentCategory ? score > gameStats[currentCategory].highScore : false;
   const isCategoryCompleted = currentCategory ? gameStats[currentCategory].isComplete : false;
+
+  // Show fullscreen ad when game over screen appears
+  useEffect(() => {
+    const yaSdk = YandexGamesSDK.getInstance();
+    yaSdk.showFullscreenAd();
+  }, []);
+
+  // Handle continue with rewarded ad
+  const handleContinueWithAd = async () => {
+    await showRewardedAd();
+  };
 
   return (
     <div className="w-full max-w-xl mx-auto px-4 flex flex-col items-center justify-center min-h-[70vh]">
@@ -60,6 +72,20 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
             {/* Highlight effect on edges */}
             <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </button>
+          
+          {/* Continue with Ad button */}
+          <button
+            onClick={handleContinueWithAd}
+            className="glass-dark px-6 py-3 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-green-800/50 relative group bg-green-900/30 border border-green-800/40"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-transparent opacity-50 rounded-xl"></div>
+            <Play size={20} className="mr-2 text-green-400" />
+            <span className="relative z-10">Продолжить за рекламу</span>
+            
+            {/* Highlight effect on edges */}
+            <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-green-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </button>
           
           <button
