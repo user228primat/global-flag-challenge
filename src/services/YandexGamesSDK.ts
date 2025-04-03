@@ -8,6 +8,7 @@ class YandexGamesSDK {
   private static instance: YandexGamesSDK;
   private ysdk: any = null;
   private isInitialized: boolean = false;
+  private initAttempted: boolean = false;
 
   private constructor() {}
 
@@ -25,9 +26,17 @@ class YandexGamesSDK {
    * Initialize the Yandex Games SDK
    */
   public async init(): Promise<boolean> {
+    // Prevent multiple attempts if first one is in progress
+    if (this.initAttempted) {
+      return this.isInitialized;
+    }
+    
+    this.initAttempted = true;
+    
     try {
       // Check if YaGames is available in window
       if (typeof window !== 'undefined' && 'YaGames' in window) {
+        console.log('Attempting to initialize Yandex Games SDK...');
         // @ts-ignore
         this.ysdk = await window.YaGames.init();
         this.isInitialized = true;
@@ -53,8 +62,9 @@ class YandexGamesSDK {
     }
 
     try {
+      console.log('Attempting to show fullscreen ad...');
       await this.ysdk.adv.showFullscreenAdv();
-      console.log('Fullscreen ad shown');
+      console.log('Fullscreen ad shown successfully');
     } catch (error) {
       console.error('Error showing fullscreen ad:', error);
     }
@@ -72,6 +82,7 @@ class YandexGamesSDK {
     }
 
     try {
+      console.log('Attempting to show rewarded ad...');
       const result = await this.ysdk.adv.showRewardedVideo({
         callbacks: {
           onRewarded: () => {
@@ -106,6 +117,7 @@ class YandexGamesSDK {
     }
 
     try {
+      console.log('Saving progress to Yandex cloud storage:', data);
       await this.ysdk.getStorage().set('player_progress', data);
       console.log('Progress saved to Yandex.Games cloud');
       return true;
