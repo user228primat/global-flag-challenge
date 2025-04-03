@@ -17,8 +17,11 @@
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Настройка base URL для корректной маршрутизации в хеш-режиме -->
-    <base href="/" />
+    <!-- Исправленный base тег для Яндекс.Игр -->
+    <base href="./" />
+    
+    <!-- Прелоад критически важных ресурсов -->
+    <link rel="preload" href="https://yandex.ru/games/sdk/v2" as="script" />
   </head>
 
   <body>
@@ -27,6 +30,12 @@
     <script src="https://yandex.ru/games/sdk/v2"></script>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <!-- Добавляем небольшую задержку для инициализации Yandex SDK -->
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM полностью загружен, запускаем игру');
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

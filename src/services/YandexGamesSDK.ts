@@ -10,6 +10,7 @@ class YandexGamesSDK {
   private isInitialized: boolean = false;
   private initAttempted: boolean = false;
   private initError: string | null = null;
+  private initPromise: Promise<boolean> | null = null;
 
   private constructor() {}
 
@@ -41,42 +42,87 @@ class YandexGamesSDK {
    * Initialize the Yandex Games SDK
    */
   public async init(): Promise<boolean> {
+    // Если инициализация уже запущена, возвращаем существующий промис
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+    
+    // Создаем новый промис для инициализации
+    this.initPromise = this.initializeSDK();
+    return this.initPromise;
+  }
+
+  private async initializeSDK(): Promise<boolean> {
     // Сбрасываем ошибку перед попыткой инициализации
     this.initError = null;
     
-    // Prevent multiple attempts if first one is in progress
-    if (this.initAttempted) {
-      console.log('SDK initialization already attempted, status:', this.isInitialized);
-      return this.isInitialized;
+    // Предотвращаем повторную попытку
+    if (this.initAttempted && this.isInitialized) {
+      console.log('SDK уже инициализирован');
+      return true;
     }
     
     this.initAttempted = true;
     
     try {
-      console.log('Environment check:', {
+      console.log('Проверка окружения:', {
         isWindow: typeof window !== 'undefined',
         hasYaGames: typeof window !== 'undefined' && 'YaGames' in window,
         location: window.location.href,
+        hash: window.location.hash,
         pathname: window.location.pathname
       });
       
-      // Check if YaGames is available in window
+      // Проверяем наличие YaGames в window
       if (typeof window !== 'undefined' && 'YaGames' in window) {
-        console.log('Attempting to initialize Yandex Games SDK...');
-        // @ts-ignore
-        this.ysdk = await window.YaGames.init();
-        this.isInitialized = true;
-        console.log('Yandex Games SDK initialized successfully');
-        return true;
+        // Устанавливаем таймаут на инициализацию для отлова зависаний
+        const initTimeout = new Promise<false>((resolve) => {
+          setTimeout(() => {
+            this.initError = 'Превышено время ожидания инициализации Yandex SDK';
+            console.warn('Timeout exceeded for YaGames initialization');
+            resolve(false);
+          }, 10000);
+        });
+        
+        // Пытаемся инициализировать SDK
+        console.log('Попытка инициализации Yandex Games SDK...');
+        
+        // Создаем обещание для инициализации SDK
+        const initPromise = new Promise<boolean>(async (resolve) => {
+          try {
+            // @ts-ignore
+            this.ysdk = await window.YaGames.init();
+            this.isInitialized = true;
+            console.log('Yandex Games SDK инициализирован успешно');
+            resolve(true);
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
+            this.initError = errorMessage;
+            console.error('Ошибка инициализации Yandex Games SDK:', error);
+            resolve(false);
+          }
+        });
+        
+        // Race между инициализацией и таймаутом
+        return Promise.race([initPromise, initTimeout]);
       } else {
         this.initError = 'YaGames не найден в глобальном объекте window';
-        console.warn('YaGames is not available - running outside of Yandex Games environment');
+        console.warn('YaGames недоступен - приложение запущено вне среды Яндекс.Игр');
+        
+        // В режиме разработки считаем это нормальным
+        if (import.meta.env.DEV) {
+          console.info('Режим разработки: эмулируем успешную инициализацию SDK');
+          setTimeout(() => {
+            console.log('DEV: Эмулируем успешную инициализацию в течение 1 секунды');
+          }, 1000);
+        }
+        
         return false;
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
       this.initError = errorMessage;
-      console.error('Failed to initialize Yandex Games SDK:', error);
+      console.error('Критическая ошибка при инициализации Yandex Games SDK:', error);
       return false;
     }
   }
@@ -86,16 +132,16 @@ class YandexGamesSDK {
    */
   public async showFullscreenAd(): Promise<void> {
     if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK not initialized, cannot show fullscreen ad');
+      console.warn('SDK не инициализирован, невозможно показать полноэкранную рекламу');
       return;
     }
 
     try {
-      console.log('Attempting to show fullscreen ad...');
+      console.log('Попытка показать полноэкранную рекламу...');
       await this.ysdk.adv.showFullscreenAdv();
-      console.log('Fullscreen ad shown successfully');
+      console.log('Полноэкранная реклама успешно показана');
     } catch (error) {
-      console.error('Error showing fullscreen ad:', error);
+      console.error('Ошибка показа полноэкранной рекламы:', error);
     }
   }
 
@@ -106,31 +152,31 @@ class YandexGamesSDK {
    */
   public async showRewardedAd(onRewarded: () => void): Promise<boolean> {
     if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK not initialized, cannot show rewarded ad');
+      console.warn('SDK не инициализирован, невозможно показать рекламу с вознаграждением');
       return false;
     }
 
     try {
-      console.log('Attempting to show rewarded ad...');
+      console.log('Попытка показать рекламу с вознаграждением...');
       const result = await this.ysdk.adv.showRewardedVideo({
         callbacks: {
           onRewarded: () => {
-            console.log('Rewarded ad completed, giving reward');
+            console.log('Реклама с вознаграждением завершена, выдаем награду');
             onRewarded();
             return true;
           },
           onClose: () => {
-            console.log('Rewarded ad closed without reward');
+            console.log('Реклама с вознаграждением закрыта без награды');
           },
           onError: (error: any) => {
-            console.error('Rewarded ad error:', error);
+            console.error('Ошибка показа рекламы с вознаграждением:', error);
           }
         }
       });
       
       return result && result.rewarded;
     } catch (error) {
-      console.error('Error showing rewarded ad:', error);
+      console.error('Ошибка показа рекламы с вознаграждением:', error);
       return false;
     }
   }
@@ -141,17 +187,17 @@ class YandexGamesSDK {
    */
   public async saveProgress(data: PlayerProgress): Promise<boolean> {
     if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK not initialized, cannot save progress');
+      console.warn('SDK не инициализирован, невозможно сохранить прогресс');
       return false;
     }
 
     try {
-      console.log('Saving progress to Yandex cloud storage:', data);
+      console.log('Сохранение прогресса в облачное хранилище Яндекса:', data);
       await this.ysdk.getStorage().set('player_progress', data);
-      console.log('Progress saved to Yandex.Games cloud');
+      console.log('Прогресс сохранен в облачное хранилище Яндекс.Игр');
       return true;
     } catch (error) {
-      console.error('Error saving progress:', error);
+      console.error('Ошибка сохранения прогресса:', error);
       return false;
     }
   }
@@ -162,16 +208,16 @@ class YandexGamesSDK {
    */
   public async loadProgress(): Promise<PlayerProgress | null> {
     if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK not initialized, cannot load progress');
+      console.warn('SDK не инициализирован, невозможно загрузить прогресс');
       return null;
     }
 
     try {
       const data = await this.ysdk.getStorage().get('player_progress');
-      console.log('Progress loaded from Yandex.Games cloud:', data);
+      console.log('Прогресс загружен из облачного хранилища Яндекс.Игр:', data);
       return data as PlayerProgress;
     } catch (error) {
-      console.error('Error loading progress:', error);
+      console.error('Ошибка загрузки прогресса:', error);
       return null;
     }
   }

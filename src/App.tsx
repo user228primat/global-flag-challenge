@@ -19,10 +19,20 @@ import { toast } from "./components/ui/use-toast";
 
 const queryClient = new QueryClient();
 
+// Компонент загрузки, который отображается до инициализации приложения
+const LoadingScreen = () => (
+  <div className="fixed inset-0 bg-gradient-deep flex flex-col items-center justify-center">
+    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+    <h2 className="text-2xl font-bold text-white mb-2">Загрузка...</h2>
+    <p className="text-white/70">Инициализация Global Flag Challenge</p>
+  </div>
+);
+
 const App = () => {
   const [sdkInitialized, setSdkInitialized] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Попытка инициализации Yandex SDK при загрузке приложения
+  // Инициализация Yandex SDK при загрузке приложения
   useEffect(() => {
     const initializeSDK = async () => {
       try {
@@ -44,14 +54,25 @@ const App = () => {
             });
           }
         }
+
+        // Независимо от результата инициализации SDK, после таймаута показываем приложение
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       } catch (error) {
         console.error("Error initializing SDK:", error);
         setSdkInitialized(false);
+        setLoading(false);
       }
     };
 
     initializeSDK();
   }, []);
+
+  // Показываем экран загрузки, пока SDK инициализируется
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
