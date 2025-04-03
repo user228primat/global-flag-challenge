@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GameProvider } from "./contexts/GameContext";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
@@ -31,6 +31,7 @@ const LoadingScreen = () => (
 const App = () => {
   const [sdkInitialized, setSdkInitialized] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [imagesPreloaded, setImagesPreloaded] = useState<boolean>(false);
 
   // Инициализация Yandex SDK при загрузке приложения
   useEffect(() => {
@@ -55,15 +56,66 @@ const App = () => {
           }
         }
 
+        // Предзагружаем необходимые изображения для обложек регионов
+        preloadRegionImages();
+
         // Независимо от результата инициализации SDK, после таймаута показываем приложение
         setTimeout(() => {
           setLoading(false);
-        }, 1000);
+        }, 1500);
       } catch (error) {
         console.error("Error initializing SDK:", error);
         setSdkInitialized(false);
         setLoading(false);
       }
+    };
+
+    // Предзагрузка изображений регионов
+    const preloadRegionImages = () => {
+      const regionImages = [
+        '/images/regions/europe.jpg',
+        '/images/regions/asia.jpg',
+        '/images/regions/north-america.jpg',
+        '/images/regions/south-america.jpg',
+        '/images/regions/africa.jpg',
+        '/images/regions/australia.jpg',
+        '/images/regions/level1.jpg',
+        '/images/regions/level2.jpg',
+        '/images/regions/level3.jpg',
+        '/images/regions/world.jpg',
+        '/images/regions/capitals.jpg',
+        '/images/regions/fallback.jpg'
+      ];
+      
+      let loadedCount = 0;
+      regionImages.forEach(src => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          console.log(`Preloaded image: ${src}`);
+          if (loadedCount === regionImages.length) {
+            setImagesPreloaded(true);
+            console.log('All region images preloaded successfully');
+          }
+        };
+        img.onerror = () => {
+          loadedCount++;
+          console.error(`Failed to preload image: ${src}`);
+          if (loadedCount === regionImages.length) {
+            setImagesPreloaded(true); // Все равно продолжаем
+            console.warn('Finished preloading images with some errors');
+          }
+        };
+        
+        // При загрузке в Яндекс Играх нужно использовать относительные пути
+        if (window.location.href.includes('yandex') || 
+            window.location.href.includes('games.s3') || 
+            window.location.origin.includes('app-')) {
+          img.src = `.${src}`;
+        } else {
+          img.src = src;
+        }
+      });
     };
 
     initializeSDK();
@@ -89,6 +141,8 @@ const App = () => {
               <Route path="/capitals" element={<Capitals />} />
               <Route path="/capitals/:regionId" element={<CapitalsOptions />} />
               <Route path="/capitals/game" element={<CapitalsGame />} />
+              {/* Перенаправление с Yandex Games URL параметров на главную */}
+              <Route path="/origin=*" element={<Navigate to="/" />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </HashRouter>

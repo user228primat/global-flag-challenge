@@ -2,13 +2,15 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import YandexGamesSDK from "../services/YandexGamesSDK";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, HomeIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sdkStatus, setSdkStatus] = useState<string>("Проверка...");
   const [debugInfo, setDebugInfo] = useState<string>("");
+  const [isYandexEnvironment, setIsYandexEnvironment] = useState<boolean>(false);
 
   useEffect(() => {
     console.error(
@@ -27,6 +29,11 @@ const NotFound = () => {
           ? "Yandex SDK инициализирован успешно" 
           : `Ошибка при инициализации Yandex SDK: ${sdk.getInitError() || "неизвестная ошибка"}`);
         
+        // Проверяем, находимся ли мы в окружении Яндекс.Игр
+        setIsYandexEnvironment(window.location.href.includes('yandex') || 
+                              window.location.href.includes('games.s3') || 
+                              window.location.href.includes('app-id='));
+        
         // Собираем дополнительную информацию для отладки
         setDebugInfo(`
           Текущий путь: ${location.pathname}
@@ -36,6 +43,7 @@ const NotFound = () => {
           Режим: ${import.meta.env.MODE}
           SDK Initialized: ${isInitialized}
           SDK Error: ${sdk.getInitError() || "нет"}
+          В окружении Яндекс.Игр: ${isYandexEnvironment ? "Да" : "Нет"}
         `);
       } catch (err) {
         setSdkStatus(`Ошибка SDK: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
@@ -49,6 +57,11 @@ const NotFound = () => {
     navigate('/');
   };
 
+  const handleDirectHomeClick = () => {
+    // Прямой переход на домашнюю страницу, пропуская перенаправления
+    window.location.href = window.location.origin + window.location.pathname.split('?')[0] + '#/';
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-deep p-4">
       <div className="max-w-md w-full bg-black/30 dark-blur rounded-xl p-6 text-center">
@@ -60,13 +73,26 @@ const NotFound = () => {
           <p className="text-sm bg-black/20 p-2 rounded">{sdkStatus}</p>
         </div>
         
-        <button 
-          onClick={handleReturn}
-          className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <ArrowLeft size={18} className="mr-2" />
-          Вернуться на главную
-        </button>
+        <div className="flex flex-col space-y-3">
+          <Button 
+            onClick={handleReturn}
+            className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <ArrowLeft size={18} className="mr-2" />
+            Вернуться на главную
+          </Button>
+          
+          {isYandexEnvironment && (
+            <Button 
+              onClick={handleDirectHomeClick}
+              variant="outline"
+              className="flex items-center justify-center px-6 py-3 border-blue-500 text-blue-400 rounded-lg hover:bg-blue-900/20 transition-colors"
+            >
+              <HomeIcon size={18} className="mr-2" />
+              Прямой переход на главную
+            </Button>
+          )}
+        </div>
         
         {(import.meta.env.DEV || true) && debugInfo && (
           <div className="mt-8 text-left">

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Country } from '../types';
 
 interface FlagCardProps {
@@ -9,10 +9,33 @@ interface FlagCardProps {
 
 const FlagCard: React.FC<FlagCardProps> = ({ country, isLoading = false }) => {
   const [loaded, setLoaded] = useState(false);
-  const flagUrl = `/images/${country.flagFile}`;
+  const [flagSrc, setFlagSrc] = useState('');
+  const [error, setError] = useState(false);
+  
+  useEffect(() => {
+    // Определяем, находимся ли в окружении Яндекс.Игр
+    const inYandexGames = window.location.href.includes('yandex') || 
+                          window.location.href.includes('games.s3') || 
+                          window.location.origin.includes('app-');
+    
+    // Формируем путь к флагу с учетом окружения
+    const baseImagePath = `/images/${country.flagFile}`;
+    setFlagSrc(inYandexGames ? `.${baseImagePath}` : baseImagePath);
+    
+    // При смене страны сбрасываем состояние загрузки
+    setLoaded(false);
+    setError(false);
+  }, [country.flagFile]);
   
   const handleImageLoad = () => {
     setLoaded(true);
+    setError(false);
+  };
+
+  const handleImageError = () => {
+    console.error(`Failed to load flag image: ${country.flagFile}`);
+    setError(true);
+    setLoaded(true); // Consider it "loaded" even though it errored
   };
 
   return (
@@ -24,14 +47,25 @@ const FlagCard: React.FC<FlagCardProps> = ({ country, isLoading = false }) => {
         </div>
       )}
       
+      {/* Error state */}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="text-center p-4">
+            <div className="text-red-500 text-lg mb-2">Ошибка загрузки</div>
+            <div className="text-sm text-white/70">{country.name}</div>
+          </div>
+        </div>
+      )}
+      
       {/* Flag image */}
       <img
-        src={flagUrl}
+        src={flagSrc}
         alt={`Флаг ${country.name}`}
         className={`w-full object-contain transition-opacity duration-300 ${
-          loaded ? 'opacity-100' : 'opacity-0'
+          loaded && !error ? 'opacity-100' : 'opacity-0'
         }`}
         onLoad={handleImageLoad}
+        onError={handleImageError}
       />
     </div>
   );

@@ -34,6 +34,17 @@
     <script>
       window.addEventListener('DOMContentLoaded', function() {
         console.log('DOM полностью загружен, запускаем игру');
+        
+        // Проверка и исправление путей для Yandex Games
+        window.isYandexGames = window.location.href.includes('yandex') || 
+                             window.location.href.includes('games.s3') ||
+                             window.location.origin.includes('app-');
+        
+        // Переадресация с параметров Yandex Games на корректный маршрут
+        if (window.location.pathname.includes('origin=') || window.location.pathname.includes('app-id=')) {
+          console.log('Обнаружен URL Yandex Games, перенаправление на корректный маршрут');
+          window.location.href = window.location.origin + window.location.pathname.split('?')[0] + '#/';
+        }
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>
