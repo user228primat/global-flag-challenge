@@ -9,6 +9,7 @@ class YandexGamesSDK {
   private ysdk: any = null;
   private isInitialized: boolean = false;
   private initAttempted: boolean = false;
+  private initError: string | null = null;
 
   private constructor() {}
 
@@ -23,17 +24,42 @@ class YandexGamesSDK {
   }
 
   /**
+   * Get last initialization error
+   */
+  public getInitError(): string | null {
+    return this.initError;
+  }
+
+  /**
+   * Check if SDK is initialized
+   */
+  public isSDKInitialized(): boolean {
+    return this.isInitialized;
+  }
+
+  /**
    * Initialize the Yandex Games SDK
    */
   public async init(): Promise<boolean> {
+    // Сбрасываем ошибку перед попыткой инициализации
+    this.initError = null;
+    
     // Prevent multiple attempts if first one is in progress
     if (this.initAttempted) {
+      console.log('SDK initialization already attempted, status:', this.isInitialized);
       return this.isInitialized;
     }
     
     this.initAttempted = true;
     
     try {
+      console.log('Environment check:', {
+        isWindow: typeof window !== 'undefined',
+        hasYaGames: typeof window !== 'undefined' && 'YaGames' in window,
+        location: window.location.href,
+        pathname: window.location.pathname
+      });
+      
       // Check if YaGames is available in window
       if (typeof window !== 'undefined' && 'YaGames' in window) {
         console.log('Attempting to initialize Yandex Games SDK...');
@@ -43,10 +69,13 @@ class YandexGamesSDK {
         console.log('Yandex Games SDK initialized successfully');
         return true;
       } else {
+        this.initError = 'YaGames не найден в глобальном объекте window';
         console.warn('YaGames is not available - running outside of Yandex Games environment');
         return false;
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
+      this.initError = errorMessage;
       console.error('Failed to initialize Yandex Games SDK:', error);
       return false;
     }
