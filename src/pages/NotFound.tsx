@@ -1,6 +1,6 @@
 
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useEffect } from "react-router-dom";
+import { useState } from "react";
 import YandexGamesSDK from "../services/YandexGamesSDK";
 import { ArrowLeft, HomeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,24 @@ const NotFound = () => {
       location.hash
     );
     
-    // Попытка диагностики SDK и получения статуса
+    // Check if we're in Yandex environment and redirect automatically
+    const inYandexGames = window.location.href.includes('yandex') || 
+                        window.location.href.includes('games.s3') || 
+                        window.location.href.includes('app-id=');
+    
+    setIsYandexEnvironment(inYandexGames);
+    
+    // Auto-redirect to home in Yandex Games after a short delay
+    if (inYandexGames) {
+      console.log("Detected Yandex Games environment, auto-redirecting to home page in 1 second");
+      const redirectTimer = setTimeout(() => {
+        handleDirectHomeClick();
+      }, 1000);
+      
+      return () => clearTimeout(redirectTimer);
+    }
+    
+    // Attempt SDK diagnostics and get status
     const checkSDK = async () => {
       try {
         const sdk = YandexGamesSDK.getInstance();
@@ -28,13 +45,8 @@ const NotFound = () => {
         setSdkStatus(isInitialized 
           ? "Yandex SDK инициализирован успешно" 
           : `Ошибка при инициализации Yandex SDK: ${sdk.getInitError() || "неизвестная ошибка"}`);
-        
-        // Проверяем, находимся ли мы в окружении Яндекс.Игр
-        setIsYandexEnvironment(window.location.href.includes('yandex') || 
-                              window.location.href.includes('games.s3') || 
-                              window.location.href.includes('app-id='));
-        
-        // Собираем дополнительную информацию для отладки
+                
+        // Collect additional debug info
         setDebugInfo(`
           Текущий путь: ${location.pathname}
           Хэш: ${location.hash}
@@ -51,14 +63,14 @@ const NotFound = () => {
     };
     
     checkSDK();
-  }, [location.pathname, location.hash]);
+  }, [location.pathname, location.hash, navigate]);
 
   const handleReturn = () => {
     navigate('/');
   };
 
   const handleDirectHomeClick = () => {
-    // Прямой переход на домашнюю страницу, пропуская перенаправления
+    // Direct navigation to home page, bypassing redirects
     window.location.href = window.location.origin + window.location.pathname.split('?')[0] + '#/';
   };
 

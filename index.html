@@ -17,34 +17,60 @@
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Исправленный base тег для Яндекс.Игр -->
+    <!-- Base tag for Yandex.Games -->
     <base href="./" />
     
-    <!-- Прелоад критически важных ресурсов -->
+    <!-- Preload critical resources -->
     <link rel="preload" href="https://yandex.ru/games/sdk/v2" as="script" />
   </head>
 
   <body>
     <div id="root"></div>
-    <!-- Yandex Games SDK (загружаем до остальных скриптов) -->
+    <!-- Yandex Games SDK (load before other scripts) -->
     <script src="https://yandex.ru/games/sdk/v2"></script>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <!-- Добавляем небольшую задержку для инициализации Yandex SDK -->
+    <!-- Improved script to handle Yandex Games parameters and avoid 404 page -->
     <script>
       window.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM полностью загружен, запускаем игру');
+        console.log('DOM fully loaded, starting game');
         
-        // Проверка и исправление путей для Yandex Games
+        // Check and fix paths for Yandex Games
         window.isYandexGames = window.location.href.includes('yandex') || 
-                             window.location.href.includes('games.s3') ||
-                             window.location.origin.includes('app-');
+                              window.location.href.includes('games.s3') ||
+                              window.location.origin.includes('app-');
         
-        // Переадресация с параметров Yandex Games на корректный маршрут
-        if (window.location.pathname.includes('origin=') || window.location.pathname.includes('app-id=')) {
-          console.log('Обнаружен URL Yandex Games, перенаправление на корректный маршрут');
-          window.location.href = window.location.origin + window.location.pathname.split('?')[0] + '#/';
+        // Handle URL parameters from Yandex Games and redirect to correct route
+        const redirectToHome = function() {
+          // If there's no hash or the hash doesn't start with '/#/', redirect to home
+          if (!window.location.hash || !window.location.hash.startsWith('#/')) {
+            console.log('Detected Yandex Games URL without proper hash, redirecting to home page');
+            // Use replace state to avoid browser history issues
+            window.location.replace(window.location.origin + window.location.pathname.split('?')[0] + '#/');
+            return true;
+          }
+          return false;
+        };
+        
+        // Check if URL contains Yandex-specific parameters
+        if (window.location.pathname.includes('origin=') || 
+            window.location.pathname.includes('app-id=') || 
+            window.location.search.includes('draft=true') ||
+            window.location.href.includes('app-')) {
+          redirectToHome();
         }
+        
+        // Also redirect in cases where hash contains Yandex parameters but no route
+        if (window.location.hash && window.location.hash.includes('origin=') && !window.location.hash.startsWith('#/')) {
+          redirectToHome();
+        }
+        
+        // Run another check after a short delay to ensure routing is correct
+        setTimeout(function() {
+          if (!window.location.hash || window.location.hash === '#') {
+            redirectToHome();
+          }
+        }, 500);
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>

@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { GameProvider } from "./contexts/GameContext";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
@@ -19,60 +19,30 @@ import { toast } from "./components/ui/use-toast";
 
 const queryClient = new QueryClient();
 
-// Компонент загрузки, который отображается до инициализации приложения
-const LoadingScreen = () => (
-  <div className="fixed inset-0 bg-gradient-deep flex flex-col items-center justify-center">
-    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-    <h2 className="text-2xl font-bold text-white mb-2">Загрузка...</h2>
-    <p className="text-white/70">Инициализация Global Flag Challenge</p>
-  </div>
-);
-
-const App = () => {
-  const [sdkInitialized, setSdkInitialized] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [imagesPreloaded, setImagesPreloaded] = useState<boolean>(false);
-
-  // Инициализация Yandex SDK при загрузке приложения
+// Component for auto-redirecting from problematic paths
+const RedirectHandler = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   useEffect(() => {
-    const initializeSDK = async () => {
-      try {
-        console.log("Initializing Yandex Games SDK...");
-        const sdk = YandexGamesSDK.getInstance();
-        const initialized = await sdk.init();
-        setSdkInitialized(initialized);
-        
-        if (initialized) {
-          console.log("Yandex Games SDK initialized successfully");
-        } else {
-          console.warn("Failed to initialize Yandex Games SDK", sdk.getInitError());
-          // Показываем уведомление только в dev режиме
-          if (import.meta.env.DEV) {
-            toast({
-              title: "Предупреждение",
-              description: `SDK Яндекс.Игр не инициализирован: ${sdk.getInitError() || 'неизвестная ошибка'}`,
-              variant: "destructive",
-            });
-          }
-        }
+    // Handle special cases for Yandex Games URLs
+    if (location.pathname.includes('origin=') || 
+        location.pathname.includes('app-id=') ||
+        location.search.includes('draft=true') ||
+        (location.hash && location.hash.includes('origin='))) {
+      console.log('Redirecting from problematic path to home page');
+      navigate('/', { replace: true });
+    }
+  }, [location, navigate]);
+  
+  return null;
+};
 
-        // Предзагружаем необходимые изображения для обложек регионов
-        preloadRegionImages();
-
-        // Независимо от результата инициализации SDK, после таймаута показываем приложение
-        setTimeout(() => {
-          setLoading(false);
-        }, 1500);
-      } catch (error) {
-        console.error("Error initializing SDK:", error);
-        setSdkInitialized(false);
-        setLoading(false);
-      }
-    };
-
-    // Предзагрузка изображений регионов
-    const preloadRegionImages = () => {
-      const regionImages = [
+// Component to preload critical resources
+const ResourcePreloader = () => {
+  useEffect(() => {
+    const preloadImages = () => {
+      const imagesToPreload = [
         '/images/regions/europe.jpg',
         '/images/regions/asia.jpg',
         '/images/regions/north-america.jpg',
@@ -86,42 +56,90 @@ const App = () => {
         '/images/regions/capitals.jpg',
         '/images/regions/fallback.jpg'
       ];
-      
-      let loadedCount = 0;
-      regionImages.forEach(src => {
+
+      // Detect if we're in Yandex Games environment
+      const inYandexGames = window.location.href.includes('yandex') || 
+                          window.location.href.includes('games.s3') || 
+                          window.location.origin.includes('app-');
+                          
+      imagesToPreload.forEach(imagePath => {
         const img = new Image();
-        img.onload = () => {
-          loadedCount++;
-          console.log(`Preloaded image: ${src}`);
-          if (loadedCount === regionImages.length) {
-            setImagesPreloaded(true);
-            console.log('All region images preloaded successfully');
-          }
-        };
-        img.onerror = () => {
-          loadedCount++;
-          console.error(`Failed to preload image: ${src}`);
-          if (loadedCount === regionImages.length) {
-            setImagesPreloaded(true); // Все равно продолжаем
-            console.warn('Finished preloading images with some errors');
-          }
-        };
-        
-        // При загрузке в Яндекс Играх нужно использовать относительные пути
-        if (window.location.href.includes('yandex') || 
-            window.location.href.includes('games.s3') || 
-            window.location.origin.includes('app-')) {
-          img.src = `.${src}`;
-        } else {
-          img.src = src;
-        }
+        img.src = inYandexGames ? `.${imagePath}` : imagePath;
+        console.log(`Preloading image: ${img.src}`);
       });
+    };
+    
+    preloadImages();
+  }, []);
+  
+  return null;
+};
+
+// Loading screen component
+const LoadingScreen = () => (
+  <div className="fixed inset-0 bg-gradient-deep flex flex-col items-center justify-center">
+    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+    <h2 className="text-2xl font-bold text-white mb-2">Загрузка...</h2>
+    <p className="text-white/70">Инициализация Global Flag Challenge</p>
+  </div>
+);
+
+const App = () => {
+  const [sdkInitialized, setSdkInitialized] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Initialize Yandex SDK when app loads
+  useEffect(() => {
+    const initializeSDK = async () => {
+      try {
+        console.log("Initializing Yandex Games SDK...");
+        const sdk = YandexGamesSDK.getInstance();
+        const initialized = await sdk.init();
+        setSdkInitialized(initialized);
+        
+        if (initialized) {
+          console.log("Yandex Games SDK initialized successfully");
+        } else {
+          console.warn("Failed to initialize Yandex Games SDK", sdk.getInitError());
+          // Show notification only in dev mode
+          if (import.meta.env.DEV) {
+            toast({
+              title: "Предупреждение",
+              description: `SDK Яндекс.Игр не инициализирован: ${sdk.getInitError() || 'неизвестная ошибка'}`,
+              variant: "destructive",
+            });
+          }
+        }
+
+        // Show app after a short timeout regardless of SDK initialization result
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      } catch (error) {
+        console.error("Error initializing SDK:", error);
+        setSdkInitialized(false);
+        setLoading(false);
+      }
     };
 
     initializeSDK();
+    
+    // Check for empty hash or problematic paths and redirect
+    const redirectIfNeeded = () => {
+      const isYandexGames = window.location.href.includes('yandex') || 
+                            window.location.href.includes('games.s3') || 
+                            window.location.origin.includes('app-');
+      
+      if (isYandexGames && (!window.location.hash || window.location.hash === '#')) {
+        console.log('No hash detected, setting default route');
+        window.location.replace(window.location.origin + window.location.pathname.split('?')[0] + '#/');
+      }
+    };
+    
+    redirectIfNeeded();
   }, []);
 
-  // Показываем экран загрузки, пока SDK инициализируется
+  // Show loading screen while SDK initializes
   if (loading) {
     return <LoadingScreen />;
   }
@@ -133,6 +151,8 @@ const App = () => {
           <Toaster />
           <Sonner />
           <HashRouter>
+            <RedirectHandler />
+            <ResourcePreloader />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/game" element={<Game />} />
@@ -141,9 +161,18 @@ const App = () => {
               <Route path="/capitals" element={<Capitals />} />
               <Route path="/capitals/:regionId" element={<CapitalsOptions />} />
               <Route path="/capitals/game" element={<CapitalsGame />} />
-              {/* Перенаправление с Yandex Games URL параметров на главную */}
-              <Route path="/origin=*" element={<Navigate to="/" />} />
-              <Route path="*" element={<NotFound />} />
+              {/* Automatically redirect Yandex Games URL parameters to home */}
+              <Route path="/origin=*" element={<Navigate to="/" replace />} />
+              <Route path="/app-id=*" element={<Navigate to="/" replace />} />
+              <Route path="/draft=*" element={<Navigate to="/" replace />} />
+              {/* Redirect all other unknown routes to home page for Yandex Games environment */}
+              <Route path="*" element={
+                window.location.href.includes('yandex') || 
+                window.location.href.includes('games.s3') || 
+                window.location.origin.includes('app-') 
+                  ? <Navigate to="/" replace /> 
+                  : <NotFound />
+              } />
             </Routes>
           </HashRouter>
         </GameProvider>
