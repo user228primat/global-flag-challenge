@@ -1,67 +1,24 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
+    --background: 0 0% 5.1%; /* #0D0D0D */
     --foreground: 0 0% 98%;
-    --card: 224 50% 8%;
+    --card: 0 0% 10.6%; /* #1B1B1B */
     --card-foreground: 0 0% 98%;
-    --popover: 224 50% 8%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 226 70% 55%;
+    --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 224 50% 12%;
+    --secondary: 0 0% 10.6%; /* #1B1B1B */
     --secondary-foreground: 0 0% 98%;
-    --muted: 224 50% 12%;
-    --muted-foreground: 215 16% 65%;
-    --accent: 226 70% 55%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 224 50% 12%;
-    --input: 224 50% 12%;
-    --ring: 226 70% 40%;
-    --radius: 0.75rem;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border selection:bg-primary/20 selection:text-white;
-  }
-  
   body {
     @apply bg-background text-foreground antialiased overflow-x-hidden;
-    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
-    background: linear-gradient(135deg, #1a1d2a 0%, #121420 100%);
-    min-height: 100vh;
+    background: linear-gradient(135deg, #0D0D0D 0%, #121212 100%);
     background-attachment: fixed;
-  }
-
-  html {
-    @apply scroll-smooth;
-  }
-  
-  /* Улучшенные стили для полосы прокрутки */
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: rgba(99, 102, 241, 0.5);
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 102, 241, 0.7);
+    min-height: 100vh;
   }
 }
 
@@ -190,7 +147,7 @@
   }
   
   .glass-dark {
-    @apply bg-black/60 backdrop-blur-lg border border-white/5 shadow-xl;
+    @apply bg-[#1B1B1B]/80 backdrop-blur-xl border border-white/5 shadow-2xl;
   }
   
   .glass-card {
@@ -248,5 +205,34 @@
 
   .border-glow {
     @apply border border-indigo-500/20 shadow-[0_0_15px_rgba(79,70,229,0.3)];
+  }
+
+  .elegant-gradient {
+    background: linear-gradient(
+      135deg, 
+      rgba(27, 27, 27, 0.9) 0%, 
+      rgba(21, 21, 21, 0.95) 100%
+    );
+  }
+
+  .subtle-shadow {
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.2),
+      0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .glow-effect {
+    @apply transition-all duration-300 
+    hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] 
+    hover:scale-[1.02];
+  }
+
+  .border-gradient {
+    border: 1px solid transparent;
+    border-image: linear-gradient(
+      to right, 
+      rgba(255, 255, 255, 0.1), 
+      rgba(255, 255, 255, 0.05)
+    ) 1;
   }
 }
