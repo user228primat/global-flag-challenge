@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import MainMenu from '../components/MainMenu';
+import { Globe } from 'lucide-react';
 
 const Index = () => {
   // Reset scroll position when page loads
