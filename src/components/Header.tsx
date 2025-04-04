@@ -14,13 +14,16 @@ const Header: React.FC = () => {
   };
   
   return (
-    <header className="w-full glass px-4 py-3 flex items-center justify-between mb-6">
+    <header className="w-full glass-dark px-4 py-3 flex items-center justify-between mb-6">
       <button 
         onClick={handleHomeClick}
-        className="flex items-center gap-2 text-white font-semibold transition-all duration-300 hover:text-primary"
+        className="flex items-center gap-2 text-white font-semibold transition-all duration-300 hover:text-indigo-400"
       >
-        <Globe size={28} className="text-primary animate-pulse-slow" />
-        <span className="text-xl tracking-tight">Флаги Мира</span>
+        <div className="relative">
+          <div className="absolute inset-0 bg-indigo-400/20 blur-sm rounded-full"></div>
+          <Globe size={28} className="text-indigo-400 relative z-10" />
+        </div>
+        <span className="text-xl tracking-tight bg-gradient-to-r from-white to-indigo-200/80 bg-clip-text text-transparent">Флаги Мира</span>
       </button>
     </header>
   );

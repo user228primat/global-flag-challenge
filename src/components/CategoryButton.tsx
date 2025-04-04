@@ -2,7 +2,7 @@
 import React from 'react';
 import { Category, CategoryId } from '../types';
 import { gameCategories, categoryDisplayNames } from '../data';
-import { Award, BookOpen, GraduationCap, MousePointer, Trophy } from 'lucide-react';
+import { Award, BookOpen, GraduationCap, MousePointer, Trophy, Sparkles } from 'lucide-react';
 import RegionImages from './RegionImages';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -34,13 +34,13 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   // Определяем иконку в зависимости от категории
   const getIcon = () => {
     if (categoryId.startsWith('level')) {
-      return <GraduationCap size={24} className="text-blue-400" />;
+      return <GraduationCap size={22} className="text-indigo-400" />;
     } else if (categoryId === 'allFlags') {
-      return <Trophy size={24} className="text-amber-400" />;
+      return <Trophy size={22} className="text-amber-400" />;
     } else if (categoryId === 'capitals') {
-      return <Award size={24} className="text-sky-400" />;
+      return <Award size={22} className="text-blue-400" />;
     } else {
-      return <GraduationCap size={24} className="text-blue-400" />;
+      return <GraduationCap size={22} className="text-indigo-400" />;
     }
   };
 
@@ -50,32 +50,32 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     <button
       onClick={onClick}
       className={cn(
-        "relative w-full overflow-hidden rounded-xl border transition-all duration-300",
+        "relative w-full overflow-hidden rounded-xl transition-all duration-300",
         "flex flex-col items-center text-left",
         "group hover:scale-[1.02] hover:shadow-xl",
-        "border-slate-800/80 shadow-lg",
-        "bg-gradient-to-br from-slate-900/90 to-slate-950",
+        "border-gray-800/50 shadow-lg",
+        "bg-gradient-to-br from-gray-800/80 to-gray-900/80",
         "backdrop-blur-sm",
-        isCompleted ? "border-green-600/30 shadow-green-900/10" : "hover:border-blue-900"
+        isCompleted ? "border border-emerald-800/30 shadow-emerald-900/10" : "border border-gray-700/30 hover:border-indigo-900/40"
       )}
     >
       {showImage && <RegionImages region={categoryId} />}
       
       <div className="w-full p-4 z-10 relative">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-medium text-blue-100 group-hover:text-white transition-colors">
+        <div className="flex justify-between items-center mb-1.5">
+          <h3 className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors">
             {displayName}
           </h3>
           {getIcon()}
         </div>
         
         {showCompletionStatus && (
-          <div className="flex items-center justify-between text-sm text-blue-300/80">
+          <div className="flex items-center justify-between text-sm text-gray-400">
             <div className="flex items-center">
-              <BookOpen size={14} className="mr-1 text-blue-400" />
+              <BookOpen size={14} className="mr-1 text-gray-500" />
               <span>
                 {isCompleted ? (
-                  <span className="text-green-400">Завершено</span>
+                  <span className="text-emerald-400">Завершено</span>
                 ) : (
                   <span>{showCompletionCount ? `${completedCount}/${category.count}` : `${category.count}`}</span>
                 )}
@@ -89,28 +89,28 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         )}
       </div>
       
-      {/* Progress bar */}
+      {/* Индикатор прогресса */}
       {!isCompleted && category && completedCount > 0 && (
-        <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600" 
+        <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-indigo-600/80 to-blue-600/80" 
             style={{ width: `${completionPercentage}%` }} />
       )}
       
-      {/* Completed badge */}
+      {/* Значок завершения */}
       {isCompleted && (
-        <Badge variant="default" className="absolute top-2 right-2 bg-green-600/80 hover:bg-green-600/80 px-2 py-1 text-xs">
+        <Badge variant="default" className="absolute top-2 right-2 bg-emerald-700/80 hover:bg-emerald-700/80 px-2 py-1 text-xs">
           ✓ Завершено
         </Badge>
       )}
       
-      {/* Overlay effect for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent opacity-70" />
+      {/* Эффект оверлея для глубины */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-gray-900/30 to-transparent opacity-70" />
       
-      {/* Hover effect with subtle glow */}
-      <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Эффект при наведении с легким свечением */}
+      <div className="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
-      {/* Highlight effect on edges */}
-      <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      {/* Эффект подсветки по краям */}
+      <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-indigo-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-indigo-900/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
     </button>
   );
 };

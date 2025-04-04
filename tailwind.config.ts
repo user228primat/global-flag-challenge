@@ -66,8 +66,8 @@ export default {
 					dark: '#DC2626'
 				},
 				info: {
-					DEFAULT: '#3B82F6',
-					dark: '#2563EB'
+					DEFAULT: '#6366F1',
+					dark: '#4F46E5'
 				}
 			},
 			borderRadius: {
@@ -88,6 +88,10 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			boxShadow: {
+				'glow': '0 0 10px rgba(99, 102, 241, 0.3)',
+				'glow-lg': '0 0 20px rgba(99, 102, 241, 0.4)'
 			}
 		}
 	},
