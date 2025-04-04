@@ -34,21 +34,21 @@ const CapitalsOptions: React.FC = () => {
   
   return (
     <div className="w-full max-w-xl mx-auto px-4">
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-8 pt-6">
         <button 
           onClick={handleBackClick}
-          className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+          className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
         >
-          <ArrowLeft size={20} className="mr-1" />
+          <ArrowLeft size={18} />
           <span>Назад</span>
         </button>
       </div>
       
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-white text-shadow">
+        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-foreground-subtle bg-clip-text text-transparent">
           Столицы: {displayName}
         </h1>
-        <p className="text-blue-400/90">
+        <p className="text-accent-muted">
           Выберите режим
         </p>
       </div>
@@ -56,36 +56,34 @@ const CapitalsOptions: React.FC = () => {
       <div className="space-y-4">
         <button
           onClick={handlePlayClick}
-          className="glass-dark w-full p-6 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group relative"
+          className="bg-card-dark border border-border hover:border-border-hover w-full p-6 rounded-xl transition-all duration-300 hover:bg-card-hover flex items-center group relative shadow-elegant"
         >
-          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary/20 mr-4 group-hover:bg-primary/30 transition-colors">
-            <Play size={24} className="text-primary ml-1" />
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-accent/10 mr-4 group-hover:bg-accent/15 transition-colors">
+            <Play size={24} className="text-accent ml-1" />
           </div>
           <div className="text-left">
-            <div className="text-xl font-medium text-white">Играть</div>
-            <div className="text-sm text-white/60">Тест по столицам</div>
+            <div className="text-xl font-medium text-foreground">Играть</div>
+            <div className="text-sm text-foreground-subtle">Тест по столицам</div>
           </div>
           
-          {/* Highlight effect on edges */}
-          <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          {/* Highlight effect on hover */}
+          <div className="absolute inset-0 rounded-xl border border-accent/0 group-hover:border-accent/10 transition-all duration-300 pointer-events-none"></div>
         </button>
         
         <button
           onClick={handleReferenceClick}
-          className="glass-dark w-full p-6 rounded-xl transition-all duration-300 hover:bg-slate-800/50 flex items-center group relative"
+          className="bg-card-dark border border-border hover:border-border-hover w-full p-6 rounded-xl transition-all duration-300 hover:bg-card-hover flex items-center group relative shadow-elegant"
         >
-          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 mr-4 group-hover:bg-white/15 transition-colors">
-            <Book size={24} className="text-white" />
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-foreground/5 mr-4 group-hover:bg-foreground/10 transition-colors">
+            <Book size={24} className="text-foreground" />
           </div>
           <div className="text-left">
-            <div className="text-xl font-medium text-white">Таблица</div>
-            <div className="text-sm text-white/60">Изучить справочник со странами</div>
+            <div className="text-xl font-medium text-foreground">Таблица</div>
+            <div className="text-sm text-foreground-subtle">Изучить справочник со странами</div>
           </div>
           
-          {/* Highlight effect on edges */}
-          <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          {/* Highlight effect on hover */}
+          <div className="absolute inset-0 rounded-xl border border-foreground/0 group-hover:border-foreground/5 transition-all duration-300 pointer-events-none"></div>
         </button>
       </div>
     </div>

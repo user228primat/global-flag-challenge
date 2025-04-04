@@ -25,56 +25,59 @@ const ReferenceTable: React.FC = () => {
   
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8 pt-6">
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center text-white/70 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
         >
-          <ArrowLeft size={20} className="mr-1" />
+          <ArrowLeft size={18} />
           <span>Назад</span>
         </button>
         
-        <h1 className="text-xl font-medium text-white text-shadow animate-fade-in">
+        <h1 className="text-2xl font-medium text-foreground animate-fade-in">
           {displayName}
         </h1>
       </div>
       
-      <div className="glass mb-6 flex items-center rounded-xl overflow-hidden">
-        <div className="pl-4">
-          <Search size={20} className="text-white/60" />
+      {/* Search input */}
+      <div className="relative mb-6">
+        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <Search size={18} className="text-foreground-subtle" />
         </div>
         <input
           type="text"
           placeholder="Поиск по стране или столице..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-transparent px-4 py-3 focus:outline-none text-white"
+          className="w-full bg-card border border-border rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-border-hover text-foreground placeholder-foreground-subtle/70 transition-all"
         />
       </div>
       
-      <div className="glass rounded-xl overflow-hidden">
+      {/* Table */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-elegant">
         <div className="overflow-x-auto scrollbar-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left p-4 text-white/70">Флаг</th>
-                <th className="text-left p-4 text-white/70">Страна</th>
-                <th className="text-left p-4 text-white/70">Столица</th>
+              <tr className="border-b border-border">
+                <th className="text-left p-4 text-foreground-subtle">Флаг</th>
+                <th className="text-left p-4 text-foreground-subtle">Страна</th>
+                <th className="text-left p-4 text-foreground-subtle">Столица</th>
               </tr>
             </thead>
             <tbody>
               {filteredCountries.map((country, index) => (
                 <tr 
                   key={country.name} 
-                  className="border-b border-white/10 hover:bg-white/5 transition-colors"
+                  className="border-b border-border hover:bg-card-hover transition-colors"
                   style={{ 
                     opacity: 0,
                     animation: 'fade-in 0.3s ease-out forwards',
-                    animationDelay: `${index * 0.03}s` 
+                    animationDelay: `${index * 0.02}s` 
                   }}
                 >
                   <td className="p-4">
-                    <div className="w-12 h-8 overflow-hidden rounded">
+                    <div className="w-12 h-8 overflow-hidden rounded shadow-inner-highlight">
                       <img 
                         src={`/images/${country.flagFile}`} 
                         alt={country.name} 
@@ -82,8 +85,8 @@ const ReferenceTable: React.FC = () => {
                       />
                     </div>
                   </td>
-                  <td className="p-4 text-white">{country.name}</td>
-                  <td className="p-4 text-white">{country.capital}</td>
+                  <td className="p-4 text-foreground font-medium">{country.name}</td>
+                  <td className="p-4 text-foreground-muted">{country.capital}</td>
                 </tr>
               ))}
             </tbody>
