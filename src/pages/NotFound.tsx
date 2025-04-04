@@ -1,6 +1,5 @@
-
-import { useLocation, useNavigate, useEffect } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import YandexGamesSDK from "../services/YandexGamesSDK";
 import { ArrowLeft, HomeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
