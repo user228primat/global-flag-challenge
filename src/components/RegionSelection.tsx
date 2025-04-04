@@ -3,11 +3,9 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
-import { ArrowLeft, Globe, Trophy, Award, BookOpen, Map } from 'lucide-react';
+import { ArrowLeft, Globe, Trophy, Award, BookOpen, Map, CheckCircle } from 'lucide-react';
 import RegionImages from './RegionImages';
 import { useGameContext } from '../contexts/GameContext';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const RegionSelection: React.FC = () => {
@@ -23,7 +21,7 @@ const RegionSelection: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate(-1); // Навигация назад в истории
+    navigate(-1);
   };
   
   const getRegionStats = (regionId: CategoryId) => {
@@ -37,80 +35,82 @@ const RegionSelection: React.FC = () => {
   };
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4">
-      <div className="flex items-center mb-8">
+    <div className="w-full max-w-xl mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
         <Button 
           onClick={handleBackClick}
           variant="ghost" 
-          className="text-blue-400 hover:text-blue-300 hover:bg-slate-800/50"
+          className="text-foreground-subtle hover:text-foreground hover:bg-card-hover rounded-full mb-6 -ml-2 px-4"
         >
-          <ArrowLeft size={20} className="mr-1" />
+          <ArrowLeft size={18} className="mr-2" />
           <span>Назад</span>
         </Button>
-      </div>
-      
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-blue-100 text-shadow">
+        
+        <h1 className="text-3xl font-bold mb-3 text-foreground text-center">
           Выберите регион
         </h1>
-        <p className="text-blue-400/90">
+        <p className="text-foreground-subtle text-center">
           Для изучения столиц
         </p>
       </div>
       
+      {/* Region grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {categoryGroups.regions.map((regionId, index) => {
+        {categoryGroups.regions.map((regionId) => {
           const { highScore, isComplete, countryCount } = getRegionStats(regionId as CategoryId);
           
           return (
             <button
               key={regionId}
               onClick={() => handleRegionSelect(regionId as CategoryId)}
-              className="p-0 rounded-xl text-center transition-all duration-300 
-                        hover:bg-slate-800/50 flex flex-col items-center overflow-hidden
-                        hover:scale-[1.02] hover:shadow-xl relative
-                        border border-slate-800/50 bg-gradient-to-br from-slate-900/90 to-slate-950/80 
-                        backdrop-blur-sm shadow-lg"
+              className="group relative h-[170px] rounded-xl overflow-hidden border border-border hover:border-border-hover
+                        transition-all duration-300 shadow-elegant hover:shadow-glow"
             >
-              <RegionImages region={regionId as CategoryId} className="w-full h-32" />
+              {/* Background image with overlay */}
+              <div className="absolute inset-0 z-0">
+                <RegionImages region={regionId as CategoryId} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/90 to-background-dark/40 opacity-90"></div>
+              </div>
               
-              <div className="w-full p-4 z-10 relative">
-                <div className="flex flex-col items-center justify-center">
-                  <Globe size={32} className="mb-2 text-blue-500" />
-                  <span className="text-xl font-medium text-blue-100">
-                    {categoryDisplayNames[regionId as CategoryId]}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between mt-2 text-sm text-blue-300/90">
-                  <div className="flex items-center mr-2">
-                    <BookOpen size={12} className="mr-1 text-blue-400" />
-                    <span>{countryCount} стран</span>
+              {/* Content */}
+              <div className="relative z-10 h-full flex flex-col justify-between p-4">
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-lg bg-background-dark/70 backdrop-blur-sm flex items-center justify-center">
+                    <Globe size={20} className="text-blue-400" />
                   </div>
                   
-                  <div className="flex items-center">
-                    <Trophy size={12} className="mr-1 text-amber-400" />
-                    <span>Рекорд: {highScore}</span>
+                  {isComplete && (
+                    <div className="flex items-center px-2 py-1 rounded-full bg-green-500/10 backdrop-blur-sm">
+                      <CheckCircle size={12} className="text-green-500 mr-1" />
+                      <span className="text-green-400 text-xs font-medium">Завершено</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-auto">
+                  <h3 className="text-lg font-medium text-foreground mb-2 group-hover:text-white transition-colors">
+                    {categoryDisplayNames[regionId as CategoryId]}
+                  </h3>
+                  
+                  <div className="flex items-center justify-between text-xs text-foreground-subtle">
+                    <div className="flex items-center">
+                      <Map size={12} className="mr-1 text-foreground-subtle" />
+                      <span>{countryCount} стран</span>
+                    </div>
+                    
+                    {highScore > 0 && (
+                      <div className="flex items-center">
+                        <Trophy size={12} className="mr-1 text-amber-400" />
+                        <span>Рекорд: {highScore}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
               
-              {/* Completed badge */}
-              {isComplete && (
-                <Badge variant="default" className="absolute top-2 right-2 bg-green-600/80 hover:bg-green-600/80 px-2 py-1 text-xs">
-                  ✓ Завершено
-                </Badge>
-              )}
-              
-              {/* Overlay effect */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent opacity-70" />
-              
-              {/* Highlight effect on edges */}
-              <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
-              <div className="absolute inset-x-0 h-px bottom-0 bg-gradient-to-r from-transparent via-blue-900/20 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
-              
               {/* Hover effect */}
-              <div className="absolute inset-0 bg-blue-600/5 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-accent/5 via-transparent to-transparent transition-opacity duration-300"></div>
             </button>
           );
         })}

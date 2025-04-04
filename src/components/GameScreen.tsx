@@ -7,7 +7,7 @@ import LivesIndicator from './LivesIndicator';
 import ScoreCounter from './ScoreCounter';
 import { generateOptions, getNextCountry } from '../utils/gameLogic';
 import { Country } from '../types';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X, Check } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
 
 const GameScreen: React.FC = () => {
@@ -139,7 +139,9 @@ const GameScreen: React.FC = () => {
         incrementScore(currentCategory);
       }
       
-      loadNextQuestion();
+      setTimeout(() => {
+        loadNextQuestion();
+      }, 500);
     } else {
       setIncorrectOptions(prev => new Set([...prev, value]));
       
@@ -153,7 +155,7 @@ const GameScreen: React.FC = () => {
       
       setTimeout(() => {
         setSelectedOption(null);
-      }, 400);
+      }, 500);
     }
   };
   
@@ -195,14 +197,14 @@ const GameScreen: React.FC = () => {
   const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4 pb-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-xl mx-auto px-4 py-8">
+      <div className="flex items-center justify-between mb-8">
         <button 
           onClick={handleExit}
-          className="flex items-center text-white/70 hover:text-white transition-colors"
+          className="flex items-center px-4 py-2 rounded-full bg-card/80 hover:bg-card-hover transition-colors"
         >
-          <ArrowLeft size={20} className="mr-1" />
-          <span>Выход</span>
+          <ArrowLeft size={18} className="mr-2 text-foreground-subtle" />
+          <span className="text-foreground-muted">Выход</span>
         </button>
         <LivesIndicator lives={lives} maxLives={3} />
       </div>
@@ -218,7 +220,7 @@ const GameScreen: React.FC = () => {
         
         {isCapitalsMode && (
           <div className="mt-4 text-center">
-            <h2 className="text-2xl font-bold text-white">{currentCountry.name}</h2>
+            <h2 className="text-2xl font-bold text-foreground">{currentCountry?.name}</h2>
           </div>
         )}
       </div>
@@ -227,22 +229,22 @@ const GameScreen: React.FC = () => {
         {options.map((option) => {
           const isSelected = selectedOption === option.value;
           const isOptionCorrect = isCapitalsMode 
-            ? currentCountry.capital === option.value 
-            : currentCountry.name === option.value;
+            ? currentCountry?.capital === option.value 
+            : currentCountry?.name === option.value;
           const isIncorrect = incorrectOptions.has(option.value);
           
-          let buttonClass = "w-full text-left p-4 rounded-xl transition-all duration-300 ";
+          let buttonClass = "relative w-full text-left p-4 rounded-xl transition-all duration-300 flex items-center ";
           
           if (isSelected) {
             if (!isOptionCorrect) {
-              buttonClass += "bg-error/30 border border-error text-white";
+              buttonClass += "bg-red-500/20 border border-red-500/50 text-foreground";
             } else {
-              buttonClass += "bg-success/30 border border-success text-white";
+              buttonClass += "bg-green-500/20 border border-green-500/50 text-foreground";
             }
           } else if (isIncorrect) {
-            buttonClass += "bg-error/20 border border-error/40 text-white/80";
+            buttonClass += "bg-red-500/10 border border-red-500/20 text-foreground-subtle";
           } else {
-            buttonClass += "dark-blur hover:bg-slate-800/70";
+            buttonClass += "border border-border hover:border-border-hover bg-card hover:bg-card-hover shadow-inner-highlight";
           }
           
           return (
@@ -252,7 +254,23 @@ const GameScreen: React.FC = () => {
               disabled={isIncorrect || isCorrect}
               className={buttonClass}
             >
-              <span className="text-lg">{option.text}</span>
+              <div className="flex-1">
+                <span className="text-lg">{option.text}</span>
+              </div>
+              
+              {isSelected && (
+                <div className="flex items-center justify-center ml-2">
+                  {isOptionCorrect ? (
+                    <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <Check size={14} className="text-green-500" />
+                    </div>
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
+                      <X size={14} className="text-red-500" />
+                    </div>
+                  )}
+                </div>
+              )}
             </button>
           );
         })}
