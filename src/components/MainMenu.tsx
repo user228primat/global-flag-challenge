@@ -5,6 +5,7 @@ import { categoryDisplayNames, categoryGroups, gameCategories } from '../data';
 import { useGameContext } from '../contexts/GameContext';
 import { CategoryId } from '../types';
 import { Globe, Trophy, Award, Star, Map, BookOpen, Sparkles, ChevronRight, Headphones, Layers } from 'lucide-react';
+import RegionImages from './RegionImages';
 
 const MainMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const MainMenu: React.FC = () => {
               <h3 className="text-sm font-medium text-foreground-muted">По сложности</h3>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {categoryGroups.levels.map((categoryId) => {
                 const { isCompleted, completedCount, highScore, totalCount } = getCompletionData(categoryId as CategoryId);
                 
@@ -72,30 +73,34 @@ const MainMenu: React.FC = () => {
                   <button
                     key={categoryId}
                     onClick={() => handleCategoryClick(categoryId as CategoryId)}
-                    className="relative rounded-xl p-4 transition-all duration-300 
-                            border border-border hover:border-border-hover bg-card hover:bg-card-hover
-                            flex items-center gap-3 group shadow-inner-highlight"
+                    className="relative rounded-xl overflow-hidden transition-all duration-300 
+                              border border-border hover:border-border-hover
+                              flex flex-col group shadow-elegant"
                     type="button"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
-                      <Trophy size={18} className="text-amber-400" />
-                    </div>
+                    <RegionImages region={categoryId as CategoryId} />
                     
-                    <div className="flex-1 text-left">
-                      <h3 className="text-foreground font-medium">
-                        {categoryDisplayNames[categoryId as CategoryId]}
-                      </h3>
+                    <div className="p-3 flex items-center gap-3 bg-card hover:bg-card-hover transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
+                        <Trophy size={18} className="text-amber-400" />
+                      </div>
                       
-                      <div className="mt-1 text-xs text-foreground-subtle flex items-center">
-                        <span>Рекорд: {highScore}/{totalCount}</span>
+                      <div className="flex-1 text-left">
+                        <h3 className="text-foreground font-medium">
+                          {categoryDisplayNames[categoryId as CategoryId]}
+                        </h3>
+                        
+                        <div className="mt-1 text-xs text-foreground-subtle flex items-center">
+                          <span>Рекорд: {highScore}/{totalCount}</span>
+                        </div>
                       </div>
+                      
+                      {isCompleted && (
+                        <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                      )}
                     </div>
-                    
-                    {isCompleted && (
-                      <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      </div>
-                    )}
                   </button>
                 );
               })}
@@ -109,7 +114,7 @@ const MainMenu: React.FC = () => {
               <h3 className="text-sm font-medium text-foreground-muted">По регионам</h3>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {categoryGroups.regions.map((categoryId) => {
                 const { isCompleted, completedCount, highScore, totalCount } = getCompletionData(categoryId as CategoryId);
                 
@@ -117,30 +122,34 @@ const MainMenu: React.FC = () => {
                   <button
                     key={categoryId}
                     onClick={() => handleCategoryClick(categoryId as CategoryId)}
-                    className="relative rounded-xl p-4 transition-all duration-300 
-                            border border-border hover:border-border-hover bg-card hover:bg-card-hover
-                            flex items-center gap-3 group shadow-inner-highlight"
+                    className="relative rounded-xl overflow-hidden transition-all duration-300 
+                              border border-border hover:border-border-hover
+                              flex flex-col group shadow-elegant"
                     type="button"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
-                      <Globe size={18} className="text-blue-400" />
-                    </div>
+                    <RegionImages region={categoryId as CategoryId} />
                     
-                    <div className="flex-1 text-left">
-                      <h3 className="text-foreground font-medium">
-                        {categoryDisplayNames[categoryId as CategoryId]}
-                      </h3>
+                    <div className="p-3 flex items-center gap-3 bg-card hover:bg-card-hover transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
+                        <Globe size={18} className="text-blue-400" />
+                      </div>
                       
-                      <div className="mt-1 text-xs text-foreground-subtle flex items-center">
-                        <span>Рекорд: {highScore}/{totalCount}</span>
+                      <div className="flex-1 text-left">
+                        <h3 className="text-foreground font-medium">
+                          {categoryDisplayNames[categoryId as CategoryId]}
+                        </h3>
+                        
+                        <div className="mt-1 text-xs text-foreground-subtle flex items-center">
+                          <span>Рекорд: {highScore}/{totalCount}</span>
+                        </div>
                       </div>
+                      
+                      {isCompleted && (
+                        <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                      )}
                     </div>
-                    
-                    {isCompleted && (
-                      <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      </div>
-                    )}
                   </button>
                 );
               })}
@@ -160,31 +169,35 @@ const MainMenu: React.FC = () => {
           
           <button
             onClick={() => handleCategoryClick('capitals')}
-            className="relative w-full rounded-xl p-4 transition-all duration-300 
-                    border border-border hover:border-border-hover bg-card hover:bg-card-hover
-                    flex items-center gap-4 group shadow-inner-highlight"
+            className="relative w-full rounded-xl overflow-hidden transition-all duration-300 
+                      border border-border hover:border-border-hover
+                      flex flex-col group shadow-elegant"
             type="button"
           >
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-900/10 flex items-center justify-center">
-              <Map size={24} className="text-blue-400" />
-            </div>
+            <RegionImages region="capitals" />
             
-            <div className="flex-1 text-left">
-              <h3 className="text-lg font-medium text-foreground group-hover:text-white transition-colors">
-                Столицы стран
-              </h3>
-              <p className="text-sm text-foreground-subtle mt-1">
-                Выберите регион для игры со столицами
-              </p>
-            </div>
-            
-            <ChevronRight size={20} className="text-foreground-subtle group-hover:text-white transition-colors" />
-            
-            {isCapitalsComplete() && (
-              <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <div className="p-4 flex items-center gap-4 bg-card hover:bg-card-hover transition-colors">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-900/10 flex items-center justify-center">
+                <Map size={24} className="text-blue-400" />
               </div>
-            )}
+              
+              <div className="flex-1 text-left">
+                <h3 className="text-lg font-medium text-foreground group-hover:text-white transition-colors">
+                  Столицы стран
+                </h3>
+                <p className="text-sm text-foreground-subtle mt-1">
+                  Выберите регион для игры со столицами
+                </p>
+              </div>
+              
+              <ChevronRight size={20} className="text-foreground-subtle group-hover:text-white transition-colors" />
+              
+              {isCapitalsComplete() && (
+                <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                </div>
+              )}
+            </div>
           </button>
         </div>
       </div>

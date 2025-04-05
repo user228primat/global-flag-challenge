@@ -1,21 +1,22 @@
 
-interface PlayerProgress {
-  gameStats: Record<string, any>;
-  highScores: Record<string, number>;
-}
-
+/**
+ * Service for interacting with the Yandex Games SDK
+ */
 class YandexGamesSDK {
   private static instance: YandexGamesSDK;
-  private ysdk: any = null;
-  private isInitialized: boolean = false;
-  private initAttempted: boolean = false;
+  private initialized: boolean = false;
+  private initTimedOut: boolean = false;
   private initError: string | null = null;
+  private isProcessingAd: boolean = false;
+  private INIT_TIMEOUT_MS: number = 5000;
   private initPromise: Promise<boolean> | null = null;
-
+  
+  // Constructor is private for singleton pattern
   private constructor() {}
-
+  
   /**
-   * Get the singleton instance of YandexGamesSDK
+   * Gets the singleton instance of the YandexGamesSDK
+   * @returns The YandexGamesSDK instance
    */
   public static getInstance(): YandexGamesSDK {
     if (!YandexGamesSDK.instance) {
@@ -23,203 +24,311 @@ class YandexGamesSDK {
     }
     return YandexGamesSDK.instance;
   }
-
+  
   /**
-   * Get last initialization error
+   * Initializes the Yandex Games SDK with timeout protection
+   * @returns A promise that resolves to true if initialization is successful, false otherwise
    */
-  public getInitError(): string | null {
-    return this.initError;
-  }
-
-  /**
-   * Check if SDK is initialized
-   */
-  public isSDKInitialized(): boolean {
-    return this.isInitialized;
-  }
-
-  /**
-   * Initialize the Yandex Games SDK
-   */
-  public async init(): Promise<boolean> {
-    // Если инициализация уже запущена, возвращаем существующий промис
+  public init(): Promise<boolean> {
+    // If already initialized, return
+    if (this.initialized) {
+      return Promise.resolve(true);
+    }
+    
+    // If already in process of initializing, return existing promise
     if (this.initPromise) {
       return this.initPromise;
     }
     
-    // Создаем новый промис для инициализации
-    this.initPromise = this.initializeSDK();
+    this.initPromise = new Promise<boolean>((resolve) => {
+      // Create condition to determine if we're in the Yandex Games environment
+      const isYandexGames = 
+        typeof window !== 'undefined' &&
+        (window.location.hostname.includes('yandex') ||
+         window.location.hostname.includes('games.s3') ||
+         window.location.hostname.includes('app-'));
+      
+      console.log('Detected environment:', isYandexGames ? 'Yandex Games' : 'Development/Other');
+      
+      if (!isYandexGames) {
+        console.log('Not in Yandex Games environment, skipping SDK initialization');
+        this.initialized = true;
+        resolve(true);
+        return;
+      }
+      
+      const initTimeoutId = setTimeout(() => {
+        console.warn('Yandex Games SDK initialization timed out');
+        this.initTimedOut = true;
+        this.initError = 'Initialization timed out';
+        resolve(false);
+      }, this.INIT_TIMEOUT_MS);
+      
+      try {
+        // Try to load YaGames from window
+        const YaGames = (window as any).YaGames;
+        
+        if (!YaGames || typeof YaGames.init !== 'function') {
+          console.warn('YaGames not found or not a function');
+          this.initError = 'YaGames not found or not a function';
+          clearTimeout(initTimeoutId);
+          resolve(false);
+          return;
+        }
+        
+        console.log('Initializing Yandex Games SDK');
+        YaGames
+          .init()
+          .then((ysdk: any) => {
+            console.log('Yandex Games SDK initialized successfully');
+            (window as any).ysdk = ysdk; // Store globally for easy access
+            this.initialized = true;
+            clearTimeout(initTimeoutId);
+            resolve(true);
+            
+            // Pre-initialize ads to avoid delay later
+            this.preInitializeAds();
+            
+            // Let Yandex Games know we're ready
+            if (ysdk.features && ysdk.features.LoadingAPI) {
+              try {
+                ysdk.features.LoadingAPI.ready();
+                console.log('Notified Yandex Games that we are ready');
+              } catch (e) {
+                console.warn('Error calling LoadingAPI.ready():', e);
+              }
+            }
+          })
+          .catch((error: any) => {
+            console.error('Error initializing Yandex Games SDK:', error);
+            this.initError = error?.message || 'Unknown error during initialization';
+            clearTimeout(initTimeoutId);
+            resolve(false);
+          });
+      } catch (error) {
+        console.error('Exception during Yandex Games SDK initialization:', error);
+        this.initError = error instanceof Error ? error.message : 'Unknown exception during initialization';
+        clearTimeout(initTimeoutId);
+        resolve(false);
+      }
+    });
+    
     return this.initPromise;
   }
-
-  private async initializeSDK(): Promise<boolean> {
-    // Сбрасываем ошибку перед попыткой инициализации
-    this.initError = null;
+  
+  /**
+   * Gets whether the SDK has been successfully initialized
+   * @returns true if the SDK is initialized, false otherwise
+   */
+  public isInitialized(): boolean {
+    return this.initialized;
+  }
+  
+  /**
+   * Gets whether the SDK initialization timed out
+   * @returns true if initialization timed out, false otherwise
+   */
+  public didInitTimeout(): boolean {
+    return this.initTimedOut;
+  }
+  
+  /**
+   * Gets any error that occurred during SDK initialization
+   * @returns The error message, or null if no error occurred
+   */
+  public getInitError(): string | null {
+    return this.initError;
+  }
+  
+  /**
+   * Pre-initializes ads to avoid delay when showing them later
+   */
+  private preInitializeAds(): void {
+    const ysdk = (window as any).ysdk;
     
-    // Предотвращаем повторную попытку
-    if (this.initAttempted && this.isInitialized) {
-      console.log('SDK уже инициализирован');
-      return true;
-    }
+    if (!ysdk) return;
     
-    this.initAttempted = true;
-    
-    try {
-      console.log('Проверка окружения:', {
-        isWindow: typeof window !== 'undefined',
-        hasYaGames: typeof window !== 'undefined' && 'YaGames' in window,
-        location: window.location.href,
-        hash: window.location.hash,
-        pathname: window.location.pathname
-      });
-      
-      // Проверяем наличие YaGames в window
-      if (typeof window !== 'undefined' && 'YaGames' in window) {
-        // Устанавливаем таймаут на инициализацию для отлова зависаний
-        const initTimeout = new Promise<false>((resolve) => {
-          setTimeout(() => {
-            this.initError = 'Превышено время ожидания инициализации Yandex SDK';
-            console.warn('Timeout exceeded for YaGames initialization');
-            resolve(false);
-          }, 10000);
-        });
+    if (ysdk.adv) {
+      try {
+        // Pre-initialize fullscreen ads
+        ysdk.adv.getBannerAdStatus().catch(() => {});
         
-        // Пытаемся инициализировать SDK
-        console.log('Попытка инициализации Yandex Games SDK...');
-        
-        // Создаем обещание для инициализации SDK
-        const initPromise = new Promise<boolean>(async (resolve) => {
-          try {
-            // @ts-ignore
-            this.ysdk = await window.YaGames.init();
-            this.isInitialized = true;
-            console.log('Yandex Games SDK инициализирован успешно');
-            resolve(true);
-          } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
-            this.initError = errorMessage;
-            console.error('Ошибка инициализации Yandex Games SDK:', error);
-            resolve(false);
-          }
-        });
-        
-        // Race между инициализацией и таймаутом
-        return Promise.race([initPromise, initTimeout]);
-      } else {
-        this.initError = 'YaGames не найден в глобальном объекте window';
-        console.warn('YaGames недоступен - приложение запущено вне среды Яндекс.Игр');
-        
-        // В режиме разработки считаем это нормальным
-        if (import.meta.env.DEV) {
-          console.info('Режим разработки: эмулируем успешную инициализацию SDK');
-          setTimeout(() => {
-            console.log('DEV: Эмулируем успешную инициализацию в течение 1 секунды');
-          }, 1000);
+        // Pre-initialize rewarded video if available
+        if (ysdk.adv.showRewardedVideo) {
+          ysdk.adv.showRewardedVideo({ callbacks: {} }).catch(() => {});
         }
-        
-        return false;
+      } catch (e) {
+        console.warn('Error pre-initializing ads:', e);
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
-      this.initError = errorMessage;
-      console.error('Критическая ошибка при инициализации Yandex Games SDK:', error);
-      return false;
     }
   }
-
+  
   /**
-   * Show fullscreen advertisement
+   * Shows a fullscreen advertisement
+   * @returns A promise that resolves when the ad is closed, or rejects if there was an error
    */
-  public async showFullscreenAd(): Promise<void> {
-    if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK не инициализирован, невозможно показать полноэкранную рекламу');
-      return;
+  public showFullscreenAd(): Promise<void> {
+    if (this.isProcessingAd) {
+      return Promise.resolve();
     }
-
-    try {
-      console.log('Попытка показать полноэкранную рекламу...');
-      await this.ysdk.adv.showFullscreenAdv();
-      console.log('Полноэкранная реклама успешно показана');
-    } catch (error) {
-      console.error('Ошибка показа полноэкранной рекламы:', error);
+    
+    const ysdk = (window as any).ysdk;
+    
+    if (!ysdk || !ysdk.adv) {
+      return Promise.resolve();
     }
-  }
-
-  /**
-   * Show rewarded video with callback for reward
-   * @param onRewarded Callback function to run when the player gets the reward
-   * @returns Promise<boolean> Whether the reward was given
-   */
-  public async showRewardedAd(onRewarded: () => void): Promise<boolean> {
-    if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK не инициализирован, невозможно показать рекламу с вознаграждением');
-      return false;
-    }
-
-    try {
-      console.log('Попытка показать рекламу с вознаграждением...');
-      const result = await this.ysdk.adv.showRewardedVideo({
-        callbacks: {
-          onRewarded: () => {
-            console.log('Реклама с вознаграждением завершена, выдаем награду');
-            onRewarded();
-            return true;
-          },
-          onClose: () => {
-            console.log('Реклама с вознаграждением закрыта без награды');
-          },
-          onError: (error: any) => {
-            console.error('Ошибка показа рекламы с вознаграждением:', error);
+    
+    this.isProcessingAd = true;
+    
+    return new Promise<void>((resolve, reject) => {
+      try {
+        ysdk.adv.showFullscreenAdv({
+          callbacks: {
+            onClose: (wasShown: boolean) => {
+              console.log('Fullscreen ad closed, wasShown:', wasShown);
+              this.isProcessingAd = false;
+              resolve();
+            },
+            onError: (error: any) => {
+              console.warn('Error showing fullscreen ad:', error);
+              this.isProcessingAd = false;
+              resolve(); // Resolve instead of reject to prevent cascading failures
+            }
           }
-        }
-      });
-      
-      return result && result.rewarded;
-    } catch (error) {
-      console.error('Ошибка показа рекламы с вознаграждением:', error);
-      return false;
-    }
+        });
+      } catch (e) {
+        console.error('Exception showing fullscreen ad:', e);
+        this.isProcessingAd = false;
+        resolve(); // Resolve instead of reject to prevent cascading failures
+      }
+    });
   }
-
+  
   /**
-   * Save player progress to Yandex cloud storage
-   * @param data Object containing player progress data
+   * Shows a rewarded video advertisement
+   * @returns A promise that resolves to true if the reward should be given, false otherwise
    */
-  public async saveProgress(data: PlayerProgress): Promise<boolean> {
-    if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK не инициализирован, невозможно сохранить прогресс');
-      return false;
+  public showRewardedVideo(): Promise<boolean> {
+    if (this.isProcessingAd) {
+      return Promise.resolve(false);
     }
-
-    try {
-      console.log('Сохранение прогресса в облачное хранилище Яндекса:', data);
-      await this.ysdk.getStorage().set('player_progress', data);
-      console.log('Прогресс сохранен в облачное хранилище Яндекс.Игр');
-      return true;
-    } catch (error) {
-      console.error('Ошибка сохранения прогресса:', error);
-      return false;
+    
+    const ysdk = (window as any).ysdk;
+    
+    if (!ysdk || !ysdk.adv) {
+      return Promise.resolve(false);
     }
+    
+    this.isProcessingAd = true;
+    
+    return new Promise<boolean>((resolve) => {
+      try {
+        ysdk.adv.showRewardedVideo({
+          callbacks: {
+            onOpen: () => {
+              console.log('Rewarded video opened');
+            },
+            onRewarded: () => {
+              console.log('Rewarded video completed, reward should be given');
+              // Don't set isProcessingAd=false here as the ad isn't closed yet
+            },
+            onClose: () => {
+              console.log('Rewarded video closed');
+              this.isProcessingAd = false;
+              resolve(true);
+            },
+            onError: (error: any) => {
+              console.warn('Error showing rewarded video:', error);
+              this.isProcessingAd = false;
+              resolve(false);
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Exception showing rewarded video:', e);
+        this.isProcessingAd = false;
+        resolve(false);
+      }
+    });
   }
-
+  
   /**
-   * Load player progress from Yandex cloud storage
-   * @returns Progress data from cloud storage or null if not found
+   * Saves data to Yandex Games cloud storage
+   * @param data The data to save
+   * @returns A promise that resolves when the data is saved, or rejects if there was an error
    */
-  public async loadProgress(): Promise<PlayerProgress | null> {
-    if (!this.isInitialized || !this.ysdk) {
-      console.warn('SDK не инициализирован, невозможно загрузить прогресс');
-      return null;
+  public saveUserData(data: any): Promise<void> {
+    const ysdk = (window as any).ysdk;
+    
+    if (!ysdk || !ysdk.getPlayer || !this.initialized) {
+      return Promise.reject('SDK not initialized or player API not available');
     }
-
-    try {
-      const data = await this.ysdk.getStorage().get('player_progress');
-      console.log('Прогресс загружен из облачного хранилища Яндекс.Игр:', data);
-      return data as PlayerProgress;
-    } catch (error) {
-      console.error('Ошибка загрузки прогресса:', error);
-      return null;
+    
+    return new Promise<void>((resolve, reject) => {
+      try {
+        ysdk.getPlayer().then((player: any) => {
+          if (!player.setData) {
+            reject('Player setData method not available');
+            return;
+          }
+          
+          player.setData(data)
+            .then(() => {
+              console.log('Data saved successfully');
+              resolve();
+            })
+            .catch((error: any) => {
+              console.error('Error saving data:', error);
+              reject(error);
+            });
+        }).catch((error: any) => {
+          console.error('Error getting player:', error);
+          reject(error);
+        });
+      } catch (e) {
+        console.error('Exception saving data:', e);
+        reject(e);
+      }
+    });
+  }
+  
+  /**
+   * Loads data from Yandex Games cloud storage
+   * @returns A promise that resolves with the loaded data, or rejects if there was an error
+   */
+  public loadUserData(): Promise<any> {
+    const ysdk = (window as any).ysdk;
+    
+    if (!ysdk || !ysdk.getPlayer || !this.initialized) {
+      return Promise.reject('SDK not initialized or player API not available');
     }
+    
+    return new Promise<any>((resolve, reject) => {
+      try {
+        ysdk.getPlayer().then((player: any) => {
+          if (!player.getData) {
+            reject('Player getData method not available');
+            return;
+          }
+          
+          player.getData()
+            .then((data: any) => {
+              console.log('Data loaded successfully');
+              resolve(data || {});
+            })
+            .catch((error: any) => {
+              console.error('Error loading data:', error);
+              reject(error);
+            });
+        }).catch((error: any) => {
+          console.error('Error getting player:', error);
+          reject(error);
+        });
+      } catch (e) {
+        console.error('Exception loading data:', e);
+        reject(e);
+      }
+    });
   }
 }
 

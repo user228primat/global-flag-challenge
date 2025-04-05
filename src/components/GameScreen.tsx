@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -33,7 +34,6 @@ const GameScreen: React.FC = () => {
   const [incorrectOptions, setIncorrectOptions] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [isCapitalsMode, setIsCapitalsMode] = useState(false);
-  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   
   const handleExit = () => {
     resetGame();
@@ -98,7 +98,6 @@ const GameScreen: React.FC = () => {
     setSelectedOption(null);
     setIsCorrect(null);
     setIncorrectOptions(new Set());
-    setShowCorrectAnswer(false);
     
     const categoryCountries = gameCategories[currentCategory].countries;
     const nextCountry = getNextCountry(categoryCountries, usedCountries);
@@ -126,7 +125,7 @@ const GameScreen: React.FC = () => {
   };
   
   const handleAnswerSelect = (value: string) => {
-    if (!currentCountry || isCorrect || showCorrectAnswer) return;
+    if (!currentCountry || isCorrect) return;
     
     setSelectedOption(value);
     
@@ -180,6 +179,8 @@ const GameScreen: React.FC = () => {
           }
         }}
         isVictory={currentCategory ? usedCountries.size >= gameCategories[currentCategory].countries.length : false}
+        lastCountry={currentCountry}
+        isCapitalsMode={isCapitalsMode}
       />
     );
   }
@@ -278,18 +279,6 @@ const GameScreen: React.FC = () => {
           );
         })}
       </div>
-      
-      {showCorrectAnswer && !isGameOver && (
-        <div className="mt-6 text-center">
-          <button
-            onClick={loadNextQuestion}
-            className="px-6 py-3 rounded-xl bg-blue-600/60 hover:bg-blue-600/80 text-white font-medium transition-colors"
-            type="button"
-          >
-            Следующий вопрос
-          </button>
-        </div>
-      )}
     </div>
   );
 };

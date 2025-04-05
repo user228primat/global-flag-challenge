@@ -99,6 +99,16 @@ const App = () => {
         
         if (initialized) {
           console.log("Yandex Games SDK initialized successfully");
+          // Call ready() immediately after successful initialization
+          const ysdk = (window as any).ysdk;
+          if (ysdk && ysdk.features && ysdk.features.LoadingAPI) {
+            try {
+              ysdk.features.LoadingAPI.ready();
+              console.log('Called LoadingAPI.ready() after initialization');
+            } catch (e) {
+              console.warn('Error calling LoadingAPI.ready():', e);
+            }
+          }
         } else {
           console.warn("Failed to initialize Yandex Games SDK", sdk.getInitError());
           // Show notification only in dev mode

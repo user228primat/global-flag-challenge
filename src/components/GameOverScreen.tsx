@@ -3,19 +3,25 @@ import React, { useEffect } from 'react';
 import { Trophy, ArrowLeft, RefreshCw, Award, Star, Play } from 'lucide-react';
 import { useGameContext } from '../contexts/GameContext';
 import YandexGamesSDK from '../services/YandexGamesSDK';
+import { Country } from '../types';
+import FlagCard from './FlagCard';
 
 interface GameOverScreenProps {
   score: number;
   onExit: () => void;
   onRestart: () => void;
   isVictory?: boolean;
+  lastCountry: Country | null;
+  isCapitalsMode?: boolean;
 }
 
 const GameOverScreen: React.FC<GameOverScreenProps> = ({ 
   score, 
   onExit, 
   onRestart,
-  isVictory = false
+  isVictory = false,
+  lastCountry,
+  isCapitalsMode = false
 }) => {
   const { currentCategory, gameStats, showRewardedAd } = useGameContext();
   const isHighScore = currentCategory ? score > gameStats[currentCategory].highScore : false;
@@ -67,6 +73,22 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
             </div>
           )}
         </div>
+
+        {!isVictory && lastCountry && (
+          <div className="mb-6 p-4 bg-background/20 rounded-xl">
+            <h3 className="text-white text-lg mb-3">Последний вопрос:</h3>
+            <div className="aspect-[3/2] max-w-[200px] mx-auto mb-3">
+              <FlagCard country={lastCountry} isLoading={false} />
+            </div>
+            <div className="text-white font-medium">
+              {isCapitalsMode ? (
+                <p>Столица <span className="text-blue-400">{lastCountry.name}</span> — <span className="text-green-400">{lastCountry.capital}</span></p>
+              ) : (
+                <p>Это флаг <span className="text-green-400">{lastCountry.name}</span></p>
+              )}
+            </div>
+          </div>
+        )}
         
         <div className="flex flex-col gap-4">
           <button
