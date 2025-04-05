@@ -25,8 +25,9 @@ const MainMenu: React.FC = () => {
     const isCompleted = stats.isComplete;
     const completedCount = stats.currentScore;
     const highScore = stats.highScore;
+    const totalCount = gameCategories[categoryId]?.countries?.length || 0;
     
-    return { isCompleted, completedCount, highScore };
+    return { isCompleted, completedCount, highScore, totalCount };
   };
 
   const getCapitalsHighScore = () => {
@@ -65,7 +66,7 @@ const MainMenu: React.FC = () => {
             
             <div className="grid grid-cols-2 gap-3">
               {categoryGroups.levels.map((categoryId) => {
-                const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
+                const { isCompleted, completedCount, highScore, totalCount } = getCompletionData(categoryId as CategoryId);
                 
                 return (
                   <button
@@ -74,6 +75,7 @@ const MainMenu: React.FC = () => {
                     className="relative rounded-xl p-4 transition-all duration-300 
                             border border-border hover:border-border-hover bg-card hover:bg-card-hover
                             flex items-center gap-3 group shadow-inner-highlight"
+                    type="button"
                   >
                     <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
                       <Trophy size={18} className="text-amber-400" />
@@ -84,11 +86,9 @@ const MainMenu: React.FC = () => {
                         {categoryDisplayNames[categoryId as CategoryId]}
                       </h3>
                       
-                      {highScore > 0 && (
-                        <div className="mt-1 text-xs text-foreground-subtle flex items-center">
-                          <span>Рекорд: {highScore}</span>
-                        </div>
-                      )}
+                      <div className="mt-1 text-xs text-foreground-subtle flex items-center">
+                        <span>Рекорд: {highScore}/{totalCount}</span>
+                      </div>
                     </div>
                     
                     {isCompleted && (
@@ -111,7 +111,7 @@ const MainMenu: React.FC = () => {
             
             <div className="grid grid-cols-2 gap-3">
               {categoryGroups.regions.map((categoryId) => {
-                const { isCompleted, completedCount, highScore } = getCompletionData(categoryId as CategoryId);
+                const { isCompleted, completedCount, highScore, totalCount } = getCompletionData(categoryId as CategoryId);
                 
                 return (
                   <button
@@ -120,6 +120,7 @@ const MainMenu: React.FC = () => {
                     className="relative rounded-xl p-4 transition-all duration-300 
                             border border-border hover:border-border-hover bg-card hover:bg-card-hover
                             flex items-center gap-3 group shadow-inner-highlight"
+                    type="button"
                   >
                     <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
                       <Globe size={18} className="text-blue-400" />
@@ -130,11 +131,9 @@ const MainMenu: React.FC = () => {
                         {categoryDisplayNames[categoryId as CategoryId]}
                       </h3>
                       
-                      {highScore > 0 && (
-                        <div className="mt-1 text-xs text-foreground-subtle flex items-center">
-                          <span>Рекорд: {highScore}</span>
-                        </div>
-                      )}
+                      <div className="mt-1 text-xs text-foreground-subtle flex items-center">
+                        <span>Рекорд: {highScore}/{totalCount}</span>
+                      </div>
                     </div>
                     
                     {isCompleted && (
@@ -164,6 +163,7 @@ const MainMenu: React.FC = () => {
             className="relative w-full rounded-xl p-4 transition-all duration-300 
                     border border-border hover:border-border-hover bg-card hover:bg-card-hover
                     flex items-center gap-4 group shadow-inner-highlight"
+            type="button"
           >
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-900/10 flex items-center justify-center">
               <Map size={24} className="text-blue-400" />

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { gameCategories, categoryDisplayNames } from '../data';
@@ -9,6 +9,15 @@ const ReferenceTable: React.FC = () => {
   const navigate = useNavigate();
   const { currentCategory } = useGameContext();
   const [searchTerm, setSearchTerm] = useState('');
+  const [inYandexGames, setInYandexGames] = useState(false);
+  
+  useEffect(() => {
+    // Определяем, находимся ли в окружении Яндекс.Игр
+    const isYandexGames = window.location.href.includes('yandex') || 
+                         window.location.href.includes('games.s3') || 
+                         window.location.origin.includes('app-');
+    setInYandexGames(isYandexGames);
+  }, []);
   
   if (!currentCategory) {
     return null;
@@ -30,6 +39,7 @@ const ReferenceTable: React.FC = () => {
         <button 
           onClick={() => navigate('/')}
           className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
+          type="button"
         >
           <ArrowLeft size={18} />
           <span>Назад</span>
@@ -66,29 +76,34 @@ const ReferenceTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredCountries.map((country, index) => (
-                <tr 
-                  key={country.name} 
-                  className="border-b border-border hover:bg-card-hover transition-colors"
-                  style={{ 
-                    opacity: 0,
-                    animation: 'fade-in 0.3s ease-out forwards',
-                    animationDelay: `${index * 0.02}s` 
-                  }}
-                >
-                  <td className="p-4">
-                    <div className="w-12 h-8 overflow-hidden rounded shadow-inner-highlight">
-                      <img 
-                        src={`/images/${country.flagFile}`} 
-                        alt={country.name} 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </td>
-                  <td className="p-4 text-foreground font-medium">{country.name}</td>
-                  <td className="p-4 text-foreground-muted">{country.capital}</td>
-                </tr>
-              ))}
+              {filteredCountries.map((country, index) => {
+                const flagPath = inYandexGames ? `./images/${country.flagFile}` : `/images/${country.flagFile}`;
+                
+                return (
+                  <tr 
+                    key={country.name} 
+                    className="border-b border-border hover:bg-card-hover transition-colors"
+                    style={{ 
+                      opacity: 0,
+                      animation: 'fade-in 0.3s ease-out forwards',
+                      animationDelay: `${index * 0.02}s` 
+                    }}
+                  >
+                    <td className="p-4">
+                      <div className="w-12 h-8 overflow-hidden rounded shadow-inner-highlight">
+                        <img 
+                          src={flagPath} 
+                          alt={country.name} 
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    </td>
+                    <td className="p-4 text-foreground font-medium">{country.name}</td>
+                    <td className="p-4 text-foreground-muted">{country.capital}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

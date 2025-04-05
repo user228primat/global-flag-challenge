@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -33,6 +34,7 @@ const GameScreen: React.FC = () => {
   const [incorrectOptions, setIncorrectOptions] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [isCapitalsMode, setIsCapitalsMode] = useState(false);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   
   const handleExit = () => {
     resetGame();
@@ -97,6 +99,7 @@ const GameScreen: React.FC = () => {
     setSelectedOption(null);
     setIsCorrect(null);
     setIncorrectOptions(new Set());
+    setShowCorrectAnswer(false);
     
     const categoryCountries = gameCategories[currentCategory].countries;
     const nextCountry = getNextCountry(categoryCountries, usedCountries);
@@ -124,7 +127,7 @@ const GameScreen: React.FC = () => {
   };
   
   const handleAnswerSelect = (value: string) => {
-    if (!currentCountry || isCorrect) return;
+    if (!currentCountry || isCorrect || showCorrectAnswer) return;
     
     setSelectedOption(value);
     
@@ -139,23 +142,21 @@ const GameScreen: React.FC = () => {
         incrementScore(currentCategory);
       }
       
+      // Move to next question immediately on correct answer
       setTimeout(() => {
         loadNextQuestion();
-      }, 500);
+      }, 300);
     } else {
       setIncorrectOptions(prev => new Set([...prev, value]));
       
       if (!incorrectOptions.has(value)) {
         setLives(lives - 1);
+        setShowCorrectAnswer(true);
         
         if (lives <= 1) {
           setIsGameOver(true);
         }
       }
-      
-      setTimeout(() => {
-        setSelectedOption(null);
-      }, 500);
     }
   };
   
@@ -181,6 +182,7 @@ const GameScreen: React.FC = () => {
             loadNextQuestion();
           }
         }}
+        isVictory={currentCategory ? usedCountries.size >= gameCategories[currentCategory].countries.length : false}
       />
     );
   }
@@ -202,6 +204,7 @@ const GameScreen: React.FC = () => {
         <button 
           onClick={handleExit}
           className="flex items-center px-4 py-2 rounded-full bg-card/80 hover:bg-card-hover transition-colors"
+          type="button"
         >
           <ArrowLeft size={18} className="mr-2 text-foreground-subtle" />
           <span className="text-foreground-muted">Выход</span>
@@ -233,6 +236,9 @@ const GameScreen: React.FC = () => {
             : currentCountry?.name === option.value;
           const isIncorrect = incorrectOptions.has(option.value);
           
+          // Highlight correct answer when player makes a wrong choice
+          const shouldHighlightCorrect = showCorrectAnswer && isOptionCorrect;
+          
           let buttonClass = "relative w-full text-left p-4 rounded-xl transition-all duration-300 flex items-center ";
           
           if (isSelected) {
@@ -241,6 +247,8 @@ const GameScreen: React.FC = () => {
             } else {
               buttonClass += "bg-green-500/20 border border-green-500/50 text-foreground";
             }
+          } else if (shouldHighlightCorrect) {
+            buttonClass += "bg-green-500/20 border border-green-500/50 text-foreground";
           } else if (isIncorrect) {
             buttonClass += "bg-red-500/10 border border-red-500/20 text-foreground-subtle";
           } else {
@@ -251,14 +259,15 @@ const GameScreen: React.FC = () => {
             <button
               key={option.value}
               onClick={() => handleAnswerSelect(option.value)}
-              disabled={isIncorrect || isCorrect}
+              disabled={isIncorrect || isCorrect || showCorrectAnswer}
               className={buttonClass}
+              type="button"
             >
               <div className="flex-1">
                 <span className="text-lg">{option.text}</span>
               </div>
               
-              {isSelected && (
+              {(isSelected || shouldHighlightCorrect) && (
                 <div className="flex items-center justify-center ml-2">
                   {isOptionCorrect ? (
                     <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -275,6 +284,18 @@ const GameScreen: React.FC = () => {
           );
         })}
       </div>
+      
+      {showCorrectAnswer && !isGameOver && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={loadNextQuestion}
+            className="px-6 py-3 rounded-xl bg-blue-600/60 hover:bg-blue-600/80 text-white font-medium transition-colors"
+            type="button"
+          >
+            Следующий вопрос
+          </button>
+        </div>
+      )}
     </div>
   );
 };

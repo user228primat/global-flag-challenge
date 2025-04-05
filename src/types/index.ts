@@ -1,3 +1,4 @@
+
 export interface Country {
   name: string;
   capital: string;
@@ -28,7 +29,13 @@ export type CategoryId =
   | 'southAmerica' 
   | 'africa' 
   | 'australiaOceania'
-  | 'capitals';
+  | 'capitals'
+  | 'capitalsEurope'
+  | 'capitalsAsia'
+  | 'capitalsNorthAmerica'
+  | 'capitalsSouthAmerica'
+  | 'capitalsAfrica'
+  | 'capitalsAustraliaOceania';
 
 export interface GameContextType {
   currentCategory: CategoryId | null;

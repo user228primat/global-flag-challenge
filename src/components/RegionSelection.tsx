@@ -1,23 +1,30 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
 import { ArrowLeft, Globe, Trophy, Award, BookOpen, Map, CheckCircle } from 'lucide-react';
 import RegionImages from './RegionImages';
-import { useGameContext } from '../contexts/GameContext';
+import { useGameContext, getCapitalsCategory } from '../contexts/GameContext';
 import { Button } from '@/components/ui/button';
 
 const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { gameStats } = useGameContext();
+  const isCapitalsMode = location.pathname.includes('/capitals');
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
   const handleRegionSelect = (region: CategoryId) => {
-    navigate(`/capitals/${region}`);
+    if (isCapitalsMode) {
+      const capitalsCategory = getCapitalsCategory(region);
+      navigate(`/game?mode=capitals&region=${region}`);
+    } else {
+      navigate(`/category/${region}`);
+    }
   };
   
   const handleBackClick = () => {
@@ -25,7 +32,10 @@ const RegionSelection: React.FC = () => {
   };
   
   const getRegionStats = (regionId: CategoryId) => {
-    const stats = gameStats[regionId] || { highScore: 0, isComplete: false };
+    // Get appropriate category ID based on mode
+    const categoryId = isCapitalsMode ? getCapitalsCategory(regionId) : regionId;
+    
+    const stats = gameStats[categoryId] || { highScore: 0, isComplete: false };
     const regionCountryCount = gameCategories[regionId].countries.length;
     return { 
       highScore: stats.highScore, 
@@ -51,7 +61,7 @@ const RegionSelection: React.FC = () => {
           Выберите регион
         </h1>
         <p className="text-foreground-subtle text-center">
-          Для изучения столиц
+          {isCapitalsMode ? 'Для изучения столиц' : 'Для изучения флагов'}
         </p>
       </div>
       
@@ -66,6 +76,7 @@ const RegionSelection: React.FC = () => {
               onClick={() => handleRegionSelect(regionId as CategoryId)}
               className="group relative h-[170px] rounded-xl overflow-hidden border border-border hover:border-border-hover
                         transition-all duration-300 shadow-elegant hover:shadow-glow"
+              type="button"
             >
               {/* Background image with overlay */}
               <div className="absolute inset-0 z-0">
@@ -77,7 +88,11 @@ const RegionSelection: React.FC = () => {
               <div className="relative z-10 h-full flex flex-col justify-between p-4">
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-lg bg-background-dark/70 backdrop-blur-sm flex items-center justify-center">
-                    <Globe size={20} className="text-blue-400" />
+                    {isCapitalsMode ? (
+                      <Award size={20} className="text-blue-400" />
+                    ) : (
+                      <Globe size={20} className="text-blue-400" />
+                    )}
                   </div>
                   
                   {isComplete && (
@@ -99,12 +114,10 @@ const RegionSelection: React.FC = () => {
                       <span>{countryCount} стран</span>
                     </div>
                     
-                    {highScore > 0 && (
-                      <div className="flex items-center">
-                        <Trophy size={12} className="mr-1 text-amber-400" />
-                        <span>Рекорд: {highScore}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center">
+                      <Trophy size={12} className="mr-1 text-amber-400" />
+                      <span>Рекорд: {highScore}/{countryCount}</span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -17,6 +17,13 @@ const initialGameStats: Record<CategoryId, GameStats> = {
   africa: { currentScore: 0, highScore: 0, isComplete: false },
   australiaOceania: { currentScore: 0, highScore: 0, isComplete: false },
   capitals: { currentScore: 0, highScore: 0, isComplete: false },
+  // Add capital versions for each region
+  capitalsEurope: { currentScore: 0, highScore: 0, isComplete: false },
+  capitalsAsia: { currentScore: 0, highScore: 0, isComplete: false },
+  capitalsNorthAmerica: { currentScore: 0, highScore: 0, isComplete: false },
+  capitalsSouthAmerica: { currentScore: 0, highScore: 0, isComplete: false },
+  capitalsAfrica: { currentScore: 0, highScore: 0, isComplete: false },
+  capitalsAustraliaOceania: { currentScore: 0, highScore: 0, isComplete: false },
 };
 
 // Create the context with default values
@@ -41,6 +48,17 @@ const GameContext = createContext<GameContextType>({
 
 // Custom hook to use the game context
 export const useGameContext = () => useContext(GameContext);
+
+// Helper to convert region to capitals region
+export const getCapitalsCategory = (regionCategory: CategoryId): CategoryId => {
+  if (regionCategory === 'europe') return 'capitalsEurope';
+  if (regionCategory === 'asia') return 'capitalsAsia';
+  if (regionCategory === 'northAmerica') return 'capitalsNorthAmerica';
+  if (regionCategory === 'southAmerica') return 'capitalsSouthAmerica';
+  if (regionCategory === 'africa') return 'capitalsAfrica';
+  if (regionCategory === 'australiaOceania') return 'capitalsAustraliaOceania';
+  return 'capitals';
+};
 
 // Provider component to wrap the app
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -171,7 +189,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Check if category completion needs to be updated
-      if (categoryStats.currentScore >= gameCategories[category].countries.length) {
+      if (category in gameCategories && categoryStats.currentScore >= gameCategories[category].countries.length) {
         categoryStats.isComplete = true;
       }
       

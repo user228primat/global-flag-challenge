@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import MainMenu from '../components/MainMenu';
-import { Globe, Music, Heart, Flame } from 'lucide-react';
 
 const Index = () => {
   useEffect(() => {
@@ -21,56 +20,8 @@ const Index = () => {
         <div className="absolute bottom-40 -right-20 w-96 h-96 rounded-full bg-[#FF5252]/5 blur-[100px] opacity-50"></div>
       </div>
       
-      {/* Header with logo */}
-      <header className="pt-8 px-4 relative z-10">
-        <div className="max-w-md mx-auto flex items-center justify-center mb-12">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-gradient-radial from-accent/20 to-transparent blur-xl opacity-70"></div>
-            <div className="w-16 h-16 flex items-center justify-center relative">
-              <Globe size={48} className="text-accent animate-float" />
-            </div>
-          </div>
-        </div>
-      </header>
-      
       {/* Main Content */}
-      <div className="relative z-10 max-w-xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-6 tracking-tight">
-            <span className="bg-gradient-to-r from-white to-foreground-subtle bg-clip-text text-transparent">
-              Флаги Мира
-            </span>
-          </h1>
-          
-          <p className="text-foreground-subtle max-w-md mx-auto text-lg">
-            Проверьте свои знания флагов стран мира в элегантной и захватывающей игре
-          </p>
-        </div>
-        
-        {/* Feature highlights */}
-        <div className="grid grid-cols-3 gap-4 mb-10 max-w-md mx-auto">
-          <div className="flex flex-col items-center text-center p-3">
-            <div className="w-12 h-12 rounded-full bg-card-light flex items-center justify-center mb-3 shadow-inner-highlight">
-              <Globe size={22} className="text-accent-muted" />
-            </div>
-            <span className="text-foreground-subtle text-sm">Более 200 стран</span>
-          </div>
-          
-          <div className="flex flex-col items-center text-center p-3">
-            <div className="w-12 h-12 rounded-full bg-card-light flex items-center justify-center mb-3 shadow-inner-highlight">
-              <Flame size={22} className="text-[#FF5252]" />
-            </div>
-            <span className="text-foreground-subtle text-sm">Сложные уровни</span>
-          </div>
-          
-          <div className="flex flex-col items-center text-center p-3">
-            <div className="w-12 h-12 rounded-full bg-card-light flex items-center justify-center mb-3 shadow-inner-highlight">
-              <Heart size={22} className="text-[#FF9FB1]" />
-            </div>
-            <span className="text-foreground-subtle text-sm">Интересная игра</span>
-          </div>
-        </div>
-        
+      <div className="relative z-10 max-w-xl mx-auto px-4 pt-10">
         <MainMenu />
       </div>
       
