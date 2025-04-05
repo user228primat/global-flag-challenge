@@ -40,7 +40,7 @@ const NotFound = () => {
     const checkSDK = async () => {
       try {
         const sdk = YandexGamesSDK.getInstance();
-        const isInitialized = sdk.isSDKInitialized();
+        const isInitialized = sdk.isInitialized();
         setSdkStatus(isInitialized 
           ? "Yandex SDK инициализирован успешно" 
           : `Ошибка при инициализации Yandex SDK: ${sdk.getInitError() || "неизвестная ошибка"}`);

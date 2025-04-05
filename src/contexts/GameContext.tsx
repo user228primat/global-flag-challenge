@@ -102,7 +102,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // If SDK initialized, try to load progress from Yandex cloud
       if (initialized) {
-        yaSdk.loadProgress().then(progress => {
+        yaSdk.loadUserData().then(progress => {
           if (progress && progress.gameStats) {
             // Load game stats from Yandex cloud storage
             setGameStats(prev => {
@@ -128,7 +128,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Save to Yandex cloud if SDK is initialized
     if (isSDKInitialized) {
       const yaSdk = YandexGamesSDK.getInstance();
-      yaSdk.saveProgress({
+      yaSdk.saveUserData({
         gameStats: gameStats,
         highScores: Object.entries(gameStats).reduce((acc, [key, value]) => {
           acc[key] = value.highScore;
@@ -146,7 +146,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     const yaSdk = YandexGamesSDK.getInstance();
-    return await yaSdk.showRewardedAd(() => {
+    return await yaSdk.showRewardedVideo(() => {
       // Player got the reward - restore one life
       setLives(prev => prev + 1);
       // Resume game
