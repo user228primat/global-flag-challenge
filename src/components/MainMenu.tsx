@@ -78,8 +78,6 @@ const MainMenu: React.FC = () => {
                               flex flex-col group shadow-elegant"
                     type="button"
                   >
-                    <RegionImages region={categoryId as CategoryId} />
-                    
                     <div className="p-3 flex items-center gap-3 bg-card hover:bg-card-hover transition-colors">
                       <div className="w-10 h-10 rounded-lg bg-background-dark/50 flex items-center justify-center">
                         <Trophy size={18} className="text-amber-400" />
@@ -174,8 +172,6 @@ const MainMenu: React.FC = () => {
                       flex flex-col group shadow-elegant"
             type="button"
           >
-            <RegionImages region="capitals" />
-            
             <div className="p-4 flex items-center gap-4 bg-card hover:bg-card-hover transition-colors">
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-900/10 flex items-center justify-center">
                 <Map size={24} className="text-blue-400" />

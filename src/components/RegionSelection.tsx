@@ -21,14 +21,14 @@ const RegionSelection: React.FC = () => {
   const handleRegionSelect = (region: CategoryId) => {
     if (isCapitalsMode) {
       const capitalsCategory = getCapitalsCategory(region);
-      navigate(`/game?mode=capitals&region=${region}`);
+      navigate(`/capitals/${region}`);
     } else {
       navigate(`/category/${region}`);
     }
   };
   
   const handleBackClick = () => {
-    navigate(-1);
+    navigate('/');
   };
   
   const getRegionStats = (regionId: CategoryId) => {
@@ -36,7 +36,7 @@ const RegionSelection: React.FC = () => {
     const categoryId = isCapitalsMode ? getCapitalsCategory(regionId) : regionId;
     
     const stats = gameStats[categoryId] || { highScore: 0, isComplete: false };
-    const regionCountryCount = gameCategories[regionId].countries.length;
+    const regionCountryCount = gameCategories[regionId]?.countries?.length || 0;
     return { 
       highScore: stats.highScore, 
       isComplete: stats.isComplete,

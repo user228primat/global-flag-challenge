@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
@@ -8,7 +8,6 @@ import { Play, Book, ArrowLeft } from 'lucide-react';
 
 const CategoryOptions: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { categoryId } = useParams<{ categoryId: string }>();
   const { startGame, viewReference } = useGameContext();
   
@@ -28,7 +27,7 @@ const CategoryOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate('/'); // Always navigate to the home page instead of using history
+    navigate('/');
   };
   
   const displayName = categoryDisplayNames[categoryId as CategoryId] || 'Категория';

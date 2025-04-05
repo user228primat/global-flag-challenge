@@ -17,17 +17,19 @@ const CapitalsOptions: React.FC = () => {
   }
   
   const handlePlayClick = () => {
-    startGame(regionId as CategoryId);
-    navigate('/capitals/game');
+    const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
+    startGame(capitalsCategory);
+    navigate('/game');
   };
   
   const handleReferenceClick = () => {
-    viewReference(regionId as CategoryId);
+    const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
+    viewReference(capitalsCategory);
     navigate('/reference');
   };
   
   const handleBackClick = () => {
-    navigate('/capitals'); // Always navigate to capitals page instead of using history
+    navigate('/capitals');
   };
   
   const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';
