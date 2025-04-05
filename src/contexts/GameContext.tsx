@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CategoryId, GameContextType, GameStats } from '../types';
 import { gameCategories } from '../data';
@@ -17,7 +16,6 @@ const initialGameStats: Record<CategoryId, GameStats> = {
   africa: { currentScore: 0, highScore: 0, isComplete: false },
   australiaOceania: { currentScore: 0, highScore: 0, isComplete: false },
   capitals: { currentScore: 0, highScore: 0, isComplete: false },
-  // Add capital versions for each region
   capitalsEurope: { currentScore: 0, highScore: 0, isComplete: false },
   capitalsAsia: { currentScore: 0, highScore: 0, isComplete: false },
   capitalsNorthAmerica: { currentScore: 0, highScore: 0, isComplete: false },
@@ -64,15 +62,12 @@ export const getCapitalsCategory = (regionCategory: CategoryId): CategoryId => {
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentCategory, setCurrentCategory] = useState<CategoryId | null>(null);
   const [gameStats, setGameStats] = useState<Record<CategoryId, GameStats>>(() => {
-    // Try to load saved game stats from localStorage
     const savedStats = localStorage.getItem('flagGameStats');
     if (savedStats) {
       try {
         const parsedStats = JSON.parse(savedStats);
-        // Ensure all categories exist in the loaded stats
         const completeStats = { ...initialGameStats };
         
-        // Only copy keys that exist in initialGameStats to avoid invalid categories
         Object.keys(initialGameStats).forEach(key => {
           if (parsedStats[key]) {
             completeStats[key as CategoryId] = parsedStats[key];
@@ -100,14 +95,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     yaSdk.init().then(initialized => {
       setIsSDKInitialized(initialized);
       
-      // If SDK initialized, try to load progress from Yandex cloud
       if (initialized) {
         yaSdk.loadUserData().then(progress => {
           if (progress && progress.gameStats) {
-            // Load game stats from Yandex cloud storage
             setGameStats(prev => {
               const newStats = { ...prev };
-              // Only copy valid categories
               Object.keys(initialGameStats).forEach(key => {
                 if (progress.gameStats[key]) {
                   newStats[key as CategoryId] = progress.gameStats[key];
@@ -125,7 +117,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('flagGameStats', JSON.stringify(gameStats));
     
-    // Save to Yandex cloud if SDK is initialized
     if (isSDKInitialized) {
       const yaSdk = YandexGamesSDK.getInstance();
       yaSdk.saveUserData({
@@ -146,12 +137,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     const yaSdk = YandexGamesSDK.getInstance();
-    return await yaSdk.showRewardedVideo(() => {
-      // Player got the reward - restore one life
+    const wasAdShown = await yaSdk.showRewardedVideo();
+    
+    if (wasAdShown) {
       setLives(prev => prev + 1);
-      // Resume game
       setIsGameOver(false);
-    });
+    }
+    
+    return wasAdShown;
   };
 
   // Mark a category as complete
@@ -162,7 +155,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       categoryStats.isComplete = true;
       
-      // Ensure high score is updated
       if (currentScore > categoryStats.highScore) {
         categoryStats.highScore = currentScore;
       }
@@ -180,15 +172,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newStats = { ...prev };
       const categoryStats = { ...newStats[category] };
       
-      // Update current score
       categoryStats.currentScore = currentScore + 1;
       
-      // Update high score if current score is higher
       if (categoryStats.currentScore > categoryStats.highScore) {
         categoryStats.highScore = categoryStats.currentScore;
       }
       
-      // Check if category completion needs to be updated
       if (category in gameCategories && categoryStats.currentScore >= gameCategories[category].countries.length) {
         categoryStats.isComplete = true;
       }
