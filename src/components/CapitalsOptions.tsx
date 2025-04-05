@@ -27,7 +27,7 @@ const CapitalsOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate(-1); // Навигация назад в истории
+    navigate('/capitals'); // Always navigate to capitals page instead of using history
   };
   
   const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';

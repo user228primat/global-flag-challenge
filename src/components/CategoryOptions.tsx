@@ -28,7 +28,7 @@ const CategoryOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate(-1); // Navigate back in history
+    navigate('/'); // Always navigate to the home page instead of using history
   };
   
   const displayName = categoryDisplayNames[categoryId as CategoryId] || 'Категория';

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -142,7 +141,6 @@ const GameScreen: React.FC = () => {
         incrementScore(currentCategory);
       }
       
-      // Move to next question immediately on correct answer
       setTimeout(() => {
         loadNextQuestion();
       }, 300);
@@ -151,7 +149,6 @@ const GameScreen: React.FC = () => {
       
       if (!incorrectOptions.has(value)) {
         setLives(lives - 1);
-        setShowCorrectAnswer(true);
         
         if (lives <= 1) {
           setIsGameOver(true);
@@ -236,19 +233,16 @@ const GameScreen: React.FC = () => {
             : currentCountry?.name === option.value;
           const isIncorrect = incorrectOptions.has(option.value);
           
-          // Highlight correct answer when player makes a wrong choice
-          const shouldHighlightCorrect = showCorrectAnswer && isOptionCorrect;
+          const shouldHighlightCorrect = isSelected && isOptionCorrect;
           
           let buttonClass = "relative w-full text-left p-4 rounded-xl transition-all duration-300 flex items-center ";
           
           if (isSelected) {
-            if (!isOptionCorrect) {
-              buttonClass += "bg-red-500/20 border border-red-500/50 text-foreground";
-            } else {
+            if (isOptionCorrect) {
               buttonClass += "bg-green-500/20 border border-green-500/50 text-foreground";
+            } else {
+              buttonClass += "bg-red-500/20 border border-red-500/50 text-foreground";
             }
-          } else if (shouldHighlightCorrect) {
-            buttonClass += "bg-green-500/20 border border-green-500/50 text-foreground";
           } else if (isIncorrect) {
             buttonClass += "bg-red-500/10 border border-red-500/20 text-foreground-subtle";
           } else {
@@ -259,7 +253,7 @@ const GameScreen: React.FC = () => {
             <button
               key={option.value}
               onClick={() => handleAnswerSelect(option.value)}
-              disabled={isIncorrect || isCorrect || showCorrectAnswer}
+              disabled={isIncorrect || isCorrect}
               className={buttonClass}
               type="button"
             >
@@ -267,7 +261,7 @@ const GameScreen: React.FC = () => {
                 <span className="text-lg">{option.text}</span>
               </div>
               
-              {(isSelected || shouldHighlightCorrect) && (
+              {isSelected && (
                 <div className="flex items-center justify-center ml-2">
                   {isOptionCorrect ? (
                     <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
