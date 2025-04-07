@@ -6,13 +6,26 @@ import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
 import { Play, Book, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from "@/components/ui/use-toast";
 
-const CategoryOptions: React.FC = () => {
+interface CategoryOptionsProps {
+  onBack?: () => void;
+}
+
+const CategoryOptions: React.FC<CategoryOptionsProps> = ({ onBack }) => {
   const navigate = useNavigate();
   const { categoryId } = useParams<{ categoryId: string }>();
   const { startGame, viewReference } = useGameContext();
   
+  console.log("CategoryOptions rendered with categoryId:", categoryId);
+  
   if (!categoryId) {
+    console.error("No categoryId parameter in CategoryOptions");
+    toast({
+      title: "Ошибка",
+      description: "Не выбрана категория",
+      variant: "destructive",
+    });
     navigate('/');
     return null;
   }
@@ -30,8 +43,12 @@ const CategoryOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    console.log('Back button clicked in CategoryOptions, navigating to /');
-    navigate('/');
+    console.log('Back button clicked in CategoryOptions');
+    if (onBack) {
+      onBack();
+    } else {
+      navigate('/');
+    }
   };
   
   const displayName = categoryDisplayNames[categoryId as CategoryId] || 'Категория';

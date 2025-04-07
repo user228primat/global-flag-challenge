@@ -6,6 +6,7 @@ import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
 import { Play, Book, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from "@/components/ui/use-toast";
 
 const CapitalsOptions: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +14,15 @@ const CapitalsOptions: React.FC = () => {
   const { regionId } = useParams<{ regionId: string }>();
   const { startGame, viewReference } = useGameContext();
   
+  console.log("CapitalsOptions rendered with regionId:", regionId);
+  
   if (!regionId) {
+    console.error("No regionId parameter in CapitalsOptions");
+    toast({
+      title: "Ошибка",
+      description: "Не выбран регион",
+      variant: "destructive",
+    });
     navigate('/capitals');
     return null;
   }
@@ -27,6 +36,7 @@ const CapitalsOptions: React.FC = () => {
   
   const handleReferenceClick = () => {
     const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
+    console.log('Viewing reference for category:', capitalsCategory);
     viewReference(capitalsCategory);
     navigate('/reference');
   };

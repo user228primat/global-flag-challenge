@@ -14,11 +14,14 @@ const RegionSelection: React.FC = () => {
   const { gameStats } = useGameContext();
   const isCapitalsMode = location.pathname.includes('/capitals');
   
+  console.log('RegionSelection rendered, isCapitalsMode:', isCapitalsMode);
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
   const handleRegionSelect = (region: CategoryId) => {
+    console.log(`Region selected: ${region}, isCapitalsMode: ${isCapitalsMode}`);
     if (isCapitalsMode) {
       console.log(`Navigating to capitals/${region}`);
       navigate(`/capitals/${region}`);
@@ -29,11 +32,7 @@ const RegionSelection: React.FC = () => {
   
   const handleBackClick = () => {
     console.log("Back button clicked in RegionSelection");
-    if (isCapitalsMode) {
-      navigate('/');
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
   
   const getRegionStats = (regionId: CategoryId) => {

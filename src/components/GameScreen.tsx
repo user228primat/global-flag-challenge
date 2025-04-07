@@ -12,7 +12,11 @@ import GameOverScreen from './GameOverScreen';
 import { Button } from '@/components/ui/button';
 import { toast } from "@/components/ui/use-toast";
 
-const GameScreen: React.FC = () => {
+interface GameScreenProps {
+  onBack?: () => void;
+}
+
+const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { 
@@ -37,9 +41,17 @@ const GameScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCapitalsMode, setIsCapitalsMode] = useState(false);
   
+  console.log("GameScreen rendered with currentCategory:", currentCategory);
+  
   const handleExit = () => {
     console.log("Exit button clicked, resetting game and navigating");
     resetGame();
+    
+    if (onBack) {
+      onBack();
+      return;
+    }
+    
     const isCapitals = currentCategory?.includes('capitals') || location.pathname.includes('capitals');
     navigate(isCapitals ? '/capitals' : '/');
   };

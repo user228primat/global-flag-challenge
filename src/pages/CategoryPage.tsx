@@ -1,12 +1,20 @@
 
 import React, { useEffect } from 'react';
 import CategoryOptions from '../components/CategoryOptions';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryPage = () => {
-  // Сбрасываем позицию прокрутки при загрузке страницы
+  const navigate = useNavigate();
+  
+  // Reset scroll position when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleBackClick = () => {
+    console.log('Back button clicked in CategoryPage');
+    navigate('/');
+  };
   
   return (
     <div className="min-h-screen bg-background pb-16 relative overflow-hidden">
@@ -21,7 +29,7 @@ const CategoryPage = () => {
         <div className="absolute bottom-40 -left-20 w-96 h-96 rounded-full bg-[#FF5252]/5 blur-[100px] opacity-50"></div>
       </div>
 
-      <CategoryOptions />
+      <CategoryOptions onBack={handleBackClick} />
     </div>
   );
 };

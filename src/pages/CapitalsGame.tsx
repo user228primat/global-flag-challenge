@@ -10,13 +10,15 @@ const CapitalsGame = () => {
   const location = useLocation();
   const { currentCategory } = useGameContext();
   
+  console.log("CapitalsGame rendered with currentCategory:", currentCategory);
+  
   // Reset scroll position when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
     
     // Check if we have a category set and if it's a capitals category
     if (!currentCategory) {
-      console.log('No category set in capitals game, redirecting to capitals page');
+      console.error('No category set in capitals game, redirecting to capitals page');
       toast({
         title: "Ошибка",
         description: "Категория не выбрана, пожалуйста выберите регион",
@@ -27,7 +29,7 @@ const CapitalsGame = () => {
     }
     
     if (!currentCategory.includes('capitals')) {
-      console.log('Not a capitals category, redirecting to capitals page');
+      console.error('Not a capitals category:', currentCategory, ', redirecting to capitals page');
       toast({
         title: "Ошибка",
         description: "Выбрана неверная категория, пожалуйста выберите регион",
@@ -36,6 +38,11 @@ const CapitalsGame = () => {
       navigate('/capitals');
     }
   }, [currentCategory, navigate]);
+  
+  const handleBackClick = () => {
+    console.log('Back button clicked in CapitalsGame');
+    navigate('/capitals');
+  };
   
   return (
     <div className="min-h-screen bg-background pb-16 relative overflow-hidden">
@@ -53,7 +60,7 @@ const CapitalsGame = () => {
         <div className="absolute bottom-10 left-10 w-56 h-56 rounded-full bg-indigo-800/5 blur-3xl pointer-events-none"></div>
       </div>
       
-      <GameScreen />
+      <GameScreen onBack={handleBackClick} />
     </div>
   );
 };
