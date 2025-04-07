@@ -1,19 +1,27 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import GameScreen from '../components/GameScreen';
 import { useGameContext } from '../contexts/GameContext';
 
 const CapitalsGame = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentCategory } = useGameContext();
   
   // Reset scroll position when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Check if we're actually in capitals mode
-    if (currentCategory && !currentCategory.includes('capitals')) {
+    // Check if we have a category set and if it's a capitals category
+    if (!currentCategory) {
+      console.log('No category set in capitals game, redirecting to capitals page');
+      navigate('/capitals');
+      return;
+    }
+    
+    if (!currentCategory.includes('capitals')) {
+      console.log('Not a capitals category, redirecting to capitals page');
       navigate('/capitals');
     }
   }, [currentCategory, navigate]);

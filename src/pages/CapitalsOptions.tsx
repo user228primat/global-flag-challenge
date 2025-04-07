@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import CapitalsOptions from '../components/CapitalsOptions';
 
 const CapitalsOptionsPage = () => {
-  // Сбрасываем позицию прокрутки при загрузке страницы
+  // Reset scroll position when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

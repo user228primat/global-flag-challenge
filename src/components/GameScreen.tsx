@@ -10,6 +10,7 @@ import { generateOptions, getNextCountry } from '../utils/gameLogic';
 import { Country } from '../types';
 import { ArrowLeft, X, Check } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
+import { Button } from '@/components/ui/button';
 
 const GameScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -90,7 +91,10 @@ const GameScreen: React.FC = () => {
   };
   
   const loadNextQuestion = () => {
-    if (!currentCategory) return;
+    if (!currentCategory) {
+      console.error("No current category set");
+      return;
+    }
     
     if (checkForCategoryCompletion()) {
       return;
@@ -170,7 +174,9 @@ const GameScreen: React.FC = () => {
       setIsCapitalsMode(currentCategory.includes('capitals') || location.pathname.includes('/capitals'));
       loadNextQuestion();
     } else {
-      navigate('/');
+      console.error("No category selected, redirecting to home");
+      const isCapitals = location.pathname.includes('/capitals');
+      navigate(isCapitals ? '/capitals' : '/');
     }
   }, [currentCategory]);
   
@@ -208,14 +214,15 @@ const GameScreen: React.FC = () => {
   return (
     <div className="w-full max-w-xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <button 
+        <Button 
           onClick={handleExit}
+          variant="ghost" 
           className="flex items-center px-4 py-2 rounded-full bg-card/80 hover:bg-card-hover transition-colors"
           type="button"
         >
           <ArrowLeft size={18} className="mr-2 text-foreground-subtle" />
           <span className="text-foreground-muted">Выход</span>
-        </button>
+        </Button>
         <LivesIndicator lives={lives} maxLives={3} />
       </div>
       

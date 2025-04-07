@@ -5,6 +5,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
 import { Play, Book, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const CapitalsOptions: React.FC = () => {
   const navigate = useNavigate();
@@ -38,13 +39,14 @@ const CapitalsOptions: React.FC = () => {
   return (
     <div className="w-full max-w-xl mx-auto px-4">
       <div className="flex items-center mb-8 pt-6">
-        <button 
+        <Button 
           onClick={handleBackClick}
+          variant="ghost"
           className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
         >
           <ArrowLeft size={18} />
           <span>Назад</span>
-        </button>
+        </Button>
       </div>
       
       <div className="mb-12 text-center">
