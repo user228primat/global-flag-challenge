@@ -1,12 +1,22 @@
 
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import GameScreen from '../components/GameScreen';
+import { useGameContext } from '../contexts/GameContext';
 
 const CapitalsGame = () => {
-  // Сбрасываем позицию прокрутки при загрузке страницы
+  const navigate = useNavigate();
+  const { currentCategory } = useGameContext();
+  
+  // Reset scroll position when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    // Check if we're actually in capitals mode
+    if (currentCategory && !currentCategory.includes('capitals')) {
+      navigate('/capitals');
+    }
+  }, [currentCategory, navigate]);
   
   return (
     <div className="min-h-screen bg-background pb-16 relative overflow-hidden">

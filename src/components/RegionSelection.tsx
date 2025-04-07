@@ -1,9 +1,8 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
-import { ArrowLeft, Globe, Trophy, Award, BookOpen, Map, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Globe, Trophy, Award, Star, Map, BookOpen, Sparkles, ChevronRight, Headphones, Layers } from 'lucide-react';
 import RegionImages from './RegionImages';
 import { useGameContext, getCapitalsCategory } from '../contexts/GameContext';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,6 @@ const RegionSelection: React.FC = () => {
   
   const handleRegionSelect = (region: CategoryId) => {
     if (isCapitalsMode) {
-      const capitalsCategory = getCapitalsCategory(region);
       navigate(`/capitals/${region}`);
     } else {
       navigate(`/category/${region}`);
@@ -28,11 +26,10 @@ const RegionSelection: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate('/');
+    navigate(-1);
   };
   
   const getRegionStats = (regionId: CategoryId) => {
-    // Get appropriate category ID based on mode
     const categoryId = isCapitalsMode ? getCapitalsCategory(regionId) : regionId;
     
     const stats = gameStats[categoryId] || { highScore: 0, isComplete: false };
@@ -46,7 +43,6 @@ const RegionSelection: React.FC = () => {
   
   return (
     <div className="w-full max-w-xl mx-auto px-4 py-8">
-      {/* Header */}
       <div className="mb-8">
         <Button 
           onClick={handleBackClick}
@@ -65,7 +61,6 @@ const RegionSelection: React.FC = () => {
         </p>
       </div>
       
-      {/* Region grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {categoryGroups.regions.map((regionId) => {
           const { highScore, isComplete, countryCount } = getRegionStats(regionId as CategoryId);
@@ -78,13 +73,11 @@ const RegionSelection: React.FC = () => {
                         transition-all duration-300 shadow-elegant hover:shadow-glow"
               type="button"
             >
-              {/* Background image with overlay */}
               <div className="absolute inset-0 z-0">
                 <RegionImages region={regionId as CategoryId} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/90 to-background-dark/40 opacity-90"></div>
               </div>
               
-              {/* Content */}
               <div className="relative z-10 h-full flex flex-col justify-between p-4">
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-lg bg-background-dark/70 backdrop-blur-sm flex items-center justify-center">
@@ -122,7 +115,6 @@ const RegionSelection: React.FC = () => {
                 </div>
               </div>
               
-              {/* Hover effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-accent/5 via-transparent to-transparent transition-opacity duration-300"></div>
             </button>
           );

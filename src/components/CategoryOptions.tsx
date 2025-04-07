@@ -27,7 +27,7 @@ const CategoryOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate('/');
+    navigate(-1);
   };
   
   const displayName = categoryDisplayNames[categoryId as CategoryId] || 'Категория';

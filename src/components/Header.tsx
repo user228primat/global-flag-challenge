@@ -1,11 +1,12 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { Globe } from 'lucide-react';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { resetGame } = useGameContext();
   
   const handleHomeClick = () => {

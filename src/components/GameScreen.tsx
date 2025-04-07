@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { gameCategories } from '../data';
 import FlagCard from './FlagCard';
@@ -13,6 +13,7 @@ import GameOverScreen from './GameOverScreen';
 
 const GameScreen: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { 
     currentCategory, 
     lives, 
@@ -37,11 +38,12 @@ const GameScreen: React.FC = () => {
   
   const handleExit = () => {
     resetGame();
-    navigate('/');
+    const isCapitals = currentCategory?.includes('capitals') || location.pathname.includes('capitals');
+    navigate(isCapitals ? '/capitals' : '/');
   };
   
   const checkForCategoryCompletion = () => {
-    if (!currentCategory) return false;
+    if (!currentCategory || !gameCategories[currentCategory]) return false;
     
     const categoryCountries = gameCategories[currentCategory].countries;
     const allCountriesUsed = usedCountries.size >= categoryCountries.length;
@@ -94,6 +96,13 @@ const GameScreen: React.FC = () => {
       return;
     }
     
+    // Ensure that gameCategories[currentCategory] exists
+    if (!gameCategories[currentCategory]) {
+      console.error(`Category ${currentCategory} not found in gameCategories`);
+      navigate('/');
+      return;
+    }
+    
     setIsLoading(true);
     setSelectedOption(null);
     setIsCorrect(null);
@@ -105,7 +114,7 @@ const GameScreen: React.FC = () => {
     if (nextCountry) {
       setCurrentCountry(nextCountry);
       
-      if (currentCategory === 'capitals' || window.location.pathname.includes('/capitals')) {
+      if (currentCategory.includes('capitals') || location.pathname.includes('/capitals')) {
         setIsCapitalsMode(true);
         setOptions(generateCapitalsOptions(categoryCountries, nextCountry));
       } else {
@@ -158,7 +167,7 @@ const GameScreen: React.FC = () => {
   
   useEffect(() => {
     if (currentCategory) {
-      setIsCapitalsMode(currentCategory === 'capitals' || window.location.pathname.includes('/capitals'));
+      setIsCapitalsMode(currentCategory.includes('capitals') || location.pathname.includes('/capitals'));
       loadNextQuestion();
     } else {
       navigate('/');

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
@@ -8,6 +8,7 @@ import { Play, Book, ArrowLeft } from 'lucide-react';
 
 const CapitalsOptions: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { regionId } = useParams<{ regionId: string }>();
   const { startGame, viewReference } = useGameContext();
   
@@ -19,7 +20,7 @@ const CapitalsOptions: React.FC = () => {
   const handlePlayClick = () => {
     const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
     startGame(capitalsCategory);
-    navigate('/game');
+    navigate('/capitals/game');
   };
   
   const handleReferenceClick = () => {
@@ -29,7 +30,7 @@ const CapitalsOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate('/capitals');
+    navigate(-1);
   };
   
   const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';
