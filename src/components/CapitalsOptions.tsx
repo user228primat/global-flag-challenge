@@ -20,6 +20,7 @@ const CapitalsOptions: React.FC = () => {
   
   const handlePlayClick = () => {
     const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
+    console.log('Starting capitals game with category:', capitalsCategory);
     startGame(capitalsCategory);
     navigate('/capitals/game');
   };
@@ -31,7 +32,9 @@ const CapitalsOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate(-1);
+    // Simple hard navigation back
+    console.log('Back button clicked, navigating back');
+    navigate('/capitals');
   };
   
   const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';

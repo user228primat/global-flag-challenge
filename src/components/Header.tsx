@@ -10,6 +10,7 @@ const Header: React.FC = () => {
   const { resetGame } = useGameContext();
   
   const handleHomeClick = () => {
+    console.log("Home button clicked in Header, resetting game and navigating to /");
     resetGame();
     navigate('/');
   };

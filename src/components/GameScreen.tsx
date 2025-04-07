@@ -38,6 +38,7 @@ const GameScreen: React.FC = () => {
   const [isCapitalsMode, setIsCapitalsMode] = useState(false);
   
   const handleExit = () => {
+    console.log("Exit button clicked, resetting game and navigating");
     resetGame();
     const isCapitals = currentCategory?.includes('capitals') || location.pathname.includes('capitals');
     navigate(isCapitals ? '/capitals' : '/');
@@ -171,6 +172,7 @@ const GameScreen: React.FC = () => {
   
   useEffect(() => {
     if (currentCategory) {
+      console.log("Current category in GameScreen:", currentCategory);
       setIsCapitalsMode(currentCategory.includes('capitals') || location.pathname.includes('/capitals'));
       loadNextQuestion();
     } else {

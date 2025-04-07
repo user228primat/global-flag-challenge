@@ -20,6 +20,7 @@ const RegionSelection: React.FC = () => {
   
   const handleRegionSelect = (region: CategoryId) => {
     if (isCapitalsMode) {
+      console.log(`Navigating to capitals/${region}`);
       navigate(`/capitals/${region}`);
     } else {
       navigate(`/category/${region}`);
@@ -27,7 +28,8 @@ const RegionSelection: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    navigate(-1);
+    console.log("Back button clicked in RegionSelection");
+    navigate('/');
   };
   
   const getRegionStats = (regionId: CategoryId) => {
