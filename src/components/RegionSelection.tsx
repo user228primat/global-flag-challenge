@@ -1,8 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
-import { ArrowLeft, Globe, Trophy, Award, Star, Map, BookOpen, Sparkles, ChevronRight, Headphones, Layers } from 'lucide-react';
+import { ArrowLeft, Globe, Trophy, Award, Star, Map, BookOpen, Sparkles, ChevronRight, Headphones, Layers, CheckCircle } from 'lucide-react';
 import RegionImages from './RegionImages';
 import { useGameContext, getCapitalsCategory } from '../contexts/GameContext';
 import { Button } from '@/components/ui/button';
