@@ -32,8 +32,7 @@ const CapitalsOptions: React.FC = () => {
   };
   
   const handleBackClick = () => {
-    // Simple hard navigation back
-    console.log('Back button clicked, navigating back');
+    console.log('Back button clicked in CapitalsOptions, navigating to /capitals');
     navigate('/capitals');
   };
   

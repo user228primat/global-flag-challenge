@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import GameScreen from '../components/GameScreen';
 import { useGameContext } from '../contexts/GameContext';
+import { toast } from "@/components/ui/use-toast";
 
 const CapitalsGame = () => {
   const navigate = useNavigate();
@@ -16,12 +17,22 @@ const CapitalsGame = () => {
     // Check if we have a category set and if it's a capitals category
     if (!currentCategory) {
       console.log('No category set in capitals game, redirecting to capitals page');
+      toast({
+        title: "Ошибка",
+        description: "Категория не выбрана, пожалуйста выберите регион",
+        variant: "destructive",
+      });
       navigate('/capitals');
       return;
     }
     
     if (!currentCategory.includes('capitals')) {
       console.log('Not a capitals category, redirecting to capitals page');
+      toast({
+        title: "Ошибка",
+        description: "Выбрана неверная категория, пожалуйста выберите регион",
+        variant: "destructive",
+      });
       navigate('/capitals');
     }
   }, [currentCategory, navigate]);

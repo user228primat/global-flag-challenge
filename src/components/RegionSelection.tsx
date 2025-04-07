@@ -29,7 +29,11 @@ const RegionSelection: React.FC = () => {
   
   const handleBackClick = () => {
     console.log("Back button clicked in RegionSelection");
-    navigate('/');
+    if (isCapitalsMode) {
+      navigate('/');
+    } else {
+      navigate('/');
+    }
   };
   
   const getRegionStats = (regionId: CategoryId) => {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -11,6 +10,7 @@ import { Country } from '../types';
 import { ArrowLeft, X, Check } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
 import { Button } from '@/components/ui/button';
+import { toast } from "@/components/ui/use-toast";
 
 const GameScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -104,6 +104,11 @@ const GameScreen: React.FC = () => {
     // Ensure that gameCategories[currentCategory] exists
     if (!gameCategories[currentCategory]) {
       console.error(`Category ${currentCategory} not found in gameCategories`);
+      toast({
+        title: "Ошибка",
+        description: `Категория ${currentCategory} не найдена`,
+        variant: "destructive",
+      });
       navigate('/');
       return;
     }
@@ -119,11 +124,15 @@ const GameScreen: React.FC = () => {
     if (nextCountry) {
       setCurrentCountry(nextCountry);
       
-      if (currentCategory.includes('capitals') || location.pathname.includes('/capitals')) {
-        setIsCapitalsMode(true);
+      const isCurrentCapitalsMode = currentCategory.includes('capitals') || location.pathname.includes('/capitals');
+      console.log('Current game mode:', isCurrentCapitalsMode ? 'capitals' : 'flags', 'Current category:', currentCategory);
+      setIsCapitalsMode(isCurrentCapitalsMode);
+      
+      if (isCurrentCapitalsMode) {
+        console.log('Setting options for capitals mode');
         setOptions(generateCapitalsOptions(categoryCountries, nextCountry));
       } else {
-        setIsCapitalsMode(false);
+        console.log('Setting options for flags mode');
         setOptions(generateOptions(categoryCountries, nextCountry).map(country => ({
           text: country.name,
           value: country.name
@@ -173,11 +182,18 @@ const GameScreen: React.FC = () => {
   useEffect(() => {
     if (currentCategory) {
       console.log("Current category in GameScreen:", currentCategory);
-      setIsCapitalsMode(currentCategory.includes('capitals') || location.pathname.includes('/capitals'));
+      const isCurrentCapitalsMode = currentCategory.includes('capitals') || location.pathname.includes('/capitals');
+      console.log('Is capitals mode:', isCurrentCapitalsMode);
+      setIsCapitalsMode(isCurrentCapitalsMode);
       loadNextQuestion();
     } else {
       console.error("No category selected, redirecting to home");
       const isCapitals = location.pathname.includes('/capitals');
+      toast({
+        title: "Ошибка",
+        description: "Категория не выбрана, перенаправление на главную страницу",
+        variant: "destructive",
+      });
       navigate(isCapitals ? '/capitals' : '/');
     }
   }, [currentCategory]);

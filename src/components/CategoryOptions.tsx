@@ -5,6 +5,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
 import { Play, Book, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const CategoryOptions: React.FC = () => {
   const navigate = useNavigate();
@@ -17,17 +18,20 @@ const CategoryOptions: React.FC = () => {
   }
   
   const handlePlayClick = () => {
+    console.log('Starting game with category:', categoryId);
     startGame(categoryId as CategoryId);
     navigate('/game');
   };
   
   const handleReferenceClick = () => {
+    console.log('Viewing reference for category:', categoryId);
     viewReference(categoryId as CategoryId);
     navigate('/reference');
   };
   
   const handleBackClick = () => {
-    navigate(-1);
+    console.log('Back button clicked in CategoryOptions, navigating to /');
+    navigate('/');
   };
   
   const displayName = categoryDisplayNames[categoryId as CategoryId] || 'Категория';
@@ -35,15 +39,14 @@ const CategoryOptions: React.FC = () => {
   return (
     <div className="w-full max-w-xl mx-auto px-4 pt-6">
       <div className="flex items-center mb-8">
-        <button 
+        <Button 
           onClick={handleBackClick}
-          className="flex items-center text-blue-400 hover:text-blue-300 transition-colors group"
+          variant="ghost"
+          className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
         >
-          <div className="bg-blue-950/50 p-2 rounded-full mr-2 group-hover:bg-blue-900/50 transition-colors">
-            <ArrowLeft size={18} />
-          </div>
-          <span className="font-medium">Назад</span>
-        </button>
+          <ArrowLeft size={18} />
+          <span>Назад</span>
+        </Button>
       </div>
       
       <div className="mb-10 text-center">
