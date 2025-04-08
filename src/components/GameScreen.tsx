@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
@@ -121,7 +122,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
         description: `Категория ${currentCategory} не найдена`,
         variant: "destructive",
       });
-      navigate('/');
+      const isCapitals = currentCategory.includes('capitals') || location.pathname.includes('capitals');
+      navigate(isCapitals ? '/capitals' : '/');
       return;
     }
     
@@ -242,7 +244,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4 py-8">
+    <div className="w-full max-w-xl mx-auto px-4 py-8 relative z-10">
       <div className="flex items-center justify-between mb-8">
         <Button 
           onClick={handleExit}

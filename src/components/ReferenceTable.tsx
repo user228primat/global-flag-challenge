@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { gameCategories, categoryDisplayNames } from '../data';
 import { ArrowLeft, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const ReferenceTable: React.FC = () => {
   const navigate = useNavigate();
@@ -26,6 +27,12 @@ const ReferenceTable: React.FC = () => {
   const category = gameCategories[currentCategory];
   const displayName = categoryDisplayNames[currentCategory];
   
+  const handleBackClick = () => {
+    console.log('Back button clicked in ReferenceTable');
+    const isCapitalsCategory = currentCategory.includes('capitals');
+    navigate(isCapitalsCategory ? '/capitals' : '/');
+  };
+  
   // Filter countries based on search term
   const filteredCountries = category.countries.filter(country => 
     country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -33,17 +40,17 @@ const ReferenceTable: React.FC = () => {
   );
   
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
+    <div className="w-full max-w-4xl mx-auto px-4 relative z-10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 pt-6">
-        <button 
-          onClick={() => navigate('/')}
+        <Button 
+          onClick={handleBackClick}
+          variant="ghost"
           className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
-          type="button"
         >
           <ArrowLeft size={18} />
           <span>Назад</span>
-        </button>
+        </Button>
         
         <h1 className="text-2xl font-medium text-foreground animate-fade-in">
           {displayName}

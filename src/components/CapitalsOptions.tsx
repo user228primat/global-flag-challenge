@@ -27,33 +27,8 @@ const CapitalsOptions: React.FC = () => {
     return null;
   }
   
-  // Validate if the regionId corresponds to a valid category
-  const isValidRegion = ["europe", "asia", "northAmerica", "southAmerica", "africa", "australiaOceania"].includes(regionId);
-  if (!isValidRegion) {
-    console.error("Invalid regionId in CapitalsOptions:", regionId);
-    toast({
-      title: "Ошибка",
-      description: "Неверный регион",
-      variant: "destructive",
-    });
-    navigate('/capitals');
-    return null;
-  }
-  
   const capitalsCategory = getCapitalsCategory(regionId as CategoryId);
   console.log('Mapped capitals category:', capitalsCategory);
-  
-  // Verify the capitals category exists in gameCategories
-  if (!gameCategories[capitalsCategory]) {
-    console.error(`Capitals category ${capitalsCategory} not found in gameCategories`);
-    toast({
-      title: "Ошибка",
-      description: `Категория столиц для региона ${regionId} не найдена`,
-      variant: "destructive",
-    });
-    navigate('/capitals');
-    return null;
-  }
   
   const handlePlayClick = () => {
     console.log('Starting capitals game with category:', capitalsCategory);
@@ -75,7 +50,7 @@ const CapitalsOptions: React.FC = () => {
   const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4">
+    <div className="w-full max-w-xl mx-auto px-4 relative z-10">
       <div className="flex items-center mb-8 pt-6">
         <Button 
           onClick={handleBackClick}

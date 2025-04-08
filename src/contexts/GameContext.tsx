@@ -49,13 +49,15 @@ export const useGameContext = () => useContext(GameContext);
 
 // Helper to convert region to capitals region
 export const getCapitalsCategory = (regionCategory: CategoryId): CategoryId => {
+  console.log('Converting region category to capitals category:', regionCategory);
+  
   if (regionCategory === 'europe') return 'capitalsEurope';
   if (regionCategory === 'asia') return 'capitalsAsia';
   if (regionCategory === 'northAmerica') return 'capitalsNorthAmerica';
   if (regionCategory === 'southAmerica') return 'capitalsSouthAmerica';
   if (regionCategory === 'africa') return 'capitalsAfrica';
   if (regionCategory === 'australiaOceania') return 'capitalsAustraliaOceania';
-  return 'capitals';
+  return 'capitals'; // Default if no match
 };
 
 // Provider component to wrap the app
@@ -207,6 +209,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Start a new game in a specific category
   const startGame = (category: CategoryId) => {
+    console.log('Starting game with category:', category);
     setCurrentCategory(category);
     setLives(3);
     setIsPlaying(true);
@@ -224,6 +227,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // View reference table for a category
   const viewReference = (category: CategoryId) => {
+    console.log('Viewing reference for category:', category);
     setCurrentCategory(category);
     setIsPlaying(false);
   };
