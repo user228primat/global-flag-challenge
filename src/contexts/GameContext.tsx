@@ -91,7 +91,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentScore, setCurrentScore] = useState(0);
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
   
-  // Initialize Yandex Games SDK
   useEffect(() => {
     const yaSdk = YandexGamesSDK.getInstance();
     yaSdk.init().then(initialized => {
@@ -115,7 +114,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   }, []);
 
-  // Save game stats to localStorage and Yandex cloud whenever they change
   useEffect(() => {
     localStorage.setItem('flagGameStats', JSON.stringify(gameStats));
     
@@ -131,7 +129,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [gameStats, isSDKInitialized]);
 
-  // Show rewarded ad and restore one life if ad is watched
   const showRewardedAd = async (): Promise<boolean> => {
     if (!isSDKInitialized) {
       console.warn('SDK not initialized, cannot show rewarded ad');
@@ -149,7 +146,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return wasAdShown;
   };
 
-  // Mark a category as complete
   const markCategoryComplete = (category: CategoryId) => {
     setGameStats(prev => {
       const newStats = { ...prev };
@@ -166,7 +162,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // Increment the score for a category
   const incrementScore = (category: CategoryId) => {
     setCurrentScore(prev => prev + 1);
     
@@ -189,7 +184,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // Reset the game state
   const resetGame = () => {
     setLives(3);
     setIsPlaying(false);
@@ -207,7 +201,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Start a new game in a specific category
   const startGame = (category: CategoryId) => {
     console.log('Starting game with category:', category);
     setCurrentCategory(category);
@@ -225,7 +218,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // View reference table for a category
   const viewReference = (category: CategoryId) => {
     console.log('Viewing reference for category:', category);
     setCurrentCategory(category);

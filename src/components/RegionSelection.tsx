@@ -21,38 +21,12 @@ const RegionSelection: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  const getCapitalsCategoryId = (region: CategoryId): CategoryId | null => {
-    // Преобразование названий регионов в категории столиц
-    const capitalsMapping: Record<string, CategoryId> = {
-      'europe': 'capitalsEurope',
-      'asia': 'capitalsAsia',
-      'northAmerica': 'capitalsNorthAmerica',
-      'southAmerica': 'capitalsSouthAmerica',
-      'africa': 'capitalsAfrica',
-      'australiaOceania': 'capitalsAustraliaOceania'
-    };
-    
-    return capitalsMapping[region] || null;
-  };
-  
   const handleRegionSelect = (region: CategoryId) => {
     console.log(`Region selected: ${region}, isCapitalsMode: ${isCapitalsMode}`);
     
     if (isCapitalsMode) {
-      // Для режима столиц преобразуем регион в соответствующую категорию столиц
-      const capitalsCategory = getCapitalsCategoryId(region);
-      
-      if (capitalsCategory && gameCategories[capitalsCategory]) {
-        console.log(`Navigating to capitals/${region}`);
-        navigate(`/capitals/${region}`);
-      } else {
-        console.error(`No capitals category found for region: ${region}`);
-        toast({
-          title: "Ошибка",
-          description: `Категория столиц не найдена для региона ${categoryDisplayNames[region]}`,
-          variant: "destructive",
-        });
-      }
+      console.log(`Navigating to capitals/${region}`);
+      navigate(`/capitals/${region}`);
     } else {
       navigate(`/category/${region}`);
     }
@@ -64,18 +38,28 @@ const RegionSelection: React.FC = () => {
   };
   
   const getRegionStats = (regionId: CategoryId) => {
-    // Определяем ID категории в зависимости от режима
-    const categoryId = isCapitalsMode 
-      ? getCapitalsCategoryId(regionId) || regionId
-      : regionId;
-    
-    const stats = gameStats[categoryId] || { highScore: 0, isComplete: false };
+    const capitalsCategory = isCapitalsMode ? getCapitalsCategoryId(regionId) : regionId;
+    const stats = gameStats[capitalsCategory] || { highScore: 0, isComplete: false };
     const regionCountryCount = gameCategories[regionId]?.countries?.length || 0;
     return { 
       highScore: stats.highScore, 
       isComplete: stats.isComplete,
       countryCount: regionCountryCount
     };
+  };
+  
+  // Преобразование названий регионов в категории столиц
+  const getCapitalsCategoryId = (region: CategoryId): CategoryId => {
+    const capitalsMapping: Record<string, CategoryId> = {
+      'europe': 'capitalsEurope',
+      'asia': 'capitalsAsia',
+      'northAmerica': 'capitalsNorthAmerica',
+      'southAmerica': 'capitalsSouthAmerica',
+      'africa': 'capitalsAfrica',
+      'australiaOceania': 'capitalsAustraliaOceania'
+    };
+    
+    return capitalsMapping[region] || region;
   };
   
   return (

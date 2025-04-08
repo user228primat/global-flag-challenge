@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGameContext } from '../contexts/GameContext';
 import { gameCategories } from '../data';
@@ -11,7 +11,7 @@ import { Country } from '../types';
 import { ArrowLeft, X, Check } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
 import { Button } from '@/components/ui/button';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface GameScreenProps {
   onBack?: () => void;
@@ -40,9 +40,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [incorrectOptions, setIncorrectOptions] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
-  const [isCapitalsMode, setIsCapitalsMode] = useState(false);
   
-  console.log("GameScreen rendered with currentCategory:", currentCategory);
+  // Determine if we're in capitals mode
+  const isCapitalsMode = useMemo(() => {
+    if (!currentCategory) return false;
+    return currentCategory.includes('capitals') || location.pathname.includes('/capitals');
+  }, [currentCategory, location.pathname]);
+  
+  console.log("GameScreen rendered with currentCategory:", currentCategory, "isCapitalsMode:", isCapitalsMode);
   
   const handleExit = () => {
     console.log("Exit button clicked, resetting game and navigating");
@@ -53,8 +58,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
       return;
     }
     
-    const isCapitals = currentCategory?.includes('capitals') || location.pathname.includes('capitals');
-    navigate(isCapitals ? '/capitals' : '/');
+    navigate(isCapitalsMode ? '/capitals' : '/');
   };
   
   const checkForCategoryCompletion = () => {
@@ -122,8 +126,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
         description: `Категория ${currentCategory} не найдена`,
         variant: "destructive",
       });
-      const isCapitals = currentCategory.includes('capitals') || location.pathname.includes('capitals');
-      navigate(isCapitals ? '/capitals' : '/');
+      navigate(isCapitalsMode ? '/capitals' : '/');
       return;
     }
     
@@ -138,11 +141,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     if (nextCountry) {
       setCurrentCountry(nextCountry);
       
-      const isCurrentCapitalsMode = currentCategory.includes('capitals') || location.pathname.includes('/capitals');
-      console.log('Current game mode:', isCurrentCapitalsMode ? 'capitals' : 'flags', 'Current category:', currentCategory);
-      setIsCapitalsMode(isCurrentCapitalsMode);
+      console.log('Current game mode:', isCapitalsMode ? 'capitals' : 'flags', 'Current category:', currentCategory);
       
-      if (isCurrentCapitalsMode) {
+      if (isCapitalsMode) {
         console.log('Setting options for capitals mode');
         setOptions(generateCapitalsOptions(categoryCountries, nextCountry));
       } else {
@@ -196,19 +197,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   useEffect(() => {
     if (currentCategory) {
       console.log("Current category in GameScreen:", currentCategory);
-      const isCurrentCapitalsMode = currentCategory.includes('capitals') || location.pathname.includes('/capitals');
-      console.log('Is capitals mode:', isCurrentCapitalsMode);
-      setIsCapitalsMode(isCurrentCapitalsMode);
       loadNextQuestion();
     } else {
       console.error("No category selected, redirecting to home");
-      const isCapitals = location.pathname.includes('/capitals');
       toast({
         title: "Ошибка",
         description: "Категория не выбрана, перенаправление на главную страницу",
         variant: "destructive",
       });
-      navigate(isCapitals ? '/capitals' : '/');
+      navigate(isCapitalsMode ? '/capitals' : '/');
     }
   }, [currentCategory]);
   
