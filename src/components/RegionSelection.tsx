@@ -5,13 +5,14 @@ import { categoryGroups, categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
 import { ArrowLeft, Globe, Trophy, Award, Star, Map, BookOpen, Sparkles, ChevronRight, Headphones, Layers, CheckCircle } from 'lucide-react';
 import RegionImages from './RegionImages';
-import { useGameContext, getCapitalsCategory } from '../contexts/GameContext';
+import { useGameContext } from '../contexts/GameContext';
 import { Button } from '@/components/ui/button';
+import { toast } from "@/hooks/use-toast";
 
 const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { gameStats } = useGameContext();
+  const { gameStats, startGame } = useGameContext();
   const isCapitalsMode = location.pathname.includes('/capitals');
   
   console.log('RegionSelection rendered, isCapitalsMode:', isCapitalsMode);
@@ -20,16 +21,37 @@ const RegionSelection: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
   
+  const getCapitalsCategoryId = (region: CategoryId): CategoryId | null => {
+    // Преобразование названий регионов в категории столиц
+    const capitalsMapping: Record<string, CategoryId> = {
+      'europe': 'capitalsEurope',
+      'asia': 'capitalsAsia',
+      'northAmerica': 'capitalsNorthAmerica',
+      'southAmerica': 'capitalsSouthAmerica',
+      'africa': 'capitalsAfrica',
+      'australiaOceania': 'capitalsAustraliaOceania'
+    };
+    
+    return capitalsMapping[region] || null;
+  };
+  
   const handleRegionSelect = (region: CategoryId) => {
     console.log(`Region selected: ${region}, isCapitalsMode: ${isCapitalsMode}`);
+    
     if (isCapitalsMode) {
-      // Verify this region has a corresponding capitals category
-      const capitalsCategory = getCapitalsCategory(region);
-      if (gameCategories[capitalsCategory]) {
+      // Для режима столиц преобразуем регион в соответствующую категорию столиц
+      const capitalsCategory = getCapitalsCategoryId(region);
+      
+      if (capitalsCategory && gameCategories[capitalsCategory]) {
         console.log(`Navigating to capitals/${region}`);
         navigate(`/capitals/${region}`);
       } else {
         console.error(`No capitals category found for region: ${region}`);
+        toast({
+          title: "Ошибка",
+          description: `Категория столиц не найдена для региона ${categoryDisplayNames[region]}`,
+          variant: "destructive",
+        });
       }
     } else {
       navigate(`/category/${region}`);
@@ -42,7 +64,10 @@ const RegionSelection: React.FC = () => {
   };
   
   const getRegionStats = (regionId: CategoryId) => {
-    const categoryId = isCapitalsMode ? getCapitalsCategory(regionId) : regionId;
+    // Определяем ID категории в зависимости от режима
+    const categoryId = isCapitalsMode 
+      ? getCapitalsCategoryId(regionId) || regionId
+      : regionId;
     
     const stats = gameStats[categoryId] || { highScore: 0, isComplete: false };
     const regionCountryCount = gameCategories[regionId]?.countries?.length || 0;

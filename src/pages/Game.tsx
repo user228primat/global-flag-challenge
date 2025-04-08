@@ -20,11 +20,13 @@ const Game = () => {
       
       {/* Glowing elements - All made pointer-events-none */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-48 h-48 rounded-full bg-blue-700/5 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-10 right-10 w-56 h-56 rounded-full bg-indigo-800/5 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-10 left-10 w-48 h-48 rounded-full bg-blue-700/5 blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-56 h-56 rounded-full bg-indigo-800/5 blur-3xl"></div>
       </div>
       
-      <GameScreen />
+      <div className="relative z-20">
+        <GameScreen />
+      </div>
     </div>
   );
 };

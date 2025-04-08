@@ -1,13 +1,12 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import GameScreen from '../components/GameScreen';
 import { useGameContext } from '../contexts/GameContext';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 const CapitalsGame = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { currentCategory } = useGameContext();
   
   console.log("CapitalsGame rendered with currentCategory:", currentCategory);
@@ -56,11 +55,13 @@ const CapitalsGame = () => {
       
       {/* Glowing elements - Made pointer-events-none */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 right-10 w-48 h-48 rounded-full bg-blue-700/5 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-10 left-10 w-56 h-56 rounded-full bg-indigo-800/5 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-10 right-10 w-48 h-48 rounded-full bg-blue-700/5 blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-56 h-56 rounded-full bg-indigo-800/5 blur-3xl"></div>
       </div>
       
-      <GameScreen onBack={handleBackClick} />
+      <div className="relative z-20">
+        <GameScreen onBack={handleBackClick} />
+      </div>
     </div>
   );
 };

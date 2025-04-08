@@ -5,6 +5,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { gameCategories, categoryDisplayNames } from '../data';
 import { ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from "@/hooks/use-toast";
 
 const ReferenceTable: React.FC = () => {
   const navigate = useNavigate();
@@ -28,9 +29,27 @@ const ReferenceTable: React.FC = () => {
   const displayName = categoryDisplayNames[currentCategory];
   
   const handleBackClick = () => {
-    console.log('Back button clicked in ReferenceTable');
+    console.log('Back button clicked in ReferenceTable, currentCategory:', currentCategory);
     const isCapitalsCategory = currentCategory.includes('capitals');
-    navigate(isCapitalsCategory ? '/capitals' : '/');
+    
+    if (isCapitalsCategory) {
+      // Если это категория столиц, возвращаемся на страницу capitals/region
+      const regionMatch = currentCategory.match(/capitals(.+)/);
+      if (regionMatch && regionMatch[1]) {
+        // Если есть регион (например, capitalsEurope -> europe)
+        const region = regionMatch[1].charAt(0).toLowerCase() + regionMatch[1].slice(1);
+        console.log('Navigating to capitals options with region:', region);
+        navigate(`/capitals/${region}`);
+      } else {
+        // Если это просто "capitals", возвращаемся на главную страницу столиц
+        console.log('Navigating to main capitals page');
+        navigate('/capitals');
+      }
+    } else {
+      // Для обычных категорий флагов
+      console.log('Navigating to category page:', currentCategory);
+      navigate(`/category/${currentCategory}`);
+    }
   };
   
   // Filter countries based on search term
@@ -46,7 +65,7 @@ const ReferenceTable: React.FC = () => {
         <Button 
           onClick={handleBackClick}
           variant="ghost"
-          className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors"
+          className="flex items-center gap-1.5 text-foreground-subtle hover:text-foreground transition-colors z-50"
         >
           <ArrowLeft size={18} />
           <span>Назад</span>
