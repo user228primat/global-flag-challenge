@@ -23,8 +23,14 @@ const RegionSelection: React.FC = () => {
   const handleRegionSelect = (region: CategoryId) => {
     console.log(`Region selected: ${region}, isCapitalsMode: ${isCapitalsMode}`);
     if (isCapitalsMode) {
-      console.log(`Navigating to capitals/${region}`);
-      navigate(`/capitals/${region}`);
+      // Verify this region has a corresponding capitals category
+      const capitalsCategory = getCapitalsCategory(region);
+      if (gameCategories[capitalsCategory]) {
+        console.log(`Navigating to capitals/${region}`);
+        navigate(`/capitals/${region}`);
+      } else {
+        console.error(`No capitals category found for region: ${region}`);
+      }
     } else {
       navigate(`/category/${region}`);
     }
@@ -53,7 +59,7 @@ const RegionSelection: React.FC = () => {
         <Button 
           onClick={handleBackClick}
           variant="ghost" 
-          className="text-foreground-subtle hover:text-foreground hover:bg-card-hover rounded-full mb-6 -ml-2 px-4"
+          className="z-50 relative text-foreground-subtle hover:text-foreground hover:bg-card-hover rounded-full mb-6 -ml-2 px-4"
         >
           <ArrowLeft size={18} className="mr-2" />
           <span>Назад</span>
@@ -121,7 +127,7 @@ const RegionSelection: React.FC = () => {
                 </div>
               </div>
               
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-accent/5 via-transparent to-transparent transition-opacity duration-300"></div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-accent/5 via-transparent to-transparent transition-opacity duration-300 pointer-events-none"></div>
             </button>
           );
         })}

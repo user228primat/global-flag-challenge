@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useGameContext } from '../contexts/GameContext';
-import { categoryDisplayNames } from '../data';
+import { useGameContext, getCapitalsCategory } from '../contexts/GameContext';
+import { categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
 import { Play, Book, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,15 +27,41 @@ const CapitalsOptions: React.FC = () => {
     return null;
   }
   
+  // Validate if the regionId corresponds to a valid category
+  const isValidRegion = ["europe", "asia", "northAmerica", "southAmerica", "africa", "australiaOceania"].includes(regionId);
+  if (!isValidRegion) {
+    console.error("Invalid regionId in CapitalsOptions:", regionId);
+    toast({
+      title: "Ошибка",
+      description: "Неверный регион",
+      variant: "destructive",
+    });
+    navigate('/capitals');
+    return null;
+  }
+  
+  const capitalsCategory = getCapitalsCategory(regionId as CategoryId);
+  console.log('Mapped capitals category:', capitalsCategory);
+  
+  // Verify the capitals category exists in gameCategories
+  if (!gameCategories[capitalsCategory]) {
+    console.error(`Capitals category ${capitalsCategory} not found in gameCategories`);
+    toast({
+      title: "Ошибка",
+      description: `Категория столиц для региона ${regionId} не найдена`,
+      variant: "destructive",
+    });
+    navigate('/capitals');
+    return null;
+  }
+  
   const handlePlayClick = () => {
-    const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
     console.log('Starting capitals game with category:', capitalsCategory);
     startGame(capitalsCategory);
     navigate('/capitals/game');
   };
   
   const handleReferenceClick = () => {
-    const capitalsCategory = `capitals${regionId.charAt(0).toUpperCase() + regionId.slice(1)}` as CategoryId;
     console.log('Viewing reference for category:', capitalsCategory);
     viewReference(capitalsCategory);
     navigate('/reference');
@@ -74,6 +100,7 @@ const CapitalsOptions: React.FC = () => {
         <button
           onClick={handlePlayClick}
           className="bg-card-dark border border-border hover:border-border-hover w-full p-6 rounded-xl transition-all duration-300 hover:bg-card-hover flex items-center group relative shadow-elegant"
+          type="button"
         >
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-accent/10 mr-4 group-hover:bg-accent/15 transition-colors">
             <Play size={24} className="text-accent ml-1" />
@@ -83,13 +110,14 @@ const CapitalsOptions: React.FC = () => {
             <div className="text-sm text-foreground-subtle">Тест по столицам</div>
           </div>
           
-          {/* Highlight effect on hover */}
+          {/* Highlight effect on hover - Made pointer-events-none */}
           <div className="absolute inset-0 rounded-xl border border-accent/0 group-hover:border-accent/10 transition-all duration-300 pointer-events-none"></div>
         </button>
         
         <button
           onClick={handleReferenceClick}
           className="bg-card-dark border border-border hover:border-border-hover w-full p-6 rounded-xl transition-all duration-300 hover:bg-card-hover flex items-center group relative shadow-elegant"
+          type="button"
         >
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-foreground/5 mr-4 group-hover:bg-foreground/10 transition-colors">
             <Book size={24} className="text-foreground" />
@@ -99,7 +127,7 @@ const CapitalsOptions: React.FC = () => {
             <div className="text-sm text-foreground-subtle">Изучить справочник со странами</div>
           </div>
           
-          {/* Highlight effect on hover */}
+          {/* Highlight effect on hover - Made pointer-events-none */}
           <div className="absolute inset-0 rounded-xl border border-foreground/0 group-hover:border-foreground/5 transition-all duration-300 pointer-events-none"></div>
         </button>
       </div>
