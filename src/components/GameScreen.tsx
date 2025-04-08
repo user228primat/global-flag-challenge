@@ -11,7 +11,7 @@ import { Country } from '../types';
 import { ArrowLeft, X, Check } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
 import { Button } from '@/components/ui/button';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface GameScreenProps {
   onBack?: () => void;
@@ -114,12 +114,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
       return;
     }
     
+    // Debug category data
+    console.log("Current category:", currentCategory);
+    console.log("All categories:", Object.keys(gameCategories));
+    console.log("Category exists check:", !!gameCategories[currentCategory]);
+    
     // Ensure that gameCategories[currentCategory] exists
     if (!gameCategories[currentCategory]) {
       console.error(`Category ${currentCategory} not found in gameCategories`);
       toast({
         title: "Ошибка",
-        description: `Категория ${currentCategory} не найдена`,
+        description: `Категория ${currentCategory} не найдена, пожалуйста выберите регион`,
         variant: "destructive",
       });
       const isCapitals = currentCategory.includes('capitals') || location.pathname.includes('capitals');
@@ -244,12 +249,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
-    <div className="w-full max-w-xl mx-auto px-4 py-8 relative z-10">
+    <div className="w-full max-w-xl mx-auto px-4 py-8 relative z-20">
       <div className="flex items-center justify-between mb-8">
         <Button 
           onClick={handleExit}
           variant="ghost" 
-          className="flex items-center px-4 py-2 rounded-full bg-card/80 hover:bg-card-hover transition-colors"
+          className="flex items-center px-4 py-2 rounded-full bg-card/80 hover:bg-card-hover transition-colors z-50"
           type="button"
         >
           <ArrowLeft size={18} className="mr-2 text-foreground-subtle" />
@@ -269,7 +274,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
         
         {isCapitalsMode && (
           <div className="mt-4 text-center">
-            <h2 className="text-2xl font-bold text-foreground">{currentCountry?.name}</h2>
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-100">{currentCountry?.name}</h2>
           </div>
         )}
       </div>
@@ -295,7 +300,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
           } else if (isIncorrect) {
             buttonClass += "bg-red-500/10 border border-red-500/20 text-foreground-subtle";
           } else {
-            buttonClass += "border border-border hover:border-border-hover bg-card hover:bg-card-hover shadow-inner-highlight";
+            buttonClass += "border border-white/10 hover:border-blue-500/30 bg-gradient-to-br from-slate-800/60 to-slate-900/60 hover:from-blue-900/40 hover:to-indigo-900/40 shadow-inner-highlight";
           }
           
           return (
