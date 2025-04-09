@@ -27,7 +27,8 @@ const CapitalsGame = () => {
       return;
     }
     
-    if (!currentCategory.includes('capitals')) {
+    const isCapitalsCategory = currentCategory.startsWith('capitals');
+    if (!isCapitalsCategory) {
       console.error('Not a capitals category:', currentCategory, ', redirecting to capitals page');
       toast({
         title: "Ошибка",

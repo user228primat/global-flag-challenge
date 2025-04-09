@@ -65,7 +65,7 @@ const CapitalsOptions = () => {
     navigate('/capitals');
   };
   
-  const displayName = categoryDisplayNames[capitalsCategoryId] || 'Столицы';
+  const displayName = categoryDisplayNames[regionId as CategoryId] || 'Столицы';
   
   return (
     <div className="min-h-screen bg-background pb-16 relative overflow-hidden">

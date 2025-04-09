@@ -22,6 +22,22 @@ const ReferenceTable: React.FC = () => {
   }, []);
   
   if (!currentCategory) {
+    console.error("No current category set in ReferenceTable");
+    toast({
+      title: "Ошибка",
+      description: "Категория не выбрана",
+      variant: "destructive",
+    });
+    return null;
+  }
+  
+  if (!gameCategories[currentCategory]) {
+    console.error(`Category ${currentCategory} not found in gameCategories`);
+    toast({
+      title: "Ошибка",
+      description: `Категория ${currentCategory} не найдена`,
+      variant: "destructive",
+    });
     return null;
   }
   

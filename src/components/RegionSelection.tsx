@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast";
 const RegionSelection: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { gameStats, startGame } = useGameContext();
+  const { gameStats } = useGameContext();
   const isCapitalsMode = location.pathname.includes('/capitals');
   
   console.log('RegionSelection rendered, isCapitalsMode:', isCapitalsMode);
@@ -25,6 +25,7 @@ const RegionSelection: React.FC = () => {
     console.log(`Region selected: ${region}, isCapitalsMode: ${isCapitalsMode}`);
     
     if (isCapitalsMode) {
+      // No need to convert to capitals category here since pages do the conversion
       console.log(`Navigating to capitals/${region}`);
       navigate(`/capitals/${region}`);
     } else {

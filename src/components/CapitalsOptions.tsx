@@ -1,16 +1,15 @@
 
 import React from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useGameContext, getCapitalsCategory } from '../contexts/GameContext';
-import { categoryDisplayNames, gameCategories } from '../data';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGameContext } from '../contexts/GameContext';
+import { categoryDisplayNames } from '../data';
 import { CategoryId } from '../types';
 import { Play, Book, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 const CapitalsOptions: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { regionId } = useParams<{ regionId: string }>();
   const { startGame, viewReference } = useGameContext();
   
@@ -27,18 +26,32 @@ const CapitalsOptions: React.FC = () => {
     return null;
   }
   
-  const capitalsCategory = getCapitalsCategory(regionId as CategoryId);
-  console.log('Mapped capitals category:', capitalsCategory);
+  // Преобразование названий регионов в категории столиц
+  const getCapitalsCategoryId = (region: string): CategoryId => {
+    const capitalsMapping: Record<string, CategoryId> = {
+      'europe': 'capitalsEurope',
+      'asia': 'capitalsAsia',
+      'northAmerica': 'capitalsNorthAmerica',
+      'southAmerica': 'capitalsSouthAmerica',
+      'africa': 'capitalsAfrica',
+      'australiaOceania': 'capitalsAustraliaOceania'
+    };
+    
+    return capitalsMapping[region] || 'capitals';
+  };
+  
+  const capitalsCategoryId = getCapitalsCategoryId(regionId);
+  console.log("Capitals category ID:", capitalsCategoryId);
   
   const handlePlayClick = () => {
-    console.log('Starting capitals game with category:', capitalsCategory);
-    startGame(capitalsCategory);
+    console.log('Starting capitals game with category:', capitalsCategoryId);
+    startGame(capitalsCategoryId);
     navigate('/capitals/game');
   };
   
   const handleReferenceClick = () => {
-    console.log('Viewing reference for category:', capitalsCategory);
-    viewReference(capitalsCategory);
+    console.log('Viewing reference for category:', capitalsCategoryId);
+    viewReference(capitalsCategoryId);
     navigate('/reference');
   };
   
