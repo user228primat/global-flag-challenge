@@ -44,7 +44,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   // Determine if we're in capitals mode
   const isCapitalsMode = useMemo(() => {
     if (!currentCategory) return false;
-    return currentCategory.includes('capitals') || location.pathname.includes('/capitals');
+    return currentCategory.startsWith('capitals') || location.pathname.includes('/capitals');
   }, [currentCategory, location.pathname]);
   
   console.log("GameScreen rendered with currentCategory:", currentCategory, "isCapitalsMode:", isCapitalsMode);
@@ -163,7 +163,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   };
   
   const handleAnswerSelect = (value: string) => {
-    if (!currentCountry || isCorrect) return;
+    if (!currentCountry || isCorrect !== null) return;
     
     setSelectedOption(value);
     
@@ -180,7 +180,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
       
       setTimeout(() => {
         loadNextQuestion();
-      }, 300);
+      }, 1000);
     } else {
       setIncorrectOptions(prev => new Set([...prev, value]));
       
@@ -299,7 +299,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
             <button
               key={option.value}
               onClick={() => handleAnswerSelect(option.value)}
-              disabled={isIncorrect || isCorrect}
+              disabled={isIncorrect || isCorrect !== null}
               className={buttonClass}
               type="button"
             >

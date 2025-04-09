@@ -42,27 +42,40 @@ const ReferenceTable: React.FC = () => {
   }
   
   const category = gameCategories[currentCategory];
-  const displayName = categoryDisplayNames[currentCategory];
+  const displayName = categoryDisplayNames[currentCategory] || 'Категория';
   
   const handleBackClick = () => {
     console.log('Back button clicked in ReferenceTable, currentCategory:', currentCategory);
-    const isCapitalsCategory = currentCategory.includes('capitals');
+    const isCapitalsCategory = currentCategory.startsWith('capitals');
     
     if (isCapitalsCategory) {
-      // Если это категория столиц, возвращаемся на страницу capitals/region
-      const regionMatch = currentCategory.match(/capitals(.+)/);
-      if (regionMatch && regionMatch[1]) {
-        // Если есть регион (например, capitalsEurope -> europe)
-        const region = regionMatch[1].charAt(0).toLowerCase() + regionMatch[1].slice(1);
+      // Extract region from capitals category (e.g., capitalsEurope -> europe)
+      let region = '';
+      if (currentCategory === 'capitals') {
+        region = '';
+      } else if (currentCategory === 'capitalsEurope') {
+        region = 'europe';
+      } else if (currentCategory === 'capitalsAsia') {
+        region = 'asia';
+      } else if (currentCategory === 'capitalsNorthAmerica') {
+        region = 'northAmerica';
+      } else if (currentCategory === 'capitalsSouthAmerica') {
+        region = 'southAmerica';
+      } else if (currentCategory === 'capitalsAfrica') {
+        region = 'africa';
+      } else if (currentCategory === 'capitalsAustraliaOceania') {
+        region = 'australiaOceania';
+      }
+      
+      if (region) {
         console.log('Navigating to capitals options with region:', region);
         navigate(`/capitals/${region}`);
       } else {
-        // Если это просто "capitals", возвращаемся на главную страницу столиц
         console.log('Navigating to main capitals page');
         navigate('/capitals');
       }
     } else {
-      // Для обычных категорий флагов
+      // For regular flag categories
       console.log('Navigating to category page:', currentCategory);
       navigate(`/category/${currentCategory}`);
     }

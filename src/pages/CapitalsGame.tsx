@@ -15,7 +15,7 @@ const CapitalsGame = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Check if we have a category set and if it's a capitals category
+    // Check if we have a category set
     if (!currentCategory) {
       console.error('No category set in capitals game, redirecting to capitals page');
       toast({
@@ -27,6 +27,7 @@ const CapitalsGame = () => {
       return;
     }
     
+    // Check if it's a capitals category
     const isCapitalsCategory = currentCategory.startsWith('capitals');
     if (!isCapitalsCategory) {
       console.error('Not a capitals category:', currentCategory, ', redirecting to capitals page');

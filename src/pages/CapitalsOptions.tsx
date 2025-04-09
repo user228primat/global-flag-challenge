@@ -65,7 +65,7 @@ const CapitalsOptions = () => {
     navigate('/capitals');
   };
   
-  const displayName = categoryDisplayNames[regionId as CategoryId] || 'Столицы';
+  const displayName = categoryDisplayNames[regionId as CategoryId] || 'Регион';
   
   return (
     <div className="min-h-screen bg-background pb-16 relative overflow-hidden">
@@ -92,7 +92,7 @@ const CapitalsOptions = () => {
         
         <div className="mb-10 text-center">
           <h1 className="text-3xl font-bold mb-2 text-white text-shadow bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-blue-100">
-            {displayName}
+            Столицы: {displayName}
           </h1>
           <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
         </div>
