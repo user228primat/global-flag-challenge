@@ -118,12 +118,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
       return;
     }
     
-    // Ensure that gameCategories[currentCategory] exists
+    // Debug check for category
     if (!gameCategories[currentCategory]) {
       console.error(`Category ${currentCategory} not found in gameCategories`);
+      console.log("Available categories:", Object.keys(gameCategories));
       toast({
         title: "Ошибка",
-        description: `Категория ${currentCategory} не найдена`,
+        description: `Категория ${currentCategory} не найдена в данных игры`,
         variant: "destructive",
       });
       navigate(isCapitalsMode ? '/capitals' : '/');
@@ -136,10 +137,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     setIncorrectOptions(new Set());
     
     const categoryCountries = gameCategories[currentCategory].countries;
+    console.log(`Loading question from category ${currentCategory} with ${categoryCountries.length} countries`);
+    
     const nextCountry = getNextCountry(categoryCountries, usedCountries);
     
     if (nextCountry) {
       setCurrentCountry(nextCountry);
+      console.log('Next country selected:', nextCountry.name);
       
       console.log('Current game mode:', isCapitalsMode ? 'capitals' : 'flags', 'Current category:', currentCategory);
       
@@ -197,7 +201,20 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   useEffect(() => {
     if (currentCategory) {
       console.log("Current category in GameScreen:", currentCategory);
-      loadNextQuestion();
+      
+      if (gameCategories[currentCategory]) {
+        console.log(`Category ${currentCategory} found with ${gameCategories[currentCategory].countries.length} countries`);
+        loadNextQuestion();
+      } else {
+        console.error(`Category ${currentCategory} not found in gameCategories`);
+        console.log("Available categories:", Object.keys(gameCategories));
+        toast({
+          title: "Ошибка",
+          description: `Категория ${currentCategory} не найдена в данных игры`,
+          variant: "destructive",
+        });
+        navigate(isCapitalsMode ? '/capitals' : '/');
+      }
     } else {
       console.error("No category selected, redirecting to home");
       toast({

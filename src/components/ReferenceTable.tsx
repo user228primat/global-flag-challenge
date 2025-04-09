@@ -31,11 +31,15 @@ const ReferenceTable: React.FC = () => {
     return null;
   }
   
+  // Debug output to see what category is being used
+  console.log(`Reference table for category: ${currentCategory}`);
+  console.log(`Available categories: ${Object.keys(gameCategories).join(', ')}`);
+  
   if (!gameCategories[currentCategory]) {
     console.error(`Category ${currentCategory} not found in gameCategories`);
     toast({
       title: "Ошибка",
-      description: `Категория ${currentCategory} не найдена`,
+      description: `Категория ${currentCategory} не найдена в данных игры`,
       variant: "destructive",
     });
     return null;
@@ -43,6 +47,8 @@ const ReferenceTable: React.FC = () => {
   
   const category = gameCategories[currentCategory];
   const displayName = categoryDisplayNames[currentCategory] || 'Категория';
+  
+  console.log(`Found category with ${category.countries.length} countries`);
   
   const handleBackClick = () => {
     console.log('Back button clicked in ReferenceTable, currentCategory:', currentCategory);

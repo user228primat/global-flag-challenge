@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import GameScreen from '../components/GameScreen';
 import { useGameContext } from '../contexts/GameContext';
 import { toast } from "@/hooks/use-toast";
+import { gameCategories } from '../data';
 
 const CapitalsGame = () => {
   const navigate = useNavigate();
@@ -37,7 +38,22 @@ const CapitalsGame = () => {
         variant: "destructive",
       });
       navigate('/capitals');
+      return;
     }
+    
+    // Check if category exists in gameCategories
+    if (!gameCategories[currentCategory]) {
+      console.error('Category not found in gameCategories:', currentCategory);
+      toast({
+        title: "Ошибка",
+        description: `Категория ${currentCategory} не найдена в данных игры`,
+        variant: "destructive",
+      });
+      navigate('/capitals');
+      return;
+    }
+    
+    console.log(`Category ${currentCategory} validated successfully with ${gameCategories[currentCategory].countries.length} countries`);
   }, [currentCategory, navigate]);
   
   const handleBackClick = () => {
