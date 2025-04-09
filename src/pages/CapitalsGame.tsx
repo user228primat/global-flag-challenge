@@ -5,12 +5,34 @@ import GameScreen from '../components/GameScreen';
 import { useGameContext } from '../contexts/GameContext';
 import { toast } from "@/hooks/use-toast";
 import { gameCategories } from '../data';
+import { CategoryId } from '../types';
 
 const CapitalsGame = () => {
   const navigate = useNavigate();
   const { currentCategory } = useGameContext();
   
   console.log("CapitalsGame rendered with currentCategory:", currentCategory);
+  
+  // Convert capitals category to corresponding region category for validation
+  const getCategoryForValidation = (category: CategoryId | null): CategoryId | null => {
+    if (!category) return null;
+    
+    if (category.startsWith('capitals')) {
+      const regionMapping: Record<string, CategoryId> = {
+        'capitalsEurope': 'europe',
+        'capitalsAsia': 'asia',
+        'capitalsNorthAmerica': 'northAmerica',
+        'capitalsSouthAmerica': 'southAmerica',
+        'capitalsAfrica': 'africa',
+        'capitalsAustraliaOceania': 'australiaOceania',
+        'capitals': 'allFlags'
+      };
+      
+      return regionMapping[category] || null;
+    }
+    
+    return category;
+  };
   
   // Reset scroll position when page loads
   useEffect(() => {
@@ -41,9 +63,12 @@ const CapitalsGame = () => {
       return;
     }
     
+    // Convert to corresponding region category for validation
+    const validationCategory = getCategoryForValidation(currentCategory);
+    
     // Check if category exists in gameCategories
-    if (!gameCategories[currentCategory]) {
-      console.error('Category not found in gameCategories:', currentCategory);
+    if (!validationCategory || !gameCategories[validationCategory]) {
+      console.error(`Category ${validationCategory} (mapped from ${currentCategory}) not found in gameCategories`);
       toast({
         title: "Ошибка",
         description: `Категория ${currentCategory} не найдена в данных игры`,
@@ -53,7 +78,7 @@ const CapitalsGame = () => {
       return;
     }
     
-    console.log(`Category ${currentCategory} validated successfully with ${gameCategories[currentCategory].countries.length} countries`);
+    console.log(`Category ${currentCategory} validated successfully using ${validationCategory} with ${gameCategories[validationCategory].countries.length} countries`);
   }, [currentCategory, navigate]);
   
   const handleBackClick = () => {

@@ -6,6 +6,7 @@ import { gameCategories, categoryDisplayNames } from '../data';
 import { ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from "@/hooks/use-toast";
+import { CategoryId } from '../types';
 
 const ReferenceTable: React.FC = () => {
   const navigate = useNavigate();
@@ -28,24 +29,43 @@ const ReferenceTable: React.FC = () => {
       description: "Категория не выбрана",
       variant: "destructive",
     });
+    navigate('/');
     return null;
   }
   
   // Debug output to see what category is being used
   console.log(`Reference table for category: ${currentCategory}`);
-  console.log(`Available categories: ${Object.keys(gameCategories).join(', ')}`);
   
-  if (!gameCategories[currentCategory]) {
-    console.error(`Category ${currentCategory} not found in gameCategories`);
+  // Handle capitals mode by converting category
+  let categoryToUse = currentCategory;
+  if (currentCategory.startsWith('capitals')) {
+    // For capitals categories, we need to use the corresponding region category
+    const regionMapping: Record<string, CategoryId> = {
+      'capitalsEurope': 'europe',
+      'capitalsAsia': 'asia',
+      'capitalsNorthAmerica': 'northAmerica',
+      'capitalsSouthAmerica': 'southAmerica',
+      'capitalsAfrica': 'africa',
+      'capitalsAustraliaOceania': 'australiaOceania',
+      'capitals': 'allFlags'
+    };
+    
+    categoryToUse = regionMapping[currentCategory] || 'allFlags';
+    console.log(`Converted capitals category ${currentCategory} to ${categoryToUse} for data lookup`);
+  }
+  
+  if (!gameCategories[categoryToUse]) {
+    console.error(`Category ${categoryToUse} (mapped from ${currentCategory}) not found in gameCategories`);
     toast({
       title: "Ошибка",
-      description: `Категория ${currentCategory} не найдена в данных игры`,
+      description: `Категория ${categoryToUse} не найдена в данных игры`,
       variant: "destructive",
     });
+    navigate('/');
     return null;
   }
   
-  const category = gameCategories[currentCategory];
+  const category = gameCategories[categoryToUse];
   const displayName = categoryDisplayNames[currentCategory] || 'Категория';
   
   console.log(`Found category with ${category.countries.length} countries`);

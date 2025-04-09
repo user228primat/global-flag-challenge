@@ -5,7 +5,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Book, Play } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
-import { categoryDisplayNames } from '../data';
+import { categoryDisplayNames, gameCategories } from '../data';
 import { CategoryId } from '../types';
 
 const CapitalsOptions = () => {
@@ -45,8 +45,38 @@ const CapitalsOptions = () => {
     return capitalsMapping[region] || 'capitals';
   };
   
+  // Get the mapping from capitals category to region category for validation
+  const getRegionForValidation = (capitalsCategory: CategoryId): CategoryId => {
+    const regionMapping: Record<string, CategoryId> = {
+      'capitalsEurope': 'europe',
+      'capitalsAsia': 'asia',
+      'capitalsNorthAmerica': 'northAmerica',
+      'capitalsSouthAmerica': 'southAmerica',
+      'capitalsAfrica': 'africa',
+      'capitalsAustraliaOceania': 'australiaOceania',
+      'capitals': 'allFlags'
+    };
+    
+    return regionMapping[capitalsCategory] || capitalsCategory;
+  };
+  
   const capitalsCategoryId = getCapitalsCategoryId(regionId);
   console.log("Capitals category ID:", capitalsCategoryId);
+  
+  // Verify that the corresponding region category exists in gameCategories
+  const regionCategory = getRegionForValidation(capitalsCategoryId);
+  if (!gameCategories[regionCategory]) {
+    console.error(`Region category ${regionCategory} for capitals category ${capitalsCategoryId} not found in gameCategories`);
+    toast({
+      title: "Ошибка",
+      description: `Регион ${regionId} не найден в данных игры`,
+      variant: "destructive",
+    });
+    navigate('/capitals');
+    return null;
+  }
+  
+  console.log(`Region category ${regionCategory} for capitals category ${capitalsCategoryId} found with ${gameCategories[regionCategory].countries.length} countries`);
   
   const handlePlayClick = () => {
     console.log('Starting game with capitals category:', capitalsCategoryId);

@@ -7,7 +7,7 @@ import FlagCard from './FlagCard';
 import LivesIndicator from './LivesIndicator';
 import ScoreCounter from './ScoreCounter';
 import { generateOptions, getNextCountry } from '../utils/gameLogic';
-import { Country } from '../types';
+import { Country, CategoryId } from '../types';
 import { ArrowLeft, X, Check } from 'lucide-react';
 import GameOverScreen from './GameOverScreen';
 import { Button } from '@/components/ui/button';
@@ -49,6 +49,33 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   
   console.log("GameScreen rendered with currentCategory:", currentCategory, "isCapitalsMode:", isCapitalsMode);
   
+  // Convert capitals category to corresponding region category for data lookup
+  const getCategoryForData = (category: CategoryId | null): CategoryId | null => {
+    if (!category) return null;
+    
+    if (category.startsWith('capitals')) {
+      const regionMapping: Record<string, CategoryId> = {
+        'capitalsEurope': 'europe',
+        'capitalsAsia': 'asia',
+        'capitalsNorthAmerica': 'northAmerica',
+        'capitalsSouthAmerica': 'southAmerica',
+        'capitalsAfrica': 'africa',
+        'capitalsAustraliaOceania': 'australiaOceania',
+        'capitals': 'allFlags'
+      };
+      
+      const mappedCategory = regionMapping[category];
+      console.log(`Mapped capitals category ${category} to ${mappedCategory} for data lookup`);
+      return mappedCategory || null;
+    }
+    
+    return category;
+  };
+  
+  const categoryForData = useMemo(() => {
+    return getCategoryForData(currentCategory);
+  }, [currentCategory]);
+  
   const handleExit = () => {
     console.log("Exit button clicked, resetting game and navigating");
     resetGame();
@@ -62,9 +89,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
   };
   
   const checkForCategoryCompletion = () => {
-    if (!currentCategory || !gameCategories[currentCategory]) return false;
+    if (!currentCategory || !categoryForData || !gameCategories[categoryForData]) return false;
     
-    const categoryCountries = gameCategories[currentCategory].countries;
+    const categoryCountries = gameCategories[categoryForData].countries;
     const allCountriesUsed = usedCountries.size >= categoryCountries.length;
     
     if (allCountriesUsed) {
@@ -118,13 +145,25 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
       return;
     }
     
-    // Debug check for category
-    if (!gameCategories[currentCategory]) {
-      console.error(`Category ${currentCategory} not found in gameCategories`);
-      console.log("Available categories:", Object.keys(gameCategories));
+    // Use the mapped category for data lookup
+    if (!categoryForData) {
+      console.error(`Could not map category ${currentCategory} to a valid data category`);
       toast({
         title: "Ошибка",
         description: `Категория ${currentCategory} не найдена в данных игры`,
+        variant: "destructive",
+      });
+      navigate(isCapitalsMode ? '/capitals' : '/');
+      return;
+    }
+    
+    // Debug check for category
+    if (!gameCategories[categoryForData]) {
+      console.error(`Category ${categoryForData} (mapped from ${currentCategory}) not found in gameCategories`);
+      console.log("Available categories:", Object.keys(gameCategories));
+      toast({
+        title: "Ошибка",
+        description: `Категория ${categoryForData} не найдена в данных игры`,
         variant: "destructive",
       });
       navigate(isCapitalsMode ? '/capitals' : '/');
@@ -136,8 +175,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     setIsCorrect(null);
     setIncorrectOptions(new Set());
     
-    const categoryCountries = gameCategories[currentCategory].countries;
-    console.log(`Loading question from category ${currentCategory} with ${categoryCountries.length} countries`);
+    const categoryCountries = gameCategories[categoryForData].countries;
+    console.log(`Loading question from mapped category ${categoryForData} (original: ${currentCategory}) with ${categoryCountries.length} countries`);
     
     const nextCountry = getNextCountry(categoryCountries, usedCountries);
     
@@ -202,11 +241,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     if (currentCategory) {
       console.log("Current category in GameScreen:", currentCategory);
       
-      if (gameCategories[currentCategory]) {
-        console.log(`Category ${currentCategory} found with ${gameCategories[currentCategory].countries.length} countries`);
+      if (categoryForData && gameCategories[categoryForData]) {
+        console.log(`Category ${categoryForData} (mapped from ${currentCategory}) found with ${gameCategories[categoryForData].countries.length} countries`);
         loadNextQuestion();
       } else {
-        console.error(`Category ${currentCategory} not found in gameCategories`);
+        console.error(`Category ${categoryForData} (mapped from ${currentCategory}) not found in gameCategories`);
         console.log("Available categories:", Object.keys(gameCategories));
         toast({
           title: "Ошибка",
@@ -224,7 +263,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
       });
       navigate(isCapitalsMode ? '/capitals' : '/');
     }
-  }, [currentCategory]);
+  }, [currentCategory, categoryForData]);
   
   if (isGameOver) {
     return (
@@ -239,7 +278,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
             loadNextQuestion();
           }
         }}
-        isVictory={currentCategory ? usedCountries.size >= gameCategories[currentCategory].countries.length : false}
+        isVictory={currentCategory && categoryForData ? usedCountries.size >= gameCategories[categoryForData].countries.length : false}
         lastCountry={currentCountry}
         isCapitalsMode={isCapitalsMode}
       />
@@ -254,7 +293,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     );
   }
   
-  const totalFlags = currentCategory ? gameCategories[currentCategory].countries.length : 0;
+  const totalFlags = categoryForData ? gameCategories[categoryForData].countries.length : 0;
   const highScore = currentCategory && gameStats[currentCategory] ? gameStats[currentCategory].highScore : 0;
   
   return (
