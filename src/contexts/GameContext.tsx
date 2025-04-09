@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CategoryId, GameContextType, GameStats } from '../types';
 import { gameCategories } from '../data';
@@ -90,6 +91,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGameOver, setIsGameOver] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
+  // Флаг для отслеживания незасохраненных изменений
+  const [pendingChanges, setPendingChanges] = useState(false);
+  // Время последнего сохранения
+  const [lastSaveTime, setLastSaveTime] = useState(0);
   
   useEffect(() => {
     const yaSdk = YandexGamesSDK.getInstance();
@@ -114,10 +119,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   }, []);
 
+  // Сохраняем в localStorage при каждом изменении
   useEffect(() => {
     localStorage.setItem('flagGameStats', JSON.stringify(gameStats));
+    // Отмечаем, что есть несохраненные изменения
+    setPendingChanges(true);
+  }, [gameStats]);
+  
+  // Отложенное сохранение в Яндекс - только при важных событиях или периодически
+  useEffect(() => {
+    // Условия для запуска сохранения:
+    // 1. Есть несохраненные изменения
+    // 2. SDK инициализирован
+    // 3. Прошло достаточно времени с последнего сохранения ИЛИ игра окончена
+    const shouldSave = pendingChanges && 
+                       isSDKInitialized && 
+                       (isGameOver || Date.now() - lastSaveTime > 30000); // 30 секунд
     
-    if (isSDKInitialized) {
+    if (shouldSave) {
+      console.log('Saving game stats to Yandex Games storage...');
       const yaSdk = YandexGamesSDK.getInstance();
       yaSdk.saveUserData({
         gameStats: gameStats,
@@ -125,9 +145,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           acc[key] = value.highScore;
           return acc;
         }, {} as Record<string, number>)
+      }).then(() => {
+        setPendingChanges(false);
+        setLastSaveTime(Date.now());
+        console.log('Game stats saved successfully');
+      }).catch(error => {
+        console.error('Error saving game stats:', error);
       });
     }
-  }, [gameStats, isSDKInitialized]);
+  }, [gameStats, isSDKInitialized, pendingChanges, lastSaveTime, isGameOver]);
 
   const showRewardedAd = async (): Promise<boolean> => {
     if (!isSDKInitialized) {
@@ -141,6 +167,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (wasAdShown) {
       setLives(prev => prev + 1);
       setIsGameOver(false);
+      
+      // После просмотра рекламы сохраняем состояние
+      setPendingChanges(true);
     }
     
     return wasAdShown;
@@ -160,6 +189,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       newStats[category] = categoryStats;
       return newStats;
     });
+    
+    // Форсируем сохранение при завершении категории
+    setPendingChanges(true);
   };
 
   const incrementScore = (category: CategoryId) => {
@@ -177,6 +209,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (category in gameCategories && categoryStats.currentScore >= gameCategories[category].countries.length) {
         categoryStats.isComplete = true;
+        
+        // Форсируем сохранение при завершении категории
+        setPendingChanges(true);
       }
       
       newStats[category] = categoryStats;
@@ -199,6 +234,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return newStats;
       });
     }
+    
+    // Сохраняем при сбросе игры
+    setPendingChanges(true);
   };
 
   const startGame = (category: CategoryId) => {
@@ -223,6 +261,32 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentCategory(category);
     setIsPlaying(false);
   };
+  
+  // Функция для явного сохранения данных
+  const saveGameData = () => {
+    if (isSDKInitialized && pendingChanges) {
+      console.log('Manually saving game stats...');
+      const yaSdk = YandexGamesSDK.getInstance();
+      yaSdk.saveUserData({
+        gameStats: gameStats,
+        highScores: Object.entries(gameStats).reduce((acc, [key, value]) => {
+          acc[key] = value.highScore;
+          return acc;
+        }, {} as Record<string, number>)
+      }).then(() => {
+        setPendingChanges(false);
+        setLastSaveTime(Date.now());
+        console.log('Game stats saved successfully');
+      });
+    }
+  };
+  
+  // Сохраняем данные при завершении игры
+  useEffect(() => {
+    if (isGameOver) {
+      saveGameData();
+    }
+  }, [isGameOver]);
 
   return (
     <GameContext.Provider

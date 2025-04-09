@@ -28,7 +28,9 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
   const isCategoryCompleted = currentCategory ? gameStats[currentCategory].isComplete : false;
 
   // Show fullscreen ad when game over screen appears
+  // И сохраняем прогресс (сохранение произойдет автоматически благодаря useEffect в GameContext)
   useEffect(() => {
+    console.log("Game over screen appeared, showing ad and triggering save");
     const yaSdk = YandexGamesSDK.getInstance();
     yaSdk.showFullscreenAd();
   }, []);
